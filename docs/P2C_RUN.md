@@ -166,9 +166,46 @@ View the summary with:
 Get-Content ".\experiments\local\p2c-v1\results\summary.json" -Raw
 ```
 
-Paste that **synthetic-only** summary here. Inspect the step/white-channel/gradient PNGs visually, especially the white channel: the CI table displayed unwanted-white-ink fraction ~0.03 **in both modes**. The CI step edge's F1 also declined from ~0.82 to ~0.79 with contours, so our goal is to diagnose rather than assume improvements. If the directory already exists, supply a new `-OutputDir` (for example `results-02`); do not delete the old experiment. The script records the actual run's Git SHA and hashes. See [phase evolution](PHASE_EVOLUTION.md) for what to retain after each phase.
+**Windows execution is complete:** the user supplied the six full-precision table entries, now archived in [P2C_SYNTHETIC_WINDOWS_RESULT.md](P2C_SYNTHETIC_WINDOWS_RESULT.md). The batch produced paired outputs and local SHA hashes in `results/summary.json`. Next inspect the *synthetic* original plus both `square-white-channel-*.png` outputs: the whole-source-white-mask unintended-ink fraction is exactly 0.02548076923076923 **in both modes**. The affected pixel location has **not** been determined, so do not equate this whole-mask rate with inner-channel contamination. If the directory already exists, supply a new `-OutputDir` (for example `results-02`); do not delete the old experiment. The script records the actual run's Git SHA and hashes. See [phase evolution](PHASE_EVOLUTION.md) for what to retain after each phase.
 
 This is the natural-output lane, **not** a matched-budget comparison. Later test a permission-cleared nonportrait photograph, also with both modes, before proceeding to P3-A.
+
+## 7. Targeted inspection after the Windows synthetic run
+
+These commands do **not** overwrite any output:
+
+```powershell
+$root = ".\\experiments\\local\\p2c-v1"
+$r = "$root\\results"
+
+# Inspect the three safe, programmatically generated images side by side.
+Start-Process "$root\\square-white-channel.png"
+Start-Process "$r\\square-white-channel-p2a.png"
+Start-Process "$r\\square-white-channel-p2b1.png"
+
+# Look at the individual full-precision diagnostic fields, not only the batch table.
+@("step","square-white-channel","gradient") | ForEach-Object {
+  $fixture = $_
+  @("p2a","p2b1") | ForEach-Object {
+    $mode = $_
+    $v = Get-Content "$r\\$fixture-$mode-report.json" -Raw | ConvertFrom-Json
+    [pscustomobject]@{
+      Fixture = $fixture; Mode = $mode
+      SourceEdges = $v.edges.source_pixels
+      PreviewEdges = $v.edges.preview_pixels
+      Precision = $v.edges.precision
+      Recall = $v.edges.recall
+      SourceWhitePixels = $v.white_region.pixels
+      WhiteInkFraction = $v.unwanted_highlight_ink_fraction
+      ExtraWhiteDarkness = $v.mean_extra_highlight_darkness
+    }
+  }
+} | Format-Table -AutoSize
+```
+
+The square fixture has 2080 white-source pixels including **both** exterior background and its internal six-column channel (x=29–34, y=8–55). The reported fraction implies 53 threshold-exceeding preview pixels somewhere in this combined mask. A visual inspection and, if still uncertain, an exact coordinate-level diagnostic are required to distinguish edge antialiasing versus improper mark support. Since both algorithms report the same rate, the new contours do not appear to be its cause on this fixture.
+
+Read the [full Windows findings](P2C_SYNTHETIC_WINDOWS_RESULT.md), inspect source/preview PNGs and complete one permitted nonportrait A/B before P3-A.
 
 ## Metrics and limitations
 
