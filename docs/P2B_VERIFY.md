@@ -1,6 +1,6 @@
 # P2-B verification — same-photo contour A/B
 
-P2-A already passed GitHub Actions workspace check and 14 core tests, and the first portrait comparison showed broken marks but weak glasses/eye/lip structure. P2-B is a separate branch; do not overwrite or rebase the original images or pop the P1 stash into it.
+P2-A passed GitHub Actions workspace check and 14 core tests, and the first portrait comparison showed broken marks but weak glasses/eye/lip structure. P2-B GitHub Actions subsequently passed workspace check and 20/20 tests (https://github.com/SanamRai001/ScanSketch/actions/runs/37216135188); **the portrait A/B is still unverified**. P2-B is a separate branch; do not overwrite or rebase the original images or pop the P1 stash into it.
 
 ## Prepare
 

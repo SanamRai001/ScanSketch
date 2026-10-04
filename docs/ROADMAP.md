@@ -22,7 +22,7 @@ Deliver: seeded 2–10.5 px broken tonal marks, controlled gaps, small endpoint 
 
 Exit: new and old render of the **same** licensed portrait, same seed/max size, plus new regression tests and full-workspace compilation. Do not claim that more fragments automatically make a better picture.
 
-## P2-B — Edge / contour reinforcement [implemented on feat/p2b-contour-reinforcement; verification pending]
+## P2-B — Edge / contour reinforcement [CI passed: 20/20 tests; visual comparison pending]
 
 Deliver: normalized linear-darkness Sobel gradient, directional non-maximum suppression, short tangent-aligned marks anchored on the dark side with support checks, sparse acceptance and bounded extra stroke budget. `--no-contours` runs the identical P2-A tone pass as a control. No semantic face recognition. Compare toggled output against P2-A before judging any visual improvement.
 

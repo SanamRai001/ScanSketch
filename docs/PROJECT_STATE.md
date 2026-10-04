@@ -25,9 +25,10 @@ Implementation:
 - Contour RNG separate from tonal P2-A generator, so `--no-contours` preserves exactly the old tonal stroke prefix for fair A/B comparison.
 - Core `SketchOptions` adds `enable_contours` (default true) and finite `contour_threshold` (default 0.28, 0..=1). CLI adds `--no-contours` and `--contour-threshold`.
 - Additional tests cover flat input, gradient direction, comparison toggle/determinism, white-gap protection, invalid settings and shared stroke budget.
+- **GitHub Actions validation passed:** `cargo check --workspace`, `cargo test --workspace` (**20/20 tests**), run https://github.com/SanamRai001/ScanSketch/actions/runs/37216135188.
 - No new dependencies, vector schema changes, external models, Primitive optimization, AI or erasing.
 
-**Verification gate:** P2-B CI compilation/tests and a same-input no-contours/contours render comparison must pass before calling this a visual improvement. An optional pass is only retained if it visibly increases recognizability without dirtying highlights or making cartoon outlines.
+**Verification gate:** P2-B CI compilation/tests passed; the same-input no-contours/contours portrait comparison is **still pending**. Do not call this a visual improvement until those output images are inspected. An optional pass is only retained if it visibly increases recognizability without dirtying highlights or making cartoon outlines.
 
 ## Next
 
