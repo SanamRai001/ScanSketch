@@ -28,25 +28,27 @@ Deliver: normalized linear-darkness Sobel gradient, directional non-maximum supp
 
 Exit: glasses/eyes/lips and hair contours are more recognizable without harsh synthetic outlines or dirty highlights.
 
-## P2-B.1 — Coherence-ranked contour accents [CI verified: 23/23 tests; visual gate pending]
+## P2-B.1 — Coherence-ranked contour accents [23/23 tests; portrait visually reviewed]
 
-First same-photo P2-B comparison: 12,563 tonal marks versus 13,024 with raw-Sobel contours (+461). Structural improvement was subtle; most important facial boundaries remained hard to read. Preserve P2-B as the unmodified reference.
+Smoothed/ranked contours with dark-side support and regional quotas are the current strongest **subjective** variant. The portrait changed incrementally, not decisively; eyes/glasses/lips remain underrepresented and hair dominates. Keep the P2-B.1 branch as a fixed comparison reference, rather than stacking further Sobel tweaks. See [P2 visual review](P2_VISUAL_REVIEW.md).
 
-Deliver: one separable 3x3 binomial blur before Sobel, require neighboring tangent continuity, stable global candidate ranking by strength and continuity instead of top-left-first acceptance, keep 32px-tile quotas and shared stroke budget, and use slightly stronger dark-side marks. Shorten a rejected mark before abandoning its candidate. Validate every stroke against the *original unsmoothed* darkness, including round caps and lateral pen reach; this is not face-feature recognition.
+## P2-C — Measurements and controlled alternatives [protocol/design documented; execution pending]
 
-Exit: same-portrait render at 512px / seed 42 alongside P2-A and P2-B; ensure glasses/lips improve without hair noise or white contamination. Keep P2-B.1 optional in a separate branch if it fails. Pass workspace CI/tests before evaluation.
+Deliver fixed synthetic and rights-cleared photographic fixtures, provenance/hash manifest, same-source/seed/preprocessing/actual dimensions, tone RMSE and masked results, unwanted white-ink rate, fixed-tolerance edge proxy, stroke count/path length, wall time/resource measurements when observed, and blinded visual comparison. Explicitly distinguish default-output comparisons from true matched-stroke/path-length budget experiments; current `--max-strokes` is a failure limit, not an allocation mechanism.
 
-## P2-C — Measurements and controlled alternatives [not started]
+Exit requires a validated measurement tool on synthetic fixtures, same-portrait plus one permitted nonportrait comparison, reproducible records and a written keep/revise/reject decision. [P2-C protocol](P2C_PROTOCOL.md).
 
-Deliver: fixture provenance, side-by-side original/preview, tone error, highlight-ink coverage, edge retention proxy, stroke count/path length and runtime/memory observations. Compare uniform and region-adaptive sampling with the same stroke budget.
+## P3-A — Multi-scale, direction-aware source proposals [architecture proposed, not implemented]
 
-Exit: saved metrics and representative visual comparisons justify moving to candidate optimization.
+Analyze source at coarse and fine scales; derive structure-tensor orientation/confidence. In the continuing top-to-bottom sweep, propose short source-supported strokes aligned to reliable local form. Retain broken horizontal tonal fallback for flat/chaotic regions. Keep fixed resource quotas, strict protected-white checks and a separate comparison mode. The proposed algorithm is **nonsemantic** and must also be judged on nonportrait images.
 
-## P3 — Primitive-inspired local optimization
+Exit: against P2-B.1, meaningful visual structure/recognizability gain on at least one permitted portrait and one nonportrait at comparable strokes/ink, without worse white contamination. [P3 direction-aware design](P3_DIRECTIONAL_DESIGN.md).
 
-Deliver: candidate proposal, local raster mask, appropriate score and white-region penalty, analytic initial opacity where valid, bounded random restarts/hill climbing, deterministic seed, and exact incremental scoring for additive terms.
+## P3-B — Primitive-inspired scored local selection [gated research, not implemented]
 
-Exit: against P1 on the same fixtures and budgets, document wins/losses in fidelity, artistic preference, runtime, memory and number of strokes. Keep P1 as a baseline mode. No erasing.
+Once P3-A wins a controlled comparison, propose multiple local strokes, render temporarily in affected bounds, score tone/white/structure/complexity, mutate/restart with seeded bounded candidate counts, and commit only beneficial marks. Expand neighborhoods correctly for gradient-based score terms.
+
+Exit: compare P3-A without and with search under the same accepted-stroke/ink and CPU budgets. Do not imply improved numerical error guarantees human sketch preference.
 
 ## P4 — Structure and bounded additive refinement
 
