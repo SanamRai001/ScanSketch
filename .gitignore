@@ -11,6 +11,9 @@ coverage/
 *.tsbuildinfo
 .vite/
 
+# Rust build output
+/target/
+
 # Python exploration (if any)
 .venv/
 __pycache__/

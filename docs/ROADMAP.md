@@ -2,17 +2,17 @@
 
 Phases are gates, not calendar promises. Advance only after reviewing actual code, repo state, baseline results and open risks. Update the single docs/PROJECT_STATE.md after each phase.
 
-## P0 — Foundation [documentation work proposed]
+## P0 — Foundation [committed on docs/foundation; PR #1 awaits review]
 
 Deliver: README, copyright/license, project vision, algorithm specification, architecture boundaries, research citations, reproducible experiment protocol, future-idea parking lot and contribution guidance.
 
 Exit: docs are internally consistent, README links work, no unimplemented feature is described as existing, and the foundation branch has been reviewed before merging.
 
-## P1 — Deterministic original scanline baseline [next]
+## P1 — Deterministic original scanline baseline [first Rust implementation committed; verification pending]
 
 Deliver: bounded local image input, grayscale/brightness analysis, clean white paper, row-by-row mostly horizontal short-stroke generation, seed reproducibility, raster preview and ordered stroke records. Include zero-mark white-image fixture.
 
-Exit: same seed+input produces matching ordered strokes; portraits/objects/architecture can be inspected; outputs are clearly strokes, not gray pixel painting; dimensions/time/memory are bounded.
+Exit: run the commands in P1_VERIFY.md and review representative source/output pairs. Same seed+input must produce matching ordered strokes; test outputs must visibly comprise strokes, not gray pixel painting; dimensions/time/memory must remain bounded. Native compilation and visually convincing results are not yet verified.
 
 ## P2 — Measurements and controlled alternatives
 

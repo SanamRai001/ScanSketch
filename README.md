@@ -4,7 +4,7 @@
 
 ScanSketch is an early-stage, research-driven graphics project by **Sanam Rai**. Its aim is to transform raster photographs and illustrations into convincing hand-drawn-style sketches through adaptive scanline sampling, vector pencil strokes, and iterative reconstruction.
 
-> Status: Documentation foundation only (4 October 2026). There is **no implemented conversion engine, application, published package, or validated output yet**.
+> Status: **P1 native Rust scanline baseline committed on a feature branch; compilation and visual quality await local verification.** No browser app, optimized candidate search, or published package yet.
 
 ## The idea
 
@@ -23,7 +23,7 @@ The intended result is visibly made from **lines and strokes**, not a grayscale 
 7. Optionally perform an additive, bounded error-guided refinement pass after the first scan.
 8. Preview as a raster drawing; later export recorded paths as SVG and the canvas as PNG.
 
-See [Algorithm](docs/ALGORITHM.md) for the proposed mathematics, constraints, and pseudocode. All algorithms are hypotheses until benchmarked.
+The current P1 baseline implements luminance, deterministic band sampling, short mostly-horizontal strokes, replayable vector records, and PNG preview. Candidate optimization, edge guidance and refinement remain proposals. See [Algorithm](docs/ALGORITHM.md).
 
 ## Current priorities
 
@@ -49,12 +49,13 @@ The proposed erasure/correction idea is recorded under [Future Experiments](docs
 | --- | --- |
 | [Vision](docs/VISION.md) | Goals, audience, constraints, MVP and non-goals |
 | [Algorithm](docs/ALGORITHM.md) | Source analysis, strokes, objective, optimization, refinement |
-| [Architecture](docs/ARCHITECTURE.md) | Proposed boundaries and representation, not an implemented stack |
+| [Architecture](docs/ARCHITECTURE.md) | Rust workspace and proposed WASM/React integration |
 | [Roadmap](docs/ROADMAP.md) | Small gated phases and acceptance conditions |
 | [Research](docs/RESEARCH.md) | Prior art, inspiration, attribution and open questions |
 | [Experiments](docs/EXPERIMENTS.md) | Reproducible comparison methodology |
 | [Future experiments](docs/FUTURE_EXPERIMENTS.md) | Ideas parked until core output is convincing |
 | [Project state](docs/PROJECT_STATE.md) | Single authoritative progress, risks and next phase |
+| [P1 verification](docs/P1_VERIFY.md) | Windows commands, expected results and manual visual checks |
 | [Contributing](CONTRIBUTING.md) | How to propose changes and provide reproducible results |
 
 ## Inspiration and attribution
@@ -65,7 +66,28 @@ Read [Research](docs/RESEARCH.md) before importing or adapting third-party imple
 
 ## Getting started
 
-The project is currently at the specification stage; there are no installation or run commands yet. The first coding milestone is a deterministic scanline-only baseline so we can measure whether later optimization genuinely helps.
+Install a current stable [Rust toolchain](https://rustup.rs/) (Cargo included). **Use the P1 feature branch**, since the foundation PR has not been merged:
+
+```powershell
+git clone https://github.com/SanamRai001/ScanSketch.git
+cd ScanSketch
+git switch feat/p1-rust-scanline-baseline
+
+cargo check --workspace
+cargo test -p scansketch-core
+cargo run -p scansketch-cli -- --help
+```
+
+Place a photo at `sample.jpg`, then create an output directory and render:
+
+```powershell
+New-Item -ItemType Directory -Force outputs | Out-Null
+cargo run -p scansketch-cli -- --input .\sample.jpg --output .\outputs\sample-sketch.png --strokes .\outputs\sample-strokes.json --seed 42 --max-size 512
+```
+
+The CLI supports **local PNG/JPEG input**, white-paper PNG output, and optional ordered stroke records in JSON. Processing is capped to a 1024px working side; default maximum is 768px. This is an experimental baseline; no quality claim is made yet.
+
+See [P1 verification](docs/P1_VERIFY.md) for exact Windows test commands and expected output. A Rust `Cargo.lock` has not been generated in this connector environment and should be checked in following the first successful local dependency resolution.
 
 ## License and ownership
 

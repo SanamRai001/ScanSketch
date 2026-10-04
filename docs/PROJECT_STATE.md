@@ -1,70 +1,60 @@
 # Project State
 
-Last updated: **2026-10-04**
-
-This is the **single authoritative progress record**. Update it at the end of each implementation or documentation phase; the actual Git tree and verification results take precedence over any prose.
+Last updated: **2026-10-04**. This is the **single authoritative** project progress record. The Git tree and actual verification take precedence over prose.
 
 ## Goal
 
-Develop ScanSketch, an image-to-sketch reconstruction engine that uses top-to-bottom guided scanline sampling, intelligent pencil-stroke placement, and optional Primitive-inspired optimization, while retaining a visibly hand-drawn line character.
+Create ScanSketch: a real line/stroke-based image reconstruction engine with a top-to-bottom sampling identity. Later evaluate Primitive-inspired candidate optimization against a deterministic baseline. Do not mistake grayscale pixel painting, halftone, or filled polygons for the intended outcome.
 
-## Repository and branch
+## Repository and branches
 
 - Repository: https://github.com/SanamRai001/ScanSketch
-- Default branch: main
-- Documentation branch: docs/foundation
-- Source at inspection: empty public repository, no commits/branches, no application.
-- Bootstrap action: initial minimal README on main, commit 0e2c9100e36a6f5021640867a70a52434ea00cb0, solely to establish a Git history from which to create the working branch.
-- No merge, deployment, or deletion authorized/performed.
+- `main`: initial bootstrap README commit `0e2c9100e36a6f5021640867a70a52434ea00cb0`.
+- `docs/foundation`: research docs and MIT foundation at `a396bcf5cae43e9de11f05f372ee63b21802a4b1`; draft PR #1, awaiting review.
+- Active feature branch: `feat/p1-rust-scanline-baseline`, based on the foundation branch.
+- P1 Rust source commit: `ca0475b8fd2ae49f43c6a2e23c7bb72a706cbc39`.
+- No merge, deployment or deletion performed.
 
-## Current phase: P0 — Documentation foundation
+## Current phase: P1 — Native Rust deterministic baseline (implementation committed; verification pending)
 
-### Intended changes on docs/foundation
+### Decisions
 
-- Founding README and attribution.
-- MIT LICENSE with Copyright (c) 2026 Sanam Rai.
-- EditorConfig and conservative Git ignore patterns.
-- Contributing guidance.
-- Vision, proposed algorithm, preliminary architecture, phased roadmap, research references, benchmark protocol, and separately parked future experiments.
+- Accepted stack: **Rust core + native CLI first**, `tiny-skia` and `image`; WASM/React only after the core is good enough. See ARCHITECTURE.md.
+- No backend, database, GPU, cloud processing or mandatory Python.
+- Graphite output is actual ordered stroke records on white paper; PNG is a rendering.
+- Retain the original top-to-bottom scanline principle. P1 does not implement optimization, contour following, erasing or SVG.
+- Erasure with optional graphite residue remains recorded in FUTURE_EXPERIMENTS.md only.
 
-### Implementation status
+### Implemented on P1 feature branch
 
-- Scanline renderer: not started.
-- Edge detector: not started.
-- Stroke optimization: not started.
-- Erasure/residual graphite: explicitly deferred.
-- UI, export, CI and deployment: not started.
+- Cargo workspace with `scansketch-core` and `scansketch-cli`.
+- Linear-light darkness map with transparent pixels composited over white.
+- Seeded deterministic, bounded horizontal-band sampling and short pencil segments, split at bright columns within each segment to prevent strokes crossing white gaps.
+- Light-area suppression and deeper-shadow second stroke.
+- Renderer-independent serialized stroke model; tiny-skia white-paper replay.
+- Local PNG/JPEG CLI, bounded decode/working image, output PNG, optional stroke JSON.
+- Synthetic Rust tests for white input, transparent input, black marks, aligned and non-aligned white boundaries, an interior white gap, fixed-seed equality, stroke-budget rejection, invalid options/dimensions and bounds.
 
-## Verification
+### Verification and limitations
 
-- Repository metadata, emptiness and permissions inspected using the connected GitHub repository.
-- Initial Git bootstrap commit returned by GitHub; foundation branch created.
-- Documentation contents require PR review; **no source code or algorithm tests can pass yet because no engine exists**.
-- Do not treat illustrative pseudocode, benchmarks or acceptance thresholds as empirical results.
+- GitHub commit/ref and source presence can be inspected remotely; **this environment does not have rustc/cargo**.
+- `cargo fmt`, `cargo check`, `cargo test` and an actual image run have **not** been performed. Do not claim the algorithm passes or produces aesthetically good images.
+- `Cargo.lock` not yet generated: resolve and check in after first successful local Cargo build.
+- P1 is intentionally rudimentary and may look striped; its purpose is to establish a reproducible baseline before adding advanced optimization.
 
-## Key decisions
+## Review fix during this continuation
 
-1. Pencil strokes, not filled primitive shapes or grayscale pixel repainting, are the intended output.
-2. Top-to-bottom scanline traversal is the core identity; refinements may revisit regions afterward.
-3. Begin with a deterministic baseline to prove improvements attributable to optimization.
-4. Use inspired principles from Primitive, not a blind port; preserve upstream notices if implementation code is ever reused.
-5. Start on white paper, minimize unwanted marks in highlights, and control complexity.
-6. MIT is selected for reuse and contribution while preserving Sanam Rai's copyright notice.
-7. The erasure/residual-graphite concept is **recorded only, not scheduled**.
+- Found that band-wide averaging could ink an interior white gap or off-grid white boundary.
+- Added continuous eligible-column run splitting and two regression tests. This remains a *source review fix*, not a claim of passed local tests.
 
-## Open risks
+## Risks
 
-- A dense scanline approach could resemble engraving/halftone rather than a drawn sketch.
-- Pure tonal scoring could obscure important contours or overfill light areas.
-- Greedy adding cannot undo an over-dark accepted stroke; guard acceptance and cap pressure until an actual edit/correction model is investigated.
-- Partial scoring is exact only for appropriately local/additive objectives; nonlocal features need padded regions or full re-evaluation.
-- Stroke count and candidate search cost could exceed browser memory/performance budgets.
-- SVG path count and compositing behavior may differ from raster previews.
-- Licensing of third-party reference images/test fixtures must be verified.
-- All runtime, image quality and performance claims remain unverified.
+- Mechanical striped output, loss of thin objects, tonal underrepresentation and sampling across boundaries.
+- Resizing a semitransparent image before compositing may create color fringes; test fixture before browser production use.
+- Pixel fidelity and human preference are different measures; need representative licensed fixtures.
+- Image decoder allocation caps are partly best effort; also bound compressed input, decoded dimensions and working image.
+- Native-to-WASM portability, package MSRVs and vector/raster parity require later checks.
 
-## Next phase: P1 — Deterministic baseline
+## Immediate next step (user-run verification gate)
 
-Implement only a small, local image-to-strokes proof: controlled image input, luminance/darkness analysis, white-paper canvas, top-to-bottom band scanning, reproducible short mostly-horizontal strokes, raster preview, and output/stroke capture for tests. Establish a baseline fixture set and metrics before optimizing.
-
-**P1 exit condition:** a user can reproduce a recognizable line-based rendering from the same fixture and seed without candidate hill climbing, AI, erasing, hosted services or a complex frontend. See docs/ROADMAP.md and docs/EXPERIMENTS.md.
+Run the exact commands in **docs/P1_VERIFY.md** on Windows, share the CLI summary, compile/test failures if any, and a rendered result. Inspect whether the image is recognizable as a sketch. Fix correctness problems before calling P1 complete. Do not progress to P2 or optimize blindly.

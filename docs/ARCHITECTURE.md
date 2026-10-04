@@ -1,54 +1,80 @@
-# Preliminary Architecture
+# Architecture and Technology Decision
 
-**No architecture has been implemented yet.** These are intended boundaries, to be revisited after the P1 baseline.
+Last updated: 2026-10-04. **Decision accepted:** native-first Rust engine, browser adapter later.
 
-## Recommended prototype stack
+## Actual P1 implementation
 
-- TypeScript for deterministic engine logic and accessible integration with a Vite browser prototype.
-- Canvas 2D for initial raster preview and image sampling; avoid WebGL until profiling demonstrates a need.
-- Web Worker for long-running analysis/optimization after an initial synchronous proof.
-- Typed, renderer-independent stroke records. SVG serialization is a later adapter, not the core engine.
-- No backend, database, accounts, GPU requirement, or paid external service for the initial prototype.
+- Rust 2021 Cargo workspace.
+- `scansketch-core`: UI-independent image-to-strokes and preview logic.
+- `scansketch-cli`: local PNG/JPEG decode, working-image resize/limits, PNG preview and optional JSON stroke export.
+- `image` for pixel data/decode; `tiny-skia` for CPU path rendering; seeded `rand_chacha` for reproducible slight stroke variation; `serde` for independent stroke data; `clap` for CLI parsing.
+- No frontend, server, database, WebAssembly adapter, AI dependency or hosted service.
+- Existing P1 code is committed, but Cargo compilation and actual visual quality remain **unverified** until the user runs documented Windows checks.
 
-Go remains a viable later option for batch optimization (Primitive is a useful case study), but adopting Go now would add a second implementation language before we have baseline evidence.
+## Why native Rust first
 
-## Boundaries (proposed)
+ScanSketch spends effort in local sampling, path construction, future candidate mutation and affected-pixel scoring. A native reusable core offers controlled memory, good profiling opportunities and a potential WebAssembly build later. We are not claiming measurable superiority before benchmarking.
 
-    image input -> normalize/analyze -> image maps
-                                     -> scanline candidate generator
-                                     -> stroke optimizer/scorer
-                                     -> stroke collection (source of truth)
-                                     -> Canvas preview
-                                     -> future SVG/PNG exports
+### Planned later, not implemented
 
-Suggested modules when code begins:
-- image/normalize: size, alpha/matte, luminance and optional denoising.
-- analysis/maps: darkness, edge strength, optional orientation.
-- strokes/model: typed paths, pressure and constraints; no UI types.
-- scanline/generator: bands, eligibility, seeded proposals.
-- scoring/objective: full and correct local scoring, metrics.
-- optimization/search: baseline, random candidate search, bounded hill climb.
-- render/canvas: compositing and preview from recorded strokes.
-- export: later PNG and SVG adapters with parity tests.
-- ui: minimal upload, comparison, run/cancel, simple controls.
+- Edge analysis: `imageproc` only if needed; do not add unneeded dependencies in P1.
+- Native benchmarks: Criterion after fixed fixtures exist.
+- WASM adapter: `wasm-bindgen` exposing bounded core APIs, with early target-build portability checks.
+- Browser processing: Web Worker with cancellation/progress and bounded memory.
+- Frontend: Vite + React + TypeScript + Tailwind; Canvas preview; SVG serialization after raster/vector parity checks.
+- Python/notebooks: strictly optional research scripts, not a second production engine.
+- WebGL/GPU, multithreaded WASM, backend/API and storage: not justified at present.
 
-This is a module map, **not** an instruction to create empty files upfront.
+## Actual source layout
 
-## Data and invariants
+```text
+Cargo.toml
+crates/
+  scansketch-core/
+    src/
+      lib.rs        # public reconstruction/renderer API and correctness tests
+      analysis.rs   # darkness/luminance, alpha compositing over white
+      scanline.rs   # deterministic top-to-bottom bands and strokes
+      stroke.rs     # renderer-independent serializable stroke records
+      render.rs     # white-paper tiny-skia PNG preview
+  scansketch-cli/
+    src/main.rs     # bounded image decode, CLI flags and exports
+docs/
+  PROJECT_STATE.md  # sole live progress record
+  P1_VERIFY.md
+```
 
-- Coordinate system, image scale and white matte must be explicit.
-- Stroke records must reproduce the raster preview when replayed in order.
-- A deterministic seed must reproduce candidates and stroke output under a pinned implementation.
-- Candidate evaluation must not mutate the committed canvas.
-- Global and local scoring must agree for the same objective, within a defined numeric tolerance.
-- Do not mutate original uploaded image bytes; keep temporary data local by default.
-- Bound dimensions, iteration counts, allocation sizes, runtime and SVG output size.
-- Stop/cancel must leave the last committed drawing valid.
+Only add new files/modules as the next measured phase demands.
 
-## UX constraints
+## Core processing contract
 
-Begin with a compact input/result comparison, Run/Cancel, honest progress indication, and very few controls (e.g. detail vs speed). Advanced debug maps and stroke statistics belong behind an optional panel. Maintain keyboard and screen-reader usability and respect reduced-motion settings if the drawing is animated.
+```text
+local PNG/JPEG -> bounded decoding -> optional aspect-preserving resize
+    -> normalized RGBA -> target darkness
+    -> deterministic band + short-stroke placement
+    -> ordered Sketch { width, height, seed, strokes[] }
+    -> CPU raster replay -> PNG, optional JSON stroke data
+```
 
-## Dependency policy
+The ordered stroke collection is the authoritative drawing data. PNG is a replay, not the model. The baseline is not edge-guided or optimized and is not described as finished sketch quality.
 
-Prefer modest, well-maintained packages with compatible licenses. Reimplement only the small portions of Primitive that are actually required or import with preserved MIT notice. Do not automatically vendor its Go project into a TypeScript experiment.
+## Invariants, data safety and limitations
+
+- Input compressed file <= 16 MiB; decoder dimension limit 4096 per side and best-effort allocation limit 128 MiB.
+- Working image <= 1024 pixels per side; CLI defaults to 768 maximum, preserving aspect ratio.
+- White/transparent source regions composite against white and should produce no ink in the wholly white fixture.
+- Fixed seed and same engine build must reproduce ordered stroke records.
+- Band/segment/threshold/stroke budgets validated; limits are not a general image-parser sandbox.
+- No uploaded image leaves the local CLI.
+- Candidate scoring and erasing are absent, so improvements require measured later work rather than decorative features.
+- JSON is for research/inspection; future backward compatibility and a versioned schema will need a decision.
+- No Cargo.lock yet: pin via first local `cargo generate-lockfile`/Cargo build, then commit.
+- For WebAssembly, avoid assuming native-only image/PNG features or parallelism will port automatically. Test the target early before investing in a browser adapter.
+
+## UX when the engine is good enough
+
+One image upload, source/result comparison, Render/Cancel, minimal default quality control, clearly labelled exports. Show progress honestly. Maintain keyboard accessibility and respect reduced-motion preferences.
+
+## Attribution
+
+Inspired by the optimization approach of [Primitive](https://github.com/fogleman/primitive), without importing its source code. Preserve original dependency notices when distributing binaries.
