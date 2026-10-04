@@ -205,7 +205,7 @@ Start-Process "$r\\square-white-channel-p2b1.png"
 
 The square fixture has 2080 white-source pixels including **both** exterior background and its internal six-column channel (x=29–34, y=8–55). The reported fraction implies 53 threshold-exceeding preview pixels somewhere in this combined mask. A visual inspection and, if still uncertain, an exact coordinate-level diagnostic are required to distinguish edge antialiasing versus improper mark support. Since both algorithms report the same rate, the new contours do not appear to be its cause on this fixture.
 
-Read the [full Windows findings](P2C_SYNTHETIC_WINDOWS_RESULT.md), inspect source/preview PNGs and complete one permitted nonportrait A/B before P3-A.
+Read the [full Windows findings](P2C_SYNTHETIC_WINDOWS_RESULT.md) and [targeted channel audit commands](P2C_WHITE_CHANNEL_AUDIT.md). The user has uploaded screenshots: the channel appears visually continuous but pixel coordinates cannot be verified from viewer screenshots. Run the new read-only CLI on raw source/preview PNGs, then complete one permitted nonportrait A/B before P3-A.
 
 ## Metrics and limitations
 

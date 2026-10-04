@@ -35,3 +35,20 @@ jobs:
           if ($summary.fixtures.Count -ne 6) { throw "Expected six paired experiment reports" }
           if (@($summary.fixtures | Where-Object { $_.mode -eq "p2a" }).Count -ne 3) { throw "Expected three P2-A controls" }
           if (@($summary.fixtures | Where-Object { $_.mode -eq "p2b1" }).Count -ne 3) { throw "Expected three P2-B.1 variants" }
+      - name: Audit exact white-channel pixel locations
+        shell: pwsh
+        run: |
+          cargo run -p scansketch-cli --bin scansketch-white-audit -- --source experiments/local/ci/square-white-channel.png --preview experiments/local/ci/paired/square-white-channel-p2a.png --max-size 64 --roi '29,8,6,48' --report experiments/local/ci/paired/channel-p2a-white-audit.json | Out-Null
+          if ($LASTEXITCODE -ne 0) { throw "P2-A white audit failed" }
+          cargo run -p scansketch-cli --bin scansketch-white-audit -- --source experiments/local/ci/square-white-channel.png --preview experiments/local/ci/paired/square-white-channel-p2b1.png --max-size 64 --roi '29,8,6,48' --report experiments/local/ci/paired/channel-p2b1-white-audit.json | Out-Null
+          if ($LASTEXITCODE -ne 0) { throw "P2-B.1 white audit failed" }
+          foreach ($mode in @('p2a','p2b1')) {
+            $audit = Get-Content "experiments/local/ci/paired/channel-$mode-white-audit.json" -Raw | ConvertFrom-Json
+            $m = Get-Content "experiments/local/ci/paired/square-white-channel-$mode-report.json" -Raw | ConvertFrom-Json
+            if ($audit.source_white_pixels -ne $m.white_region.pixels) { throw "Mode $mode - source-white mask mismatch" }
+            $expected = [math]::Round($m.unwanted_highlight_ink_fraction * $m.white_region.pixels)
+            if ($audit.affected_white_pixels -ne $expected) { throw "Mode $mode - different white-ink count than p2c-v1 metrics" }
+            if ($audit.roi_source_white_pixels -ne 288) { throw "Mode $mode - expected exactly 288 protected channel pixels" }
+            if ($audit.roi_affected_white_pixels + $audit.outside_roi_affected_white_pixels -ne $audit.affected_white_pixels) { throw "Mode $mode - ROI accounting mismatch" }
+            Write-Host ("WHITE AUDIT {0}: source-white={1}; affected={2}; inside channel={3}; exterior={4}; near source black <=1px={5}; near <=2px={6}; farther than 2px={7}" -f $mode, $audit.source_white_pixels, $audit.affected_white_pixels, $audit.roi_affected_white_pixels, $audit.outside_roi_affected_white_pixels, $audit.near_source_nonwhite_1px, $audit.near_source_nonwhite_2px, $audit.farther_than_2px)
+          }

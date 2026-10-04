@@ -26,3 +26,7 @@ path = "src/bin/measure.rs"
 [[bin]]
 name = "scansketch-fixtures"
 path = "src/bin/fixtures.rs"
+
+[[bin]]
+name = "scansketch-white-audit"
+path = "src/bin/white_audit.rs"

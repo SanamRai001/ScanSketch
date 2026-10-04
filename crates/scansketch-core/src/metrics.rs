@@ -8,7 +8,7 @@ use serde::Serialize;
 use crate::analysis::darkness_map;
 use crate::stroke::Sketch;
 
-const WHITE_LIMIT: f32 = 0.04;
+pub(crate) const WHITE_LIMIT: f32 = 0.04;
 const DARK_START: f32 = 0.65;
 const EDGE_THRESHOLD: f32 = 0.22;
 const EDGE_TOLERANCE: usize = 2;
