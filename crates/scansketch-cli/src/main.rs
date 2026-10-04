@@ -41,11 +41,11 @@ fn run() -> Result<(), Box<dyn Error>> {
     if !(32..=1024).contains(&args.max_size) {
         return Err("--max-size must be within 32..=1024".into());
     }
-    if !args.output.extension().is_some_and(|ext| ext.eq_ignore_ascii_case("png")) {
+    if !args.output.extension().and_then(|ext| ext.to_str()).is_some_and(|ext| ext.eq_ignore_ascii_case("png")) {
         return Err("--output must point to a .png file".into());
     }
     if let Some(ref json) = args.strokes {
-        if !json.extension().is_some_and(|ext| ext.eq_ignore_ascii_case("json")) {
+        if !json.extension().and_then(|ext| ext.to_str()).is_some_and(|ext| ext.eq_ignore_ascii_case("json")) {
             return Err("--strokes must point to a .json file".into());
         }
         if json == &args.output {
