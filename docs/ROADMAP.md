@@ -28,7 +28,7 @@ Deliver: normalized linear-darkness Sobel gradient, directional non-maximum supp
 
 Exit: glasses/eyes/lips and hair contours are more recognizable without harsh synthetic outlines or dirty highlights.
 
-## P2-B.1 — Coherence-ranked contour accents [experimental implementation; verification pending]
+## P2-B.1 — Coherence-ranked contour accents [CI verified: 23/23 tests; visual gate pending]
 
 First same-photo P2-B comparison: 12,563 tonal marks versus 13,024 with raw-Sobel contours (+461). Structural improvement was subtle; most important facial boundaries remained hard to read. Preserve P2-B as the unmodified reference.
 

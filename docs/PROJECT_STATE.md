@@ -28,7 +28,7 @@ Motivation: P2-B scans candidates from top-left, so fine texture can occupy posi
 - Validate line, rounded ends and both lateral sides against **unsmoothed** darkness; continue to protect true white gaps, canvas bounds and global stroke budget.
 - Keep P2-A tone generation and its RNG unchanged; CLI `--no-contours` remains an exact tonal-only control. CLI retains `--contour-threshold` (default 0.28). No new dependencies or stroke-schema changes.
 
-**Verification:** P2-B.1 compilation/tests and real portrait rendering must be observed before claiming it improves quality. This is a generic nonsemantic edge procedure: there is no understanding of faces, spectacles or lips yet. It may still reinforce long hair strands. Do not jump to optimization based on a theoretical benefit.
+**Verification:** P2-B.1 GitHub Actions `cargo check --workspace` and `cargo test --workspace` passed (**23/23 tests, 0 failed**), run https://github.com/SanamRai001/ScanSketch/actions/runs/37217765227. Its same-input portrait comparison is still pending; do not claim visual improvement until the image is reviewed. This is a generic nonsemantic edge procedure: there is no understanding of faces, spectacles or lips yet. It may still reinforce long hair strands. Do not jump to optimization based on a theoretical benefit.
 
 ## Next gate
 

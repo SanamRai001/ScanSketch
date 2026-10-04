@@ -1,6 +1,6 @@
 # P2-B.1 verification — ranked contour A/B experiment
 
-P2-B compiled and passed 20/20 tests. Its first portrait generated 13,024 strokes vs 12,563 P2-A tonal-only, but the qualitative improvement was subtle. The hypothesis for P2-B.1 is that smoother, coherence-ranked structural candidates give useful marks more priority and avoid excess texture.
+P2-B compiled and passed 20/20 tests; P2-B.1 compiled and passed 23/23 tests in GitHub Actions (https://github.com/SanamRai001/ScanSketch/actions/runs/37217765227). Its first portrait generated 13,024 strokes vs 12,563 P2-A tonal-only, but the qualitative improvement was subtle. The hypothesis for P2-B.1 is that smoother, coherence-ranked structural candidates give useful marks more priority and avoid excess texture.
 
 ## Update safely in Windows PowerShell
 
