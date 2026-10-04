@@ -1,0 +1,16 @@
+[workspace]
+members = ["crates/scansketch-core", "crates/scansketch-cli"]
+resolver = "2"
+
+[workspace.package]
+edition = "2021"
+license = "MIT"
+authors = ["Sanam Rai"]
+repository = "https://github.com/SanamRai001/ScanSketch"
+
+[workspace.dependencies]
+image = { version = "0.25.10", default-features = false, features = ["png", "jpeg"] }
+tiny-skia = "0.11.4"
+serde = { version = "1.0", features = ["derive"] }
+rand = "0.8.5"
+rand_chacha = "0.3.1"
