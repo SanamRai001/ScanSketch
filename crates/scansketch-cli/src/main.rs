@@ -52,6 +52,12 @@ fn run() -> Result<(), Box<dyn Error>> {
             return Err("stroke JSON and PNG output paths must differ".into());
         }
     }
+    // Never overwrite the original user image, including equivalent path spellings.
+    if args.output.exists()
+        && fs::canonicalize(&args.input)? == fs::canonicalize(&args.output)?
+    {
+        return Err("input and output resolve to the same file; choose another output path".into());
+    }
     // A compressed-size guard supplements (but does not replace) decoder limits.
     if fs::metadata(&args.input)?.len() > 16 * 1024 * 1024 {
         return Err("input exceeds the 16 MiB compressed-file limit".into());
