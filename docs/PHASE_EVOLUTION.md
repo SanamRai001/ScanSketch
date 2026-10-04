@@ -29,6 +29,10 @@ These are **local artifact references**, not public links or proof that every hi
 | P2-B.1 | `outputs/portrait-p2b1-ranked.png`; measured `outputs/p2c-portrait.png` + `outputs/p2c-portrait-strokes.json` | Ranked-coherence refinement vs earlier contours; crop around eyewear and lips |
 | P2-C | `outputs/p2c-portrait-report.json`, `outputs/p2c-portrait-p2a-control-report.json`; synthetic inputs under `experiments/local/p2c-v1/` | A/B metrics beside the corresponding preview, including unchanged white mask |
 
+### Second portrait (initially mislabeled as an object)
+
+The user ran a paired real-photo A/B into the local folder `object-results/` and then uploaded two previews. **Both are portraits, not a nonportrait object.** This must not be counted as cross-subject verification. At 400×512/seed 42, P2-A had 10,929 strokes, RMSE 0.35607746 and edge F1 0.48701302; P2-B.1 had 11,247 strokes, RMSE 0.35345628 and F1 0.66215220. The visual comparison still shows mostly horizontal hatching and weak small facial landmarks. Keep [the exact second-portrait result](P2C_SECOND_PORTRAIT_AB.md) alongside the first portrait; the nonportrait gate remains open.
+
 ## How every new phase gets recorded
 
 1. **Before coding:** capture phase ID, motivating defect, hypothesis, baseline branch+commit, source/fixture IDs and rights, controlled settings, chosen acceptance criteria. Do not silently change the metric between variants.

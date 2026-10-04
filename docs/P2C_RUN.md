@@ -242,3 +242,15 @@ $s.fixtures | Select-Object mode,width,height,stroke_count,total_path_length_px,
 
 View `object-results/p2a.png` and `object-results/p2b1.png` at 100% and record subjective shape readability, plausible pencil strokes and whether accents crowd the boundaries. This remains **natural-output**, not matched-stroke/ink budgeting. The script is CI smoke-tested using the existing **synthetic step image**, but that synthetic check does not replace the genuine nonportrait photograph gate.
 
+
+## 9. Important: the latest `object-results/` pair was another portrait
+
+The user selected `photo.jpg` through Windows file picker and ran this script successfully. The two uploaded preview images depict a human portrait, so **the historical directory name `object-results/` was misleading**. The result is preserved as [Portrait B](P2C_SECOND_PORTRAIT_AB.md), not counted as independent nonportrait evidence. The selected file path only proves a PNG/JPEG exists; it does not prove what the photograph contains.
+
+For the *still outstanding* nonportrait test, open the file picker and **look at the actual source content before selection**. Choose an object/building photograph with permission to use it. Pass that real selected `$photo` path to the same script with a **new, unique output directory** to protect the portrait results:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File ".\scripts\run-p2c-photo-ab.ps1" -InputImage $photo -OutputDir "experiments/local/p2c-v1/nonportrait-results" -MaxSize 512 -Seed 42 -RightsConfirmed
+```
+
+The script never verifies the subject category. Only classify the run after viewing the actual source and both outputs; then paste the summary table and show the two outputs (if permitted). No need to repeat either completed portrait trial.
