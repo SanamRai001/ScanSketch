@@ -26,7 +26,7 @@ cargo test -p scansketch-core
 cargo run -p scansketch-cli -- --help
 ```
 
-Expected: formatting check and Cargo check succeed; 8 core-level tests plus the analysis test should run successfully (9 total in this initial implementation); CLI shows PNG/JPEG input and options. If any command fails, share the **first** error and do not advance. `cargo fmt --all` may change source formatting; review those changes instead of discarding them.
+Expected: formatting check and Cargo check succeed; 10 core-level tests plus the analysis test should run successfully (11 total in this initial implementation); CLI shows PNG/JPEG input and options. If any command fails, share the **first** error and do not advance. `cargo fmt --all` may change source formatting; review those changes instead of discarding them.
 
 ## 3. Test a real photograph
 
@@ -40,7 +40,7 @@ Get-FileHash .\outputs\result-a.png, .\outputs\result-b.png -Algorithm SHA256
 Get-FileHash .\outputs\strokes-a.json, .\outputs\strokes-b.json -Algorithm SHA256
 ```
 
-Expected: CLI reports nonzero stroke count for a normal photo; both PNG hashes match each other, and both JSON hashes match each other when source, seed, options and engine build are identical. White-only synthetic fixture is asserted separately in unit tests.
+Expected: CLI reports nonzero stroke count for a normal photo; both PNG hashes match each other, and both JSON hashes match each other when source, seed, options and engine build are identical. White-only and white-gap/non-aligned-boundary fixtures are asserted separately in unit tests.
 
 Manual review:
 - Is it composed of visible pencil lines rather than gray-filled pixels?

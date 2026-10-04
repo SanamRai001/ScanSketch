@@ -61,6 +61,33 @@ mod tests {
         assert!(sketch.strokes.iter().all(|s| s.x0 >= 24.0 && s.x1 <= 48.0));
     }
 
+
+    #[test]
+    fn nonaligned_white_boundary_is_not_inked() {
+        // Column 23 sits inside an 8px segment, not on its boundary.
+        let mut image = solid(48, 24, [255, 255, 255, 255]);
+        for y in 0..24 {
+            for x in 23..48 {
+                image.put_pixel(x, y, Rgba([0, 0, 0, 255]));
+            }
+        }
+        let sketch = generate_sketch(&image, &SketchOptions::default()).unwrap();
+        assert!(!sketch.strokes.is_empty());
+        assert!(sketch.strokes.iter().all(|s| s.x0 >= 23.0));
+    }
+
+    #[test]
+    fn bright_gap_inside_dark_segment_splits_pencil_marks() {
+        let mut image = solid(16, 9, [0, 0, 0, 255]);
+        for y in 0..9 {
+            image.put_pixel(3, y, Rgba([255, 255, 255, 255]));
+            image.put_pixel(4, y, Rgba([255, 255, 255, 255]));
+        }
+        let sketch = generate_sketch(&image, &SketchOptions::default()).unwrap();
+        assert!(!sketch.strokes.is_empty());
+        assert!(sketch.strokes.iter().all(|s| s.x1 <= 3.0 || s.x0 >= 5.0));
+    }
+
     #[test]
     fn identical_input_and_seed_produce_identical_stroke_records() {
         let image = solid(50, 26, [75, 85, 95, 255]);

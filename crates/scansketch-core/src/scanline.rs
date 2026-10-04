@@ -27,8 +27,78 @@ impl Default for SketchOptions {
     }
 }
 
+/// Commit one continuous dark-column run as actual ink, never a filled gray block.
+/// Margins account for round stroke caps so a white neighboring column stays blank.
+fn append_run(
+    strokes: &mut Vec<Stroke>,
+    rng: &mut ChaCha8Rng,
+    options: &SketchOptions,
+    top: u32,
+    band_height: u32,
+    start_column: u32,
+    end_column: u32,
+    average_darkness: f32,
+) -> Result<(), String> {
+    let columns = end_column - start_column;
+    if columns == 0 {
+        return Ok(());
+    }
+    let count = if average_darkness > 0.66 && band_height >= 3 {
+        2
+    } else {
+        1
+    };
+
+    for layer in 0..count {
+        let base_width = (0.42 + 0.48 * average_darkness).min(band_height as f32 * 0.55);
+        // A one-pixel run must not spill significant ink into a neighboring
+        // white column after round caps and antialiasing are applied.
+        let width = if columns == 1 {
+            base_width.min(0.65)
+        } else {
+            base_width
+        };
+        let margin = width * 0.5 + 0.04 + rng.gen_range(0.0..0.04);
+        let x0 = start_column as f32 + margin;
+        let x1 = end_column as f32 - margin;
+        if x1 <= x0 {
+            continue;
+        }
+
+        let fraction = if count == 2 {
+            if layer == 0 { 0.30 } else { 0.72 }
+        } else {
+            0.50
+        };
+        let y = (top as f32
+            + band_height as f32 * fraction
+            + rng.gen_range(-0.10..0.10))
+        .clamp(
+            top as f32 + width * 0.5,
+            (top + band_height) as f32 - width * 0.5,
+        );
+        let opacity = ((0.18 + 0.70 * average_darkness) * rng.gen_range(0.94..1.0))
+            .clamp(0.0, 1.0);
+
+        if strokes.len() >= options.max_strokes {
+            return Err("stroke budget exceeded; increase --max-strokes or lower detail".into());
+        }
+        strokes.push(Stroke {
+            x0,
+            y0: y,
+            x1,
+            y1: y,
+            width,
+            opacity,
+        });
+    }
+    Ok(())
+}
+
 /// A deterministic, deliberately simple top-to-bottom scanline baseline.
-/// Darker regions receive denser, stronger pencil marks; near-white stays blank.
+///
+/// Each horizontal region is split further at bright *columns*, avoiding the
+/// earlier bug where a region average could draw straight across a white gap.
 /// No optimization, erasing, edge tracing or contour-following is included.
 pub fn generate_sketch(source: &RgbaImage, options: &SketchOptions) -> Result<Sketch, String> {
     let (width, height) = source.dimensions();
@@ -51,61 +121,49 @@ pub fn generate_sketch(source: &RgbaImage, options: &SketchOptions) -> Result<Sk
     for top in (0..height).step_by(options.band_height as usize) {
         let bottom = top.saturating_add(options.band_height).min(height);
         let actual_band = bottom - top;
+
         for left in (0..width).step_by(options.segment_width as usize) {
             let right = left.saturating_add(options.segment_width).min(width);
-            if right - left < 2 {
-                continue;
-            }
+            let mut run_start: Option<u32> = None;
+            let mut run_darkness = 0.0f32;
+            let mut run_columns = 0_u32;
 
-            // Fixed-order region sampling: the same image and seed yield the
-            // same accepted paths on this engine version.
-            let mut total = 0.0f32;
-            for y in top..bottom {
-                let row_offset = y as usize * width as usize;
-                for x in left..right {
-                    total += darkness[row_offset + x as usize];
-                }
-            }
-            let avg = total / ((right - left) * actual_band) as f32;
-            if avg <= options.white_threshold {
-                continue;
-            }
-
-            // Two separated thin marks in deep shadow rather than a wide fill.
-            let count = if avg > 0.66 && actual_band >= 3 { 2 } else { 1 };
-            for layer in 0..count {
-                let start = left as f32 + 0.18 + rng.gen_range(0.0..0.35);
-                let end = right as f32 - 0.18 - rng.gen_range(0.0..0.35);
-                if end <= start {
-                    continue;
-                }
-                let band_fraction = if count == 2 {
-                    if layer == 0 { 0.30 } else { 0.72 }
+            // Include a virtual blank column at right to flush any final run.
+            for x in left..=right {
+                let column_darkness = if x == right {
+                    0.0
                 } else {
-                    0.50
+                    let mut sum = 0.0;
+                    for y in top..bottom {
+                        sum += darkness[y as usize * width as usize + x as usize];
+                    }
+                    sum / actual_band as f32
                 };
-                let y = (top as f32
-                    + actual_band as f32 * band_fraction
-                    + rng.gen_range(-0.12..0.12))
-                    .clamp(0.35, height as f32 - 0.35);
 
-                let opacity = ((0.18 + 0.70 * avg) * rng.gen_range(0.94..1.0)).clamp(0.0, 1.0);
-                let width = (0.42 + 0.48 * avg).min(actual_band as f32 * 0.55);
-
-                if strokes.len() >= options.max_strokes {
-                    return Err("stroke budget exceeded; increase --max-strokes or lower detail".into());
+                if x < right && column_darkness > options.white_threshold {
+                    if run_start.is_none() {
+                        run_start = Some(x);
+                    }
+                    run_darkness += column_darkness;
+                    run_columns += 1;
+                } else if let Some(start) = run_start.take() {
+                    append_run(
+                        &mut strokes,
+                        &mut rng,
+                        options,
+                        top,
+                        actual_band,
+                        start,
+                        x,
+                        run_darkness / run_columns as f32,
+                    )?;
+                    run_darkness = 0.0;
+                    run_columns = 0;
                 }
-                strokes.push(Stroke {
-                    x0: start,
-                    y0: y,
-                    x1: end,
-                    y1: y,
-                    width,
-                    opacity,
-                });
             }
         }
     }
+
     Ok(Sketch {
         width,
         height,

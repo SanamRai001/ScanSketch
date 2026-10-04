@@ -29,11 +29,11 @@ Create ScanSketch: a real line/stroke-based image reconstruction engine with a t
 
 - Cargo workspace with `scansketch-core` and `scansketch-cli`.
 - Linear-light darkness map with transparent pixels composited over white.
-- Seeded deterministic, bounded horizontal-band sampling and short pencil segments.
+- Seeded deterministic, bounded horizontal-band sampling and short pencil segments, split at bright columns within each segment to prevent strokes crossing white gaps.
 - Light-area suppression and deeper-shadow second stroke.
 - Renderer-independent serialized stroke model; tiny-skia white-paper replay.
 - Local PNG/JPEG CLI, bounded decode/working image, output PNG, optional stroke JSON.
-- Synthetic Rust tests for white input, transparent input, black marks, aligned half-white input, fixed-seed equality, stroke-budget rejection, invalid options/dimensions and bounds.
+- Synthetic Rust tests for white input, transparent input, black marks, aligned and non-aligned white boundaries, an interior white gap, fixed-seed equality, stroke-budget rejection, invalid options/dimensions and bounds.
 
 ### Verification and limitations
 
@@ -41,6 +41,11 @@ Create ScanSketch: a real line/stroke-based image reconstruction engine with a t
 - `cargo fmt`, `cargo check`, `cargo test` and an actual image run have **not** been performed. Do not claim the algorithm passes or produces aesthetically good images.
 - `Cargo.lock` not yet generated: resolve and check in after first successful local Cargo build.
 - P1 is intentionally rudimentary and may look striped; its purpose is to establish a reproducible baseline before adding advanced optimization.
+
+## Review fix during this continuation
+
+- Found that band-wide averaging could ink an interior white gap or off-grid white boundary.
+- Added continuous eligible-column run splitting and two regression tests. This remains a *source review fix*, not a claim of passed local tests.
 
 ## Risks
 
