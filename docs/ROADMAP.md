@@ -14,7 +14,7 @@ Deliver: bounded local image input, grayscale/brightness analysis, clean white p
 
 Exit: run the commands in P1_VERIFY.md and review representative source/output pairs. Same seed+input must produce matching ordered strokes; test outputs must visibly comprise strokes, not gray pixel painting; dimensions/time/memory must remain bounded. Native compilation and 11/11 core tests passed on Windows; the first portrait was mechanically striped, which motivates P2-A.
 
-## P2-A — Broken-stroke language [implementation on feat/p2-sketch-stroke-language; verification pending]
+## P2-A — Broken-stroke language [14/14 tests passed in CI; portrait visually compared]
 
 Hypothesis from the first real portrait: continuous horizontal bars create mechanical engraving even when P1 correctness tests pass.
 
@@ -22,9 +22,9 @@ Deliver: seeded 2–10.5 px broken tonal marks, controlled gaps, small endpoint 
 
 Exit: new and old render of the **same** licensed portrait, same seed/max size, plus new regression tests and full-workspace compilation. Do not claim that more fragments automatically make a better picture.
 
-## P2-B — Edge / contour reinforcement [not started]
+## P2-B — Edge / contour reinforcement [implemented on feat/p2b-contour-reinforcement; verification pending]
 
-Deliver: simple source-derived gradient/edge estimate, short structure-following marks for recognizable boundaries, conservative white-region masking, bounded extra stroke budget. Compare toggled output against P2-A before combining styles.
+Deliver: normalized linear-darkness Sobel gradient, directional non-maximum suppression, short tangent-aligned marks anchored on the dark side with support checks, sparse acceptance and bounded extra stroke budget. `--no-contours` runs the identical P2-A tone pass as a control. No semantic face recognition. Compare toggled output against P2-A before judging any visual improvement.
 
 Exit: glasses/eyes/lips and hair contours are more recognizable without harsh synthetic outlines or dirty highlights.
 

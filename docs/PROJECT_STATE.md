@@ -1,52 +1,42 @@
 # Project State
 
-Last updated: **2026-10-04**. This is the single authoritative progress record. The actual code, tests and visual comparisons take precedence over phase labels.
+Last updated: **2026-10-04**. This is the single authoritative progress record; actual Git history, CI and observed outputs take precedence over descriptions.
 
 ## Goal
 
-Create a deterministic, actual-stroke-based image-to-pencil-sketch engine built around top-to-bottom scanning; investigate Primitive-style scoring only when the drawing vocabulary becomes expressive enough. A halftone or uniformly striped rendition is not the target.
+Produce convincing image-to-sketch results using real, ordered pencil strokes on white paper. Keep a top-to-bottom tonal sampling identity and evaluate algorithmic improvements against the same input/seed. No grayscale pixel painting or assumed superiority from adding complexity.
 
-## Branches / review stack
+## Repository / stacked review
 
 - Repository: https://github.com/SanamRai001/ScanSketch
-- `main`: initial bootstrap only; no features merged.
-- `docs/foundation`: foundation documentation; draft PR #1.
-- `feat/p1-rust-scanline-baseline`: P1 engine; draft PR #2 into the foundation branch, tip at P2-A branch-off: `64a935366edfeb5424637e0496f1ef25986d1c5f`.
-- **Active:** `feat/p2-sketch-stroke-language`: P2-A, branched from P1. Keep P1 intact as a comparison baseline. P2-A PR targets P1.
+- `main`: initial bootstrap only, no merges performed.
+- `docs/foundation`: draft PR #1.
+- `feat/p1-rust-scanline-baseline`: P1 baseline, draft PR #2 into foundation; 11/11 core tests and workspace check passed locally.
+- `feat/p2-sketch-stroke-language`: P2-A, draft PR #3 into P1. GitHub Actions workspace check and **14/14 tests passed**. Real portrait visually compared: fragments reduced continuous barcode-like horizontal bars but eyes/glasses/lips and hair still lack clear structure.
+- **Active:** `feat/p2b-contour-reinforcement`: P2-B, branching from P2-A. Keep each earlier branch unchanged as comparison baseline; PR targets P2-A.
 
-## Verified P1 outcome (user's Windows machine)
+## P2-B — Optional structural contour accents
 
-- `cargo check --workspace` passed; `cargo test -p scansketch-core` passed **11/11** on 2026-10-04.
-- Native CLI compiled; the supplied portrait generated an output using actual stroke records.
-- Visual review: recognizable silhouette and blank background, but the face lost detail, hair turned into a gray mass and the regular horizontal bars resembled mechanical engraving rather than a compelling sketch.
-- Dependency resolution generated a local `Cargo.lock`. It has **not been supplied/committed to GitHub yet**; retain it locally for reproducible builds and commit separately.
-- P1 is a valuable functional baseline, not an accepted final visual style.
+Implementation:
+- Normalized Sobel gradient in existing linear-light darkness domain. The response detects image gradients, **not** eyes, glasses or named facial features semantically.
+- Thin candidates via directional non-maximum suppression and skip sites near accepted contour marks.
+- Place sparse short strokes tangent to gradients, with their centers nudged to the source's dark side.
+- Check source support along the stroke and its lateral edges. Avoid indiscriminate hard outlines and white-highlight contamination; cap line count and enforce existing global stroke budget.
+- Contour RNG separate from tonal P2-A generator, so `--no-contours` preserves exactly the old tonal stroke prefix for fair A/B comparison.
+- Core `SketchOptions` adds `enable_contours` (default true) and finite `contour_threshold` (default 0.28, 0..=1). CLI adds `--no-contours` and `--contour-threshold`.
+- Additional tests cover flat input, gradient direction, comparison toggle/determinism, white-gap protection, invalid settings and shared stroke budget.
+- No new dependencies, vector schema changes, external models, Primitive optimization, AI or erasing.
 
-## Current phase — P2-A: Broken stroke language
+**Verification gate:** P2-B CI compilation/tests and a same-input no-contours/contours render comparison must pass before calling this a visual improvement. An optional pass is only retained if it visibly increases recognizability without dirtying highlights or making cartoon outlines.
 
-Implementation on the active feature branch:
-- Retains column-level splitting so a bright internal column cannot be crossed by a tonal stroke.
-- Changes the default sampling segment width from 8 to 24 pixels to permit multiple marks within a region.
-- Replaces continuous runs with bounded 2–10.5px fragments, seeded spacing and independent stroke pressure/width variation.
-- Adds small per-fragment endpoint angle and vertical wobble, clamped to each scan band.
-- Uses an independently staggered second fragment layer only for dark regions in sufficiently tall bands.
-- Preserves renderer-independent `Stroke` records, the existing PNG/JSON CLI, input bounds and stroke budget.
-- Adds tests for short fragments, visible gaps, angle variation and white-gap protection on top of the P1 tests.
-- Adds GitHub Actions check/test workflow as a remote compilation gate.
+## Next
 
-**Verification:** P2-A compilation/tests and a real-photo comparison remain pending until the new branch workflow and local run are observed. No claim of aesthetic improvement without seeing the new output.
+- Run `docs/P2B_VERIFY.md` on the same original portrait using the two modes, preserving all P1/P2-A images.
+- Fix actual code/test failures and tune contour threshold if feature enhancement is too weak or hair is too dense. Assess a wider fixture set (blank/transparent, portrait, object, landscape, high-contrast geometry).
+- Then P2-C: quantitative metrics with controlled budgets, fixture provenance, runtime and memory. Later P3: Primitive-inspired proposal optimization.
+- Keep natural erasure and graphite residue deferred in `docs/FUTURE_EXPERIMENTS.md`.
+- Locally generated `Cargo.lock` still needs to be committed after review; do not overwrite or delete local sample.jpg or stash.
 
-## Next gate
+## Risk notes
 
-Follow `docs/P2A_VERIFY.md`, compare the same portrait and seed against the saved P1 output, inspect the white gap, face recognition, hair, tone density and visible strokes at 100% zoom. Tune fragmentation only based on the comparison. If P2-A produces less recognizable shading, preserve P1 and investigate the metrics before extending it.
-
-## After P2-A
-
-- **P2-B:** source-derived edge/contour reinforcement (glasses, eyes, nose/lips, hair outline), bounded and evaluated separately.
-- **P2-C:** measurement protocol, fixtures, stroke count/path length, tone error, highlight protection and edge retention.
-- **P3:** Primitive-inspired local proposal/optimization on a capable stroke vocabulary.
-- **Deferred:** erasure and residual graphite, smudge, paper effects, AI, full browser UI and uncontrolled extra passes. See `docs/FUTURE_EXPERIMENTS.md`.
-
-## Risks
-
-Mechanical stripes can persist because scan bands are still horizontal; fragment gaps can weaken continuous tone. `max_strokes` can be reached sooner as fragments multiply. A near-white region's small dark features can be missed by column averaging; P2-B should be judged against real fixtures, not assumptions. Coordinate clamping prevents nominal spill across bright columns but rendered antialiasing must still be visually inspected.
+Sobel responds to all source gradients, including hair texture and compression/noise; there is no semantic portrait interpretation. The finite contour cap is a safeguard, not a quality objective, and current acceptance order is top-to-bottom. Source-support sampling is conservative but raster antialiasing near one-pixel highlights still requires visual inspection. More strokes can exceed small explicit budgets rather than silently truncating user-requested detail.

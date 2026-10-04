@@ -3,7 +3,7 @@ use image::{imageops::FilterType, ImageFormat, ImageReader, Limits};
 use scansketch_core::{generate_sketch, render_sketch, SketchOptions};
 use std::{error::Error, fs, io, path::PathBuf};
 
-/// Deterministic native-first broken-stroke pencil reconstruction (P2-A).
+/// Deterministic native-first tonal + optional contour sketch (P2-B).
 #[derive(Parser, Debug)]
 #[command(name = "scansketch", version, about)]
 struct Args {
@@ -34,6 +34,12 @@ struct Args {
     /// Maximum accepted strokes, 1..=500000.
     #[arg(long, default_value_t = 100_000)]
     max_strokes: usize,
+    /// Draw only P2-A tonal fragments (disable structural contour reinforcement).
+    #[arg(long, default_value_t = false)]
+    no_contours: bool,
+    /// Normalized Sobel strength cutoff for optional contours, 0..=1.
+    #[arg(long, default_value_t = 0.28)]
+    contour_threshold: f32,
 }
 
 fn run() -> Result<(), Box<dyn Error>> {
@@ -84,6 +90,8 @@ fn run() -> Result<(), Box<dyn Error>> {
         segment_width: args.segment_width,
         white_threshold: args.white_threshold,
         max_strokes: args.max_strokes,
+        enable_contours: !args.no_contours,
+        contour_threshold: args.contour_threshold,
     };
     let sketch = generate_sketch(&working.to_rgba8(), &options)
         .map_err(io::Error::other)?;
@@ -93,7 +101,7 @@ fn run() -> Result<(), Box<dyn Error>> {
         fs::write(path, serde_json::to_vec_pretty(&sketch)?)?;
     }
     println!(
-        "ScanSketch P2-A: {}x{} | {} strokes | seed {} | saved {}",
+        "ScanSketch P2-B: {}x{} | {} strokes | seed {} | saved {}",
         sketch.width, sketch.height, sketch.strokes.len(), sketch.seed, args.output.display()
     );
     Ok(())

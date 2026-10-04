@@ -1,9 +1,11 @@
 //! ScanSketch's native, UI-independent stroke reconstruction engine.
 //!
-//! P2-A adds broken tonal fragments; no contours, optimization, erasure or AI.
+//! P2-B optionally reinforces image-derived contours after the P2-A tonal pass.
+//! No semantic face recognition, optimization, erasure or AI.
 //! The output is a sequence of strokes; a PNG is only a rendering of that data.
 
 mod analysis;
+mod contour;
 mod render;
 mod scanline;
 mod stroke;
@@ -174,6 +176,76 @@ mod tests {
         let sketch = generate_sketch(&image, &opts).unwrap();
         assert!(!sketch.strokes.is_empty());
         assert!(sketch.strokes.iter().all(|s| s.x1 <= 22.0 || s.x0 >= 26.0));
+    }
+
+
+    #[test]
+    fn p2b_opt_out_preserves_the_exact_tonal_stroke_prefix() {
+        let mut image = solid(48, 32, [255, 255, 255, 255]);
+        for y in 6..26 {
+            for x in 12..36 {
+                image.put_pixel(x, y, Rgba([30, 30, 30, 255]));
+            }
+        }
+        let no_contours = SketchOptions {
+            enable_contours: false,
+            ..SketchOptions::default()
+        };
+        let plain = generate_sketch(&image, &no_contours).unwrap();
+        let edged = generate_sketch(&image, &SketchOptions::default()).unwrap();
+        assert!(!plain.strokes.is_empty());
+        assert!(edged.strokes.len() > plain.strokes.len());
+        assert_eq!(&edged.strokes[..plain.strokes.len()], plain.strokes.as_slice());
+        assert_eq!(edged, generate_sketch(&image, &SketchOptions::default()).unwrap());
+    }
+
+    #[test]
+    fn p2b_keeps_white_gap_clear_with_contours_enabled() {
+        let mut image = solid(48, 27, [0, 0, 0, 255]);
+        for y in 0..27 {
+            for x in 20..27 {
+                image.put_pixel(x, y, Rgba([255, 255, 255, 255]));
+            }
+        }
+        let sketch = generate_sketch(&image, &SketchOptions::default()).unwrap();
+        assert!(!sketch.strokes.is_empty());
+        assert!(sketch.strokes.iter().all(|s| {
+            (s.x0 <= 20.0 && s.x1 <= 20.0) || (s.x0 >= 27.0 && s.x1 >= 27.0)
+        }));
+    }
+
+    #[test]
+    fn p2b_contours_respect_shared_stroke_budget() {
+        let mut image = solid(48, 32, [255, 255, 255, 255]);
+        for y in 4..28 {
+            for x in 12..36 {
+                image.put_pixel(x, y, Rgba([0, 0, 0, 255]));
+            }
+        }
+        let plain = generate_sketch(&image, &SketchOptions {
+            enable_contours: false,
+            ..SketchOptions::default()
+        }).unwrap();
+        assert!(!plain.strokes.is_empty());
+        let constrained = SketchOptions {
+            max_strokes: plain.strokes.len(),
+            ..SketchOptions::default()
+        };
+        assert!(generate_sketch(&image, &constrained)
+            .unwrap_err()
+            .contains("stroke budget"));
+    }
+
+    #[test]
+    fn p2b_rejects_invalid_contour_thresholds() {
+        let image = solid(8, 8, [0, 0, 0, 255]);
+        for value in [f32::NAN, f32::INFINITY, -0.1, 1.1] {
+            let opts = SketchOptions {
+                contour_threshold: value,
+                ..SketchOptions::default()
+            };
+            assert!(generate_sketch(&image, &opts).is_err());
+        }
     }
 
 }
