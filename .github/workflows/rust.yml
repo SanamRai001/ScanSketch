@@ -1,0 +1,20 @@
+name: Rust workspace checks
+
+on:
+  pull_request:
+  push:
+    branches:
+      - feat/p2-sketch-stroke-language
+
+jobs:
+  cargo:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Rust stable
+        uses: dtolnay/rust-toolchain@stable
+      - name: Check workspace
+        run: cargo check --workspace
+      - name: Test workspace
+        run: cargo test --workspace

@@ -1,6 +1,6 @@
-//! ScanSketch's native, UI-independent reconstruction baseline.
+//! ScanSketch's native, UI-independent stroke reconstruction engine.
 //!
-//! P1 deliberately contains no optimized search, erasure, paper effects or AI.
+//! P2-A adds broken tonal fragments; no contours, optimization, erasure or AI.
 //! The output is a sequence of strokes; a PNG is only a rendering of that data.
 
 mod analysis;
@@ -131,4 +131,49 @@ mod tests {
             assert!(s.y1 >= 0.0 && s.y1 <= 17.0);
         }
     }
+
+    #[test]
+    fn p2_long_run_is_multiple_short_pencil_fragments() {
+        let image = solid(48, 9, [0, 0, 0, 255]);
+        let opts = SketchOptions {
+            segment_width: 48,
+            ..SketchOptions::default()
+        };
+        let sketch = generate_sketch(&image, &opts).unwrap();
+        let first_band: Vec<_> = sketch.strokes.iter().filter(|s| s.y0 < 3.0).collect();
+        assert!(first_band.len() >= 4);
+        assert!(first_band.iter().all(|s| s.x1 - s.x0 <= 10.5));
+    }
+
+    #[test]
+    fn p2_medium_tone_has_real_gaps_and_angled_fragments() {
+        // Midtone has one layer, so gaps can be inspected in drawing order.
+        let image = solid(48, 3, [175, 175, 175, 255]);
+        let opts = SketchOptions {
+            segment_width: 48,
+            ..SketchOptions::default()
+        };
+        let sketch = generate_sketch(&image, &opts).unwrap();
+        assert!(sketch.strokes.len() >= 3);
+        assert!(sketch.strokes.windows(2).any(|pair| pair[1].x0 > pair[0].x1 + 0.5));
+        assert!(sketch.strokes.iter().any(|s| (s.y1 - s.y0).abs() > 0.001));
+    }
+
+    #[test]
+    fn p2_fragments_do_not_cross_an_internal_white_gap() {
+        let mut image = solid(48, 9, [0, 0, 0, 255]);
+        for y in 0..9 {
+            for x in 22..26 {
+                image.put_pixel(x, y, Rgba([255, 255, 255, 255]));
+            }
+        }
+        let opts = SketchOptions {
+            segment_width: 48,
+            ..SketchOptions::default()
+        };
+        let sketch = generate_sketch(&image, &opts).unwrap();
+        assert!(!sketch.strokes.is_empty());
+        assert!(sketch.strokes.iter().all(|s| s.x1 <= 22.0 || s.x0 >= 26.0));
+    }
+
 }
