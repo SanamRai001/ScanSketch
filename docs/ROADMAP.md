@@ -8,17 +8,31 @@ Deliver: README, copyright/license, project vision, algorithm specification, arc
 
 Exit: docs are internally consistent, README links work, no unimplemented feature is described as existing, and the foundation branch has been reviewed before merging.
 
-## P1 — Deterministic original scanline baseline [first Rust implementation committed; verification pending]
+## P1 — Deterministic original scanline baseline [11/11 tests, CLI compiled; visual stripe problem identified]
 
 Deliver: bounded local image input, grayscale/brightness analysis, clean white paper, row-by-row mostly horizontal short-stroke generation, seed reproducibility, raster preview and ordered stroke records. Include zero-mark white-image fixture.
 
-Exit: run the commands in P1_VERIFY.md and review representative source/output pairs. Same seed+input must produce matching ordered strokes; test outputs must visibly comprise strokes, not gray pixel painting; dimensions/time/memory must remain bounded. Native compilation and visually convincing results are not yet verified.
+Exit: run the commands in P1_VERIFY.md and review representative source/output pairs. Same seed+input must produce matching ordered strokes; test outputs must visibly comprise strokes, not gray pixel painting; dimensions/time/memory must remain bounded. Native compilation and 11/11 core tests passed on Windows; the first portrait was mechanically striped, which motivates P2-A.
 
-## P2 — Measurements and controlled alternatives
+## P2-A — Broken-stroke language [implementation on feat/p2-sketch-stroke-language; verification pending]
+
+Hypothesis from the first real portrait: continuous horizontal bars create mechanical engraving even when P1 correctness tests pass.
+
+Deliver: seeded 2–10.5 px broken tonal marks, controlled gaps, small endpoint angles, bounded vertical jitter and staggered second-layer marks in deep shadow. Keep row-by-row generation and source-white boundary protection. Retain P1 as a separate comparison branch.
+
+Exit: new and old render of the **same** licensed portrait, same seed/max size, plus new regression tests and full-workspace compilation. Do not claim that more fragments automatically make a better picture.
+
+## P2-B — Edge / contour reinforcement [not started]
+
+Deliver: simple source-derived gradient/edge estimate, short structure-following marks for recognizable boundaries, conservative white-region masking, bounded extra stroke budget. Compare toggled output against P2-A before combining styles.
+
+Exit: glasses/eyes/lips and hair contours are more recognizable without harsh synthetic outlines or dirty highlights.
+
+## P2-C — Measurements and controlled alternatives [not started]
 
 Deliver: fixture provenance, side-by-side original/preview, tone error, highlight-ink coverage, edge retention proxy, stroke count/path length and runtime/memory observations. Compare uniform and region-adaptive sampling with the same stroke budget.
 
-Exit: saved metrics and representative visual comparisons justify the next algorithm change.
+Exit: saved metrics and representative visual comparisons justify moving to candidate optimization.
 
 ## P3 — Primitive-inspired local optimization
 

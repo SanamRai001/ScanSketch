@@ -1,60 +1,52 @@
 # Project State
 
-Last updated: **2026-10-04**. This is the **single authoritative** project progress record. The Git tree and actual verification take precedence over prose.
+Last updated: **2026-10-04**. This is the single authoritative progress record. The actual code, tests and visual comparisons take precedence over phase labels.
 
 ## Goal
 
-Create ScanSketch: a real line/stroke-based image reconstruction engine with a top-to-bottom sampling identity. Later evaluate Primitive-inspired candidate optimization against a deterministic baseline. Do not mistake grayscale pixel painting, halftone, or filled polygons for the intended outcome.
+Create a deterministic, actual-stroke-based image-to-pencil-sketch engine built around top-to-bottom scanning; investigate Primitive-style scoring only when the drawing vocabulary becomes expressive enough. A halftone or uniformly striped rendition is not the target.
 
-## Repository and branches
+## Branches / review stack
 
 - Repository: https://github.com/SanamRai001/ScanSketch
-- `main`: initial bootstrap README commit `0e2c9100e36a6f5021640867a70a52434ea00cb0`.
-- `docs/foundation`: research docs and MIT foundation at `a396bcf5cae43e9de11f05f372ee63b21802a4b1`; draft PR #1, awaiting review.
-- Active feature branch: `feat/p1-rust-scanline-baseline`, based on the foundation branch.
-- P1 Rust source commit: `ca0475b8fd2ae49f43c6a2e23c7bb72a706cbc39`.
-- No merge, deployment or deletion performed.
+- `main`: initial bootstrap only; no features merged.
+- `docs/foundation`: foundation documentation; draft PR #1.
+- `feat/p1-rust-scanline-baseline`: P1 engine; draft PR #2 into the foundation branch, tip at P2-A branch-off: `64a935366edfeb5424637e0496f1ef25986d1c5f`.
+- **Active:** `feat/p2-sketch-stroke-language`: P2-A, branched from P1. Keep P1 intact as a comparison baseline. P2-A PR targets P1.
 
-## Current phase: P1 — Native Rust deterministic baseline (implementation committed; verification pending)
+## Verified P1 outcome (user's Windows machine)
 
-### Decisions
+- `cargo check --workspace` passed; `cargo test -p scansketch-core` passed **11/11** on 2026-10-04.
+- Native CLI compiled; the supplied portrait generated an output using actual stroke records.
+- Visual review: recognizable silhouette and blank background, but the face lost detail, hair turned into a gray mass and the regular horizontal bars resembled mechanical engraving rather than a compelling sketch.
+- Dependency resolution generated a local `Cargo.lock`. It has **not been supplied/committed to GitHub yet**; retain it locally for reproducible builds and commit separately.
+- P1 is a valuable functional baseline, not an accepted final visual style.
 
-- Accepted stack: **Rust core + native CLI first**, `tiny-skia` and `image`; WASM/React only after the core is good enough. See ARCHITECTURE.md.
-- No backend, database, GPU, cloud processing or mandatory Python.
-- Graphite output is actual ordered stroke records on white paper; PNG is a rendering.
-- Retain the original top-to-bottom scanline principle. P1 does not implement optimization, contour following, erasing or SVG.
-- Erasure with optional graphite residue remains recorded in FUTURE_EXPERIMENTS.md only.
+## Current phase — P2-A: Broken stroke language
 
-### Implemented on P1 feature branch
+Implementation on the active feature branch:
+- Retains column-level splitting so a bright internal column cannot be crossed by a tonal stroke.
+- Changes the default sampling segment width from 8 to 24 pixels to permit multiple marks within a region.
+- Replaces continuous runs with bounded 2–10.5px fragments, seeded spacing and independent stroke pressure/width variation.
+- Adds small per-fragment endpoint angle and vertical wobble, clamped to each scan band.
+- Uses an independently staggered second fragment layer only for dark regions in sufficiently tall bands.
+- Preserves renderer-independent `Stroke` records, the existing PNG/JSON CLI, input bounds and stroke budget.
+- Adds tests for short fragments, visible gaps, angle variation and white-gap protection on top of the P1 tests.
+- Adds GitHub Actions check/test workflow as a remote compilation gate.
 
-- Cargo workspace with `scansketch-core` and `scansketch-cli`.
-- Linear-light darkness map with transparent pixels composited over white.
-- Seeded deterministic, bounded horizontal-band sampling and short pencil segments, split at bright columns within each segment to prevent strokes crossing white gaps.
-- Light-area suppression and deeper-shadow second stroke.
-- Renderer-independent serialized stroke model; tiny-skia white-paper replay.
-- Local PNG/JPEG CLI, bounded decode/working image, output PNG, optional stroke JSON.
-- Synthetic Rust tests for white input, transparent input, black marks, aligned and non-aligned white boundaries, an interior white gap, fixed-seed equality, stroke-budget rejection, invalid options/dimensions and bounds.
+**Verification:** P2-A compilation/tests and a real-photo comparison remain pending until the new branch workflow and local run are observed. No claim of aesthetic improvement without seeing the new output.
 
-### Verification and limitations
+## Next gate
 
-- GitHub commit/ref and source presence can be inspected remotely; **this environment does not have rustc/cargo**.
-- `cargo fmt`, `cargo check`, `cargo test` and an actual image run have **not** been performed. Do not claim the algorithm passes or produces aesthetically good images.
-- `Cargo.lock` not yet generated: resolve and check in after first successful local Cargo build.
-- P1 is intentionally rudimentary and may look striped; its purpose is to establish a reproducible baseline before adding advanced optimization.
+Follow `docs/P2A_VERIFY.md`, compare the same portrait and seed against the saved P1 output, inspect the white gap, face recognition, hair, tone density and visible strokes at 100% zoom. Tune fragmentation only based on the comparison. If P2-A produces less recognizable shading, preserve P1 and investigate the metrics before extending it.
 
-## Review fix during this continuation
+## After P2-A
 
-- Found that band-wide averaging could ink an interior white gap or off-grid white boundary.
-- Added continuous eligible-column run splitting and two regression tests. This remains a *source review fix*, not a claim of passed local tests.
+- **P2-B:** source-derived edge/contour reinforcement (glasses, eyes, nose/lips, hair outline), bounded and evaluated separately.
+- **P2-C:** measurement protocol, fixtures, stroke count/path length, tone error, highlight protection and edge retention.
+- **P3:** Primitive-inspired local proposal/optimization on a capable stroke vocabulary.
+- **Deferred:** erasure and residual graphite, smudge, paper effects, AI, full browser UI and uncontrolled extra passes. See `docs/FUTURE_EXPERIMENTS.md`.
 
 ## Risks
 
-- Mechanical striped output, loss of thin objects, tonal underrepresentation and sampling across boundaries.
-- Resizing a semitransparent image before compositing may create color fringes; test fixture before browser production use.
-- Pixel fidelity and human preference are different measures; need representative licensed fixtures.
-- Image decoder allocation caps are partly best effort; also bound compressed input, decoded dimensions and working image.
-- Native-to-WASM portability, package MSRVs and vector/raster parity require later checks.
-
-## Immediate next step (user-run verification gate)
-
-Run the exact commands in **docs/P1_VERIFY.md** on Windows, share the CLI summary, compile/test failures if any, and a rendered result. Inspect whether the image is recognizable as a sketch. Fix correctness problems before calling P1 complete. Do not progress to P2 or optimize blindly.
+Mechanical stripes can persist because scan bands are still horizontal; fragment gaps can weaken continuous tone. `max_strokes` can be reached sooner as fragments multiply. A near-white region's small dark features can be missed by column averaging; P2-B should be judged against real fixtures, not assumptions. Coordinate clamping prevents nominal spill across bright columns but rendered antialiasing must still be visually inspected.

@@ -3,7 +3,7 @@ use image::{imageops::FilterType, ImageFormat, ImageReader, Limits};
 use scansketch_core::{generate_sketch, render_sketch, SketchOptions};
 use std::{error::Error, fs, io, path::PathBuf};
 
-/// A deterministic, native-first scanline pencil reconstruction prototype.
+/// Deterministic native-first broken-stroke pencil reconstruction (P2-A).
 #[derive(Parser, Debug)]
 #[command(name = "scansketch", version, about)]
 struct Args {
@@ -25,8 +25,8 @@ struct Args {
     /// Horizontal band height in pixels, 1..=16.
     #[arg(long, default_value_t = 3)]
     band_height: u32,
-    /// Local sampling segment width in pixels, 2..=64.
-    #[arg(long, default_value_t = 8)]
+    /// Local sampling run width in pixels, 2..=64; wider regions allow fragmented marks.
+    #[arg(long, default_value_t = 24)]
     segment_width: u32,
     /// Skip segments with average darkness at or below this value, 0..=0.5.
     #[arg(long, default_value_t = 0.08)]
@@ -93,7 +93,7 @@ fn run() -> Result<(), Box<dyn Error>> {
         fs::write(path, serde_json::to_vec_pretty(&sketch)?)?;
     }
     println!(
-        "ScanSketch P1: {}x{} | {} strokes | seed {} | saved {}",
+        "ScanSketch P2-A: {}x{} | {} strokes | seed {} | saved {}",
         sketch.width, sketch.height, sketch.strokes.len(), sketch.seed, args.output.display()
     );
     Ok(())
