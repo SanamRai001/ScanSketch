@@ -53,6 +53,8 @@ The proposed erasure/correction idea is recorded under [Future Experiments](docs
 | [Roadmap](docs/ROADMAP.md) | Small gated phases and acceptance conditions |
 | [Research](docs/RESEARCH.md) | Prior art, inspiration, attribution and open questions |
 | [Experiments](docs/EXPERIMENTS.md) | General reproducible comparison methodology |
+| [Phase evolution](docs/PHASE_EVOLUTION.md) | Permanent P0→current algorithm progression, observed results, artifact references and decisions |
+| [Phase result template](docs/PHASE_RESULT_TEMPLATE.md) | Standard evidence record to append for each future phase |
 | [P2 visual review](docs/P2_VISUAL_REVIEW.md) | What actually happened in the P1–P2-B.1 portrait tests |
 | [P2-C protocol](docs/P2C_PROTOCOL.md) | Fixed fixture, metrics, comparisons and acceptance gate |
 | [P2-C runbook](docs/P2C_RUN.md) | Native fixture generator and measurement CLI usage |

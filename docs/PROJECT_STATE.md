@@ -28,7 +28,7 @@ Review stack order is foundation → P1 → P2-A → P2-B → P2-B.1 → P2-C do
 - More contour ink is not the same as better structure. Avoid judging quality from the stroke count or a single preview.
 - No semantic face/eye/glasses recognition, true direction-aware tone generation, search-based candidate scoring, erasure or web UI has been built yet.
 
-Full observed evidence and caveats: [P2 visual review](P2_VISUAL_REVIEW.md). Personal portrait/source images remain local and should not be uploaded to the public repo without permission.
+Permanent per-phase development history, evidence, outcomes and artifact names: [PHASE_EVOLUTION.md](PHASE_EVOLUTION.md); append each new phase using [PHASE_RESULT_TEMPLATE.md](PHASE_RESULT_TEMPLATE.md). Full portrait observations and caveats: [P2 visual review](P2_VISUAL_REVIEW.md). Personal portrait/source images remain local and should not be uploaded to the public repo without permission.
 
 ## P2-C deliverables and status
 
@@ -37,7 +37,7 @@ Full observed evidence and caveats: [P2 visual review](P2_VISUAL_REVIEW.md). Per
 - **Observed synthetic result:** CI's 64×64 all-white fixture generated **0 strokes**, `tone_rmse = 0.0` and `unwanted_highlight_ink_fraction = 0.0`; the CI Python sanity assertion read the output JSON and passed. Eight new metrics tests passed alongside 23 prior core tests, for 31/31. More complex photographic results remain unobserved.
 - **User-verified Windows portrait execution (P2-B.1 on P2-C metrics branch):** the first paired PNG/JSON at 368×512, seed 42, produced 12,671 strokes and was successfully measured by `scansketch-measure`. Tone RMSE 0.3974361; white RMSE 0.0160805, midtone RMSE 0.3044462, dark RMSE 0.4472576; white-area unwanted-ink fraction 0.00025962. Preview/source Sobel-edge pixel counts 6,130/2,477; edge precision 0.1840131, recall 0.6697618, F1 0.2887059. Total path length ~80,222.51 working pixels. See [first real-image result](P2C_FIRST_PORTRAIT_RESULT.md) for full metrics and limitations. No source photograph or image has been checked in.
 - **User-verified same-binary portrait A/B:** P2-A (`--no-contours`) produced **12,563** strokes, total path length **79,717.37px**, tone RMSE **0.39827129**, edge precision **0.1223022**, recall **0.3718208**, F1 **0.1840614**. The P2-B.1 run from the same binary (12,671 strokes, **+108**) produced tone RMSE **0.39743606**, precision **0.1840131**, recall **0.6697618**, F1 **0.2887059**. Thus the source-derived contours increased edge-proxy F1 by ~56.9% relative with +0.86% strokes / +0.63% path length; white-region RMSE and highlight ink values were identical. The portrait's subjective visual improvement remains modest. See [portrait A/B comparison](P2C_PORTRAIT_AB.md); this is **not** a matched-budget or multi-fixture proof.
-- **Not done yet:** source/preview/strokes SHA-256 manifest for real example, additional seeds, matched-budget generator, signed tonal bias, performance benchmarking, second permission-cleared photograph and multi-image blinded review. No full P2-C completion claim.
+- **Not done yet:** source/preview/strokes SHA-256 manifest for real example, additional seeds, matched-budget generator, signed tonal bias, performance benchmarking, second permission-cleared photograph and multi-image blinded review. **The user has now successfully generated all six rights-clear 64×64 synthetic fixture SOURCES** on Windows at `experiments/local/p2c-v1/`: white, transparent black, step, square-white-channel, gradient and thin-lines. Rendering/measuring the latter five is not yet observed. No full P2-C completion claim.
 - Keep P1/P2-A/P2-B/P2-B.1 source branches as experimental controls.
 
 ## Next major algorithm decision (proposed, not coded)
@@ -47,7 +47,7 @@ Study [P3 multi-scale direction-aware design](P3_DIRECTIONAL_DESIGN.md). P3-A wo
 ## Next execution gate
 
 1. Done in Linux CI for all-white end-to-end and synthetic unit tests (31 passed). Next run step/channel/gradient with the actual Windows executable and record observed output hashes and scores, not merely expected values.
-2. **Completed:** first same-binary portrait P2-A versus P2-B.1 numerical control recorded in [P2C_PORTRAIT_AB.md](P2C_PORTRAIT_AB.md). Next generate and run synthetic step/white-channel/gradient fixtures end-to-end, retain private file SHA-256/exact build info, then perform a paired A/B on a permission-cleared **nonportrait** object.
+2. **Completed:** first same-binary portrait P2-A versus P2-B.1 numeric control recorded in [P2C_PORTRAIT_AB.md](P2C_PORTRAIT_AB.md). **Completed:** user-generated synthetic source fixtures (six PNGs). **Immediate next:** run [paired synthetic batch](P2C_RUN.md) for step, white-channel and gradient in both modes; inspect the six previews/summary, then do one permission-cleared nonportrait paired A/B. Each result is retained in [phase evolution](PHASE_EVOLUTION.md).
 3. Human A/B evaluation and numeric metrics; document agreements, trade-offs and failures.
 4. Only then prototype P3-A behind an opt-in mode and compare at controlled ink/stroke budgets. Do not start P3-B just because the new geometry is interesting.
 

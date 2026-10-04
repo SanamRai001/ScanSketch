@@ -139,6 +139,37 @@ Immediate remaining measurements:
 3. Preserve local SHA-256 hashes of sources and paired outputs; do not publish the private source without permission.
 4. Signed tone bias (preview darkness minus source darkness) is useful to determine whether dark-region error is caused by underdraw or overdraw, but this metric is not in `p2c-v1` yet. Version any addition and reevaluate the baselines.
 
+## 6. Paired synthetic fixture experiment (sources already generated)
+
+The user's Windows run successfully created all six 64×64 **source** PNGs in `experiments/local/p2c-v1/`:
+`white.png`, `transparent-black.png`, `step.png`, `square-white-channel.png`, `gradient.png` and `thin-lines.png`. **No new synthetic render/measurement scores have been claimed yet.**
+
+A reusable script now runs three meaningfully different source types under the **same binary** with both `--no-contours` (P2-A) and enabled contours (P2-B.1), seed 42, max-side 64, and unique paired outputs. It refuses to overwrite an existing result directory and saves all six detailed reports + a local JSON summary with file SHA-256 hashes.
+
+From repo root, after `git pull --ff-only`, run **one command** in PowerShell:
+
+```powershell
+.\scripts\run-p2c-synthetic.ps1 -FixtureDir ".\experiments\local\p2c-v1" -OutputDir ".\experiments\local\p2c-v1\results"
+```
+
+If your Windows execution policy disallows local scripts, run the same checked-in script explicitly without changing global policy:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File ".\scripts\run-p2c-synthetic.ps1" -FixtureDir "experiments/local/p2c-v1" -OutputDir "experiments/local/p2c-v1/results"
+```
+
+The script creates 12 paired outputs (six PNGs and six JSON stroke files), six measurement reports and `summary.json` under the ignored results folder. It prints a compact comparison table including fixture, mode, strokes, tone RMSE, edge F1 and accidental white ink.
+
+View the summary with:
+
+```powershell
+Get-Content ".\experiments\local\p2c-v1\results\summary.json" -Raw
+```
+
+Paste that **synthetic-only** summary here. Inspect the step/white-channel/gradient PNGs visually, especially paper contamination and lost narrow structure. If the directory already exists, supply a new `-OutputDir` (for example `results-02`); do not delete the old experiment. The script records the actual run's Git SHA and hashes. See [phase evolution](PHASE_EVOLUTION.md) for what to retain after each phase.
+
+This is the natural-output lane, **not** a matched-budget comparison. Later test a permission-cleared nonportrait photograph, also with both modes, before proceeding to P3-A.
+
 ## Metrics and limitations
 
 - `tone_rmse`: root-mean-square error of target vs preview linear-light darkness; regional masks: white `D<=0.04`, dark `D>=0.65`, midtone between them.
