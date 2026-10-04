@@ -1,6 +1,6 @@
 # P2-C — Source-white pixel diagnostic, screenshot review
 
-**Status:** screenshot review observed; original raw synthetic PNGs and stroke JSONs remain on the user's Windows laptop. A read-only `scansketch-white-audit` command is now added to locate and count p2c-v1 affected source-white pixels; its result must be observed before making a causal claim.
+**Status:** first exact source-white audit **passed in GitHub CI**, validating the original P2-C report against raw synthetic PNGs. The user's own earlier PNGs remain local; rerunning the command on Windows is optional for independent replication. Neither the P2-A/P2-B.1 renderer nor p2c-v1 measurement definitions changed. See [CI run](https://github.com/SanamRai001/ScanSketch/actions/runs/37222335502).
 
 ## Uploaded screenshot review (2026-10-04)
 
@@ -54,6 +54,21 @@ If those report filenames already exist, choose new names rather than deleting/o
 
 Paste the summary (safe synthetic data) here. The individual reports retain coordinates for deeper analysis. An *inside-channel count of zero* would narrow the concern to exterior/background borders; a nonzero count requires inspecting interior pixel positions and the actual stroke paths before deciding on a fix.
 
-## Status gate
+## Exact CI result — channel location resolved
 
-CI runs both audits on newly-generated synthetic source/preview data and checks equivalence with `p2c-v1` white-mask counts plus exactly 288 protected target-white ROI pixels. Record the **actual CI/local outcomes** only after they run. Proceed to one permitted nonportrait comparison once the 53-pixel distribution is understood; P3-A remains gated.
+Observed GitHub Actions job 111495038666 ([run 37222335502](https://github.com/SanamRai001/ScanSketch/actions/runs/37222335502)) executed both modes on freshly generated 64×64 synthetic source and paired preview files. Workspace check, **34/34 Rust tests**, white blank-source smoke and all six paired synthetic runs also passed.
+
+| Raw-pixel audit | P2-A | P2-B.1 |
+| --- | ---: | ---: |
+| All source-white pixels | 2080 | 2080 |
+| All source-white pixels above preview-darkness 0.04 | 53 | 53 |
+| Source-white pixels in protected inner channel | 288 | 288 |
+| Affected **inside** protected channel | **0** | **0** |
+| Affected **outside** protected channel | **53** | **53** |
+| Affected within 1px of source nonwhite region | 49 | 49 |
+| Affected within 2px | 53 | 53 |
+| Affected farther than 2px | **0** | **0** |
+
+The 53 pixels reported as unintended-white ink are *all exterior* to the six-column channel and within two source pixels of source-dark structure. This confirms that **the central white gap has no threshold-exceeding preview pixels in either mode** under this precise audit. The new contours did not change the observed count or spatial summary. The likely category is near-boundary raster coverage or edge support, but the pixel-distance audit alone cannot distinguish round-cap antialiasing from a specific vector stroke crossing the source boundary.
+
+**Decision:** close the alleged *interior-channel contamination* concern as disproven in this fixture. Keep the broader white-mask metric as-is and retain near-boundary ink as a recorded diagnostic rather than hiding it by changing thresholds. Do not tune Sobel to address it. The next P2-C gate is one permission-cleared **nonportrait** photo, paired across the same binary and documented in [P2-C runbook](P2C_RUN.md).

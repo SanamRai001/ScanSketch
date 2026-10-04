@@ -218,3 +218,27 @@ Read the [full Windows findings](P2C_SYNTHETIC_WINDOWS_RESULT.md) and [targeted 
 ## Remaining work after this first slice
 
 Validate the real metrics on more than one permitted photo, check the source/preview hash/manifest process, gather runtime and memory explicitly, and add an equal-budget experiment design before P3-A. Do not upload personal photographs to this public repository.
+
+## 8. Final P2-C nonportrait A/B experiment (same binary, one command)
+
+The source-white audit has now resolved the synthetic channel question: the GitHub CI raw-pixel test found **0/288 inner channel pixels affected** in both P2-A and P2-B.1. All 53 whole-white-mask affected pixels lie outside that protected channel and within 2px of target nonwhite. See [full audit](P2C_WHITE_CHANNEL_AUDIT.md).
+
+For the next fixture, choose a **photo you own or have permission to use** of a nonportrait object with recognizable curved and straight structure (mug, chair, bicycle, building detail, etc.). Avoid a second texture-dominated portrait; the aim is to determine whether contour gains are useful in another subject class. Keep it locally at, for example, `experiments/local/p2c-v1/object.jpg`; do not commit it. The script does **not** upload anything.
+
+```powershell
+cd D:\Projects\ScanSketch
+git pull --ff-only
+powershell -NoProfile -ExecutionPolicy Bypass -File ".\scripts\run-p2c-photo-ab.ps1" -InputImage "experiments/local/p2c-v1/object.jpg" -OutputDir "experiments/local/p2c-v1/object-results" -MaxSize 512 -Seed 42 -RightsConfirmed
+```
+
+**Do not substitute `sample.jpg`**, since that is the portrait already tested. The script refuses to overwrite an existing output directory; choose a new `-OutputDir` when repeating. The `-RightsConfirmed` switch is an affirmative local-use acknowledgement, not a license verifier. Both variants run on exactly the same checked-out renderer: `p2a` with `--no-contours`, and `p2b1` with contours enabled. It produces a paired PNG and stroke JSON for each, both full `p2c-v1` reports, and a `summary.json` manifest with local SHA-256 values, commit SHA, seed, dimensions and natural stroke budgets.
+
+To share nonprivate numbers without exposing your input source or local hashes:
+
+```powershell
+$s = Get-Content ".\experiments\local\p2c-v1\object-results\summary.json" -Raw | ConvertFrom-Json
+$s.fixtures | Select-Object mode,width,height,stroke_count,total_path_length_px,tone_rmse,white_rmse,midtone_rmse,dark_rmse,edge_f1,unwanted_highlight_ink_fraction | Format-Table -AutoSize
+```
+
+View `object-results/p2a.png` and `object-results/p2b1.png` at 100% and record subjective shape readability, plausible pencil strokes and whether accents crowd the boundaries. This remains **natural-output**, not matched-stroke/ink budgeting. The script is CI smoke-tested using the existing **synthetic step image**, but that synthetic check does not replace the genuine nonportrait photograph gate.
+

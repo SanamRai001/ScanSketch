@@ -52,3 +52,14 @@ jobs:
             if ($audit.roi_affected_white_pixels + $audit.outside_roi_affected_white_pixels -ne $audit.affected_white_pixels) { throw "Mode $mode - ROI accounting mismatch" }
             Write-Host ("WHITE AUDIT {0}: source-white={1}; affected={2}; inside channel={3}; exterior={4}; near source black <=1px={5}; near <=2px={6}; farther than 2px={7}" -f $mode, $audit.source_white_pixels, $audit.affected_white_pixels, $audit.roi_affected_white_pixels, $audit.outside_roi_affected_white_pixels, $audit.near_source_nonwhite_1px, $audit.near_source_nonwhite_2px, $audit.farther_than_2px)
           }
+      - name: Smoke-test paired photo experiment script on permitted synthetic source
+        shell: pwsh
+        run: |
+          ./scripts/run-p2c-photo-ab.ps1 -InputImage experiments/local/ci/step.png -OutputDir experiments/local/ci/photo-paired-smoke -MaxSize 64 -Seed 42 -RightsConfirmed
+          $s = Get-Content experiments/local/ci/photo-paired-smoke/summary.json -Raw | ConvertFrom-Json
+          if ($s.fixtures.Count -ne 2) { throw "Expected exactly two paired reports" }
+          if ($s.fixtures[0].mode -ne 'p2a' -or $s.fixtures[1].mode -ne 'p2b1') { throw "Wrong comparison modes" }
+          if ($s.fixtures[0].source_sha256 -ne $s.fixtures[1].source_sha256) { throw "Not the same source" }
+          if ($s.fixtures[0].seed -ne $s.fixtures[1].seed -or $s.fixtures[0].git_sha -ne $s.fixtures[1].git_sha) { throw "Not the same rendering context" }
+          if ($s.fixtures[0].stroke_count -le 0) { throw "Expected nonempty synthetic stroke record" }
+          Write-Host "Paired nonportrait script smoke passed on synthetic fixture; real photograph still pending"
