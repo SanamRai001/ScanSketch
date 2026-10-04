@@ -6,6 +6,7 @@ on:
     branches:
       - feat/p2-sketch-stroke-language
       - feat/p2b1-contour-coherence
+      - feat/p2c-measurement-utility
 
 jobs:
   cargo:
@@ -19,3 +20,46 @@ jobs:
         run: cargo check --workspace
       - name: Test workspace
         run: cargo test --workspace
+      - name: Smoke-test synthetic white fixture and measurement CLI
+        shell: bash
+        run: |
+          cargo run -p scansketch-cli --bin scansketch-fixtures -- --output-dir experiments/local/ci
+          cargo run -p scansketch-cli --bin scansketch -- --input experiments/local/ci/white.png --output experiments/local/ci/white-output.png --strokes experiments/local/ci/white-strokes.json --max-size 64
+          cargo run -p scansketch-cli --bin scansketch-measure -- --source experiments/local/ci/white.png --preview experiments/local/ci/white-output.png --strokes experiments/local/ci/white-strokes.json --max-size 64 --report experiments/local/ci/white-report.json
+          python3 -c "import json; r=json.load(open('experiments/local/ci/white-report.json')); assert r['tone_rmse']==0 and r['unwanted_highlight_ink_fraction']==0 and r['strokes']['count']==0, r"
+      - name: Validate paired synthetic P2-C experiment script
+        shell: pwsh
+        run: |
+          ./scripts/run-p2c-synthetic.ps1 -FixtureDir experiments/local/ci -OutputDir experiments/local/ci/paired
+          $summary = Get-Content experiments/local/ci/paired/summary.json -Raw | ConvertFrom-Json
+          if ($summary.fixtures.Count -ne 6) { throw "Expected six paired experiment reports" }
+          if (@($summary.fixtures | Where-Object { $_.mode -eq "p2a" }).Count -ne 3) { throw "Expected three P2-A controls" }
+          if (@($summary.fixtures | Where-Object { $_.mode -eq "p2b1" }).Count -ne 3) { throw "Expected three P2-B.1 variants" }
+      - name: Audit exact white-channel pixel locations
+        shell: pwsh
+        run: |
+          cargo run -p scansketch-cli --bin scansketch-white-audit -- --source experiments/local/ci/square-white-channel.png --preview experiments/local/ci/paired/square-white-channel-p2a.png --max-size 64 --roi '29,8,6,48' --report experiments/local/ci/paired/channel-p2a-white-audit.json | Out-Null
+          if ($LASTEXITCODE -ne 0) { throw "P2-A white audit failed" }
+          cargo run -p scansketch-cli --bin scansketch-white-audit -- --source experiments/local/ci/square-white-channel.png --preview experiments/local/ci/paired/square-white-channel-p2b1.png --max-size 64 --roi '29,8,6,48' --report experiments/local/ci/paired/channel-p2b1-white-audit.json | Out-Null
+          if ($LASTEXITCODE -ne 0) { throw "P2-B.1 white audit failed" }
+          foreach ($mode in @('p2a','p2b1')) {
+            $audit = Get-Content "experiments/local/ci/paired/channel-$mode-white-audit.json" -Raw | ConvertFrom-Json
+            $m = Get-Content "experiments/local/ci/paired/square-white-channel-$mode-report.json" -Raw | ConvertFrom-Json
+            if ($audit.source_white_pixels -ne $m.white_region.pixels) { throw "Mode $mode - source-white mask mismatch" }
+            $expected = [math]::Round($m.unwanted_highlight_ink_fraction * $m.white_region.pixels)
+            if ($audit.affected_white_pixels -ne $expected) { throw "Mode $mode - different white-ink count than p2c-v1 metrics" }
+            if ($audit.roi_source_white_pixels -ne 288) { throw "Mode $mode - expected exactly 288 protected channel pixels" }
+            if ($audit.roi_affected_white_pixels + $audit.outside_roi_affected_white_pixels -ne $audit.affected_white_pixels) { throw "Mode $mode - ROI accounting mismatch" }
+            Write-Host ("WHITE AUDIT {0}: source-white={1}; affected={2}; inside channel={3}; exterior={4}; near source black <=1px={5}; near <=2px={6}; farther than 2px={7}" -f $mode, $audit.source_white_pixels, $audit.affected_white_pixels, $audit.roi_affected_white_pixels, $audit.outside_roi_affected_white_pixels, $audit.near_source_nonwhite_1px, $audit.near_source_nonwhite_2px, $audit.farther_than_2px)
+          }
+      - name: Smoke-test paired photo experiment script on permitted synthetic source
+        shell: pwsh
+        run: |
+          ./scripts/run-p2c-photo-ab.ps1 -InputImage experiments/local/ci/step.png -OutputDir experiments/local/ci/photo-paired-smoke -MaxSize 64 -Seed 42 -RightsConfirmed
+          $s = Get-Content experiments/local/ci/photo-paired-smoke/summary.json -Raw | ConvertFrom-Json
+          if ($s.fixtures.Count -ne 2) { throw "Expected exactly two paired reports" }
+          if ($s.fixtures[0].mode -ne 'p2a' -or $s.fixtures[1].mode -ne 'p2b1') { throw "Wrong comparison modes" }
+          if ($s.fixtures[0].source_sha256 -ne $s.fixtures[1].source_sha256) { throw "Not the same source" }
+          if ($s.fixtures[0].seed -ne $s.fixtures[1].seed -or $s.fixtures[0].git_sha -ne $s.fixtures[1].git_sha) { throw "Not the same rendering context" }
+          if ($s.fixtures[0].stroke_count -le 0) { throw "Expected nonempty synthetic stroke record" }
+          Write-Host "Paired nonportrait script smoke passed on synthetic fixture; real photograph still pending"

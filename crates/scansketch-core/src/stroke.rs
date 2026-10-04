@@ -1,8 +1,8 @@
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 
 /// One editable, renderer-independent pencil segment. Coordinates are in
 /// working-image pixels. Drawing order is the order in Sketch::strokes.
-#[derive(Clone, Debug, PartialEq, Serialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct Stroke {
     pub x0: f32,
     pub y0: f32,
@@ -13,7 +13,7 @@ pub struct Stroke {
 }
 
 /// Source of truth for the generated result; PNG is derived from these records.
-#[derive(Clone, Debug, PartialEq, Serialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct Sketch {
     pub width: u32,
     pub height: u32,

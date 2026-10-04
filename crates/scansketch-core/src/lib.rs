@@ -6,12 +6,16 @@
 
 mod analysis;
 mod contour;
+mod metrics;
+mod white_audit;
 mod render;
 mod scanline;
 mod stroke;
 
 pub use analysis::darkness_map;
 pub use render::render_sketch;
+pub use metrics::{measure_sketch, EdgeMetric, Measurement, RegionMetric, StrokeMetric};
+pub use white_audit::{audit_white_pixels, AffectedPixel, AuditRoi, WhiteAudit};
 pub use scanline::{generate_sketch, SketchOptions};
 pub use stroke::{Sketch, Stroke};
 

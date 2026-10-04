@@ -1,6 +1,6 @@
 # P2-C — Reproducible Measurement Protocol
 
-**Status: design agreed; metrics/tooling and comparisons not yet executed.** This is the next gate, not a retroactive claim that P1–P2-B.1 were benchmarked. The owner of progress remains [PROJECT_STATE.md](PROJECT_STATE.md).
+**Status: protocol defined, first measurement implementation committed and synthetically verified in `feat/p2c-measurement-utility` (31/31 core tests plus white-image end-to-end CI run). A Windows **same-binary P2-A (no-contours) versus P2-B.1 portrait pair** has now been observed (see [P2C_PORTRAIT_AB.md](P2C_PORTRAIT_AB.md)). SHA manifest, additional fixtures, repeated seeds and matched-budget experiments remain pending.** This is the next gate, not a retroactive claim that P1–P2-B.1 were benchmarked. The owner of progress remains [PROJECT_STATE.md](PROJECT_STATE.md).
 
 ## 1. What are we testing?
 
@@ -71,7 +71,7 @@ Store local completed manifest under `experiments/local/`; check in only synthet
 ## 6. Implementation sequence and acceptance gate
 
 1. Generate synthetic fixtures and validate resize, alpha handling, same-seed JSON identity and true-white no-ink behavior.
-2. Build a small reproducible measurement command that reads source PNG/JPEG, output PNG and stroke JSON; validate it against exact synthetic cases **before** using portrait scores. Choose Rust to reuse the native darkness normalization; optional Python is acceptable only as a clearly isolated research utility.
+2. The first Rust implementation supplies `scansketch-measure` (source PNG/JPEG + preview PNG + stroke JSON) and `scansketch-fixtures`. Its core tests assert blank/transparent white, extra ink, exact matched/missing step edges, geometry/dimension validation and JSON-derived path length. Validate the CI fixture smoke test and local render before interpreting portrait metrics. See [P2-C runbook](P2C_RUN.md).
 3. Log all P1→P2-B.1 defaults with their true stroke budgets and runtime; render same fixtures/seed with clearly distinct filenames and commit SHAs.
 4. Perform blinded visual comparisons, then look at proxy disagreements. Do not declare a winner from one scalar score.
 5. Choose P3-A directional proposal hypothesis and its budget against P2-B.1, using the same metrics. Revisit candidate optimization only after this comparison.
