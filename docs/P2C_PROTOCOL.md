@@ -1,6 +1,6 @@
 # P2-C — Reproducible Measurement Protocol
 
-**Status: protocol defined and first measurement implementation proposed in `feat/p2c-measurement-utility`; CI/real-photo experiments must still be checked.** This is the next gate, not a retroactive claim that P1–P2-B.1 were benchmarked. The owner of progress remains [PROJECT_STATE.md](PROJECT_STATE.md).
+**Status: protocol defined, first measurement implementation committed and synthetically verified in `feat/p2c-measurement-utility` (31/31 core tests plus white-image end-to-end CI run). Real-photo and matched-budget experiments remain pending.** This is the next gate, not a retroactive claim that P1–P2-B.1 were benchmarked. The owner of progress remains [PROJECT_STATE.md](PROJECT_STATE.md).
 
 ## 1. What are we testing?
 

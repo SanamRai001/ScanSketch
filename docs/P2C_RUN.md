@@ -1,5 +1,7 @@
 # P2-C v1 measurement runbook (Windows PowerShell)
 
+GitHub CI has verified workspace compilation, **31/31 tests** and an actual all-white fixture → render → measure run: 0 strokes, `tone_rmse=0`, unwanted highlight ink fraction 0. [Successful run](https://github.com/SanamRai001/ScanSketch/actions/runs/37219282372).
+
 This is a **diagnostic tool**, not an automatic aesthetic winner selector. Read [P2-C protocol](P2C_PROTOCOL.md) before comparing versions. It uses the same `darkness_map` as the Rust renderer; source and preview are both compared in linear-light darkness with RGBA matted onto white.
 
 ## Setup without losing your existing work
