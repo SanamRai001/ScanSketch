@@ -32,11 +32,11 @@ Exit: glasses/eyes/lips and hair contours are more recognizable without harsh sy
 
 Smoothed/ranked contours with dark-side support and regional quotas are the current strongest **subjective** variant. The portrait changed incrementally, not decisively; eyes/glasses/lips remain underrepresented and hair dominates. Keep the P2-B.1 branch as a fixed comparison reference, rather than stacking further Sobel tweaks. See [P2 visual review](P2_VISUAL_REVIEW.md).
 
-## P2-C — Measurements and controlled alternatives [protocol/design documented; execution pending]
+## P2-C — Measurements and controlled alternatives [first Rust tooling implemented; CI/real comparisons pending]
 
 Deliver fixed synthetic and rights-cleared photographic fixtures, provenance/hash manifest, same-source/seed/preprocessing/actual dimensions, tone RMSE and masked results, unwanted white-ink rate, fixed-tolerance edge proxy, stroke count/path length, wall time/resource measurements when observed, and blinded visual comparison. Explicitly distinguish default-output comparisons from true matched-stroke/path-length budget experiments; current `--max-strokes` is a failure limit, not an allocation mechanism.
 
-Exit requires a validated measurement tool on synthetic fixtures, same-portrait plus one permitted nonportrait comparison, reproducible records and a written keep/revise/reject decision. [P2-C protocol](P2C_PROTOCOL.md).
+First implementation: `scansketch-core::measure_sketch`, `scansketch-measure` and `scansketch-fixtures`, with exact synthetic checks and white-source CI smoke. [P2-C runbook](P2C_RUN.md). Exit still requires **observed** validation, same-portrait plus one permitted nonportrait comparison, reproducible records and a written keep/revise/reject decision. [P2-C protocol](P2C_PROTOCOL.md).
 
 ## P3-A — Multi-scale, direction-aware source proposals [architecture proposed, not implemented]
 

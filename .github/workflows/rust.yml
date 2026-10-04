@@ -6,6 +6,7 @@ on:
     branches:
       - feat/p2-sketch-stroke-language
       - feat/p2b1-contour-coherence
+      - feat/p2c-measurement-utility
 
 jobs:
   cargo:
@@ -19,3 +20,10 @@ jobs:
         run: cargo check --workspace
       - name: Test workspace
         run: cargo test --workspace
+      - name: Smoke-test synthetic white fixture and measurement CLI
+        shell: bash
+        run: |
+          cargo run -p scansketch-cli --bin scansketch-fixtures -- --output-dir experiments/local/ci
+          cargo run -p scansketch-cli --bin scansketch -- --input experiments/local/ci/white.png --output experiments/local/ci/white-output.png --strokes experiments/local/ci/white-strokes.json --max-size 64
+          cargo run -p scansketch-cli --bin scansketch-measure -- --source experiments/local/ci/white.png --preview experiments/local/ci/white-output.png --strokes experiments/local/ci/white-strokes.json --max-size 64 --report experiments/local/ci/white-report.json
+          python3 -c "import json; r=json.load(open('experiments/local/ci/white-report.json')); assert r['tone_rmse']==0 and r['unwanted_highlight_ink_fraction']==0 and r['strokes']['count']==0, r"
