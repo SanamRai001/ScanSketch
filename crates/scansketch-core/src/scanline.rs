@@ -14,6 +14,10 @@ pub struct SketchOptions {
     pub segment_width: u32,
     pub white_threshold: f32,
     pub max_strokes: usize,
+    /// Source-derived structural strokes, drawn after the P2-A tonal marks.
+    pub enable_contours: bool,
+    /// Minimum normalized Sobel strength for a contour candidate (0..=1).
+    pub contour_threshold: f32,
 }
 
 impl Default for SketchOptions {
@@ -26,6 +30,8 @@ impl Default for SketchOptions {
             segment_width: 24,
             white_threshold: 0.08,
             max_strokes: 100_000,
+            enable_contours: true,
+            contour_threshold: 0.28,
         }
     }
 }
@@ -137,8 +143,8 @@ fn append_run(
 /// Deterministic top-to-bottom sketch generation with broken tonal fragments.
 ///
 /// Bright columns split runs before rendering. Every fragment is spatially
-/// bounded to its dark run and scan band. P2-A does not introduce contours,
-/// candidate optimization or erasure.
+/// bounded to its dark run and scan band. P2-B optionally appends sparse,
+/// source-derived contour marks; no candidate optimization or erasure.
 pub fn generate_sketch(source: &RgbaImage, options: &SketchOptions) -> Result<Sketch, String> {
     let (width, height) = source.dimensions();
     if width == 0 || height == 0 || width > 1024 || height > 1024 {
@@ -149,8 +155,10 @@ pub fn generate_sketch(source: &RgbaImage, options: &SketchOptions) -> Result<Sk
         || !options.white_threshold.is_finite()
         || !(0.0..=0.5).contains(&options.white_threshold)
         || !(1..=500_000).contains(&options.max_strokes)
+        || !options.contour_threshold.is_finite()
+        || !(0.0..=1.0).contains(&options.contour_threshold)
     {
-        return Err("invalid scan options: band 1..=16, segment 2..=64, threshold 0..=0.5, stroke budget 1..=500000".into());
+        return Err("invalid scan options: band 1..=16, segment 2..=64, white threshold 0..=0.5, contour threshold 0..=1, stroke budget 1..=500000".into());
     }
 
     let darkness = darkness_map(source);
@@ -201,6 +209,18 @@ pub fn generate_sketch(source: &RgbaImage, options: &SketchOptions) -> Result<Sk
                 }
             }
         }
+    }
+
+    if options.enable_contours {
+        // Independent RNG: enabling this pass must not change a single P2-A
+        // tonal stroke, which permits exact same-input A/B comparisons.
+        crate::contour::append_contours(
+            &darkness,
+            width,
+            height,
+            options,
+            &mut strokes,
+        )?;
     }
 
     Ok(Sketch {
