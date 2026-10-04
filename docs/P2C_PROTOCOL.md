@@ -1,6 +1,6 @@
 # P2-C — Reproducible Measurement Protocol
 
-**Status: protocol defined, first measurement implementation committed and synthetically verified in `feat/p2c-measurement-utility` (31/31 core tests plus white-image end-to-end CI run). One Windows **P2-B.1 portrait measurement** has now been observed; full same-input version comparison, SHA manifest and matched-budget experiments remain pending. See [P2C_FIRST_PORTRAIT_RESULT.md](P2C_FIRST_PORTRAIT_RESULT.md).** This is the next gate, not a retroactive claim that P1–P2-B.1 were benchmarked. The owner of progress remains [PROJECT_STATE.md](PROJECT_STATE.md).
+**Status: protocol defined, first measurement implementation committed and synthetically verified in `feat/p2c-measurement-utility` (31/31 core tests plus white-image end-to-end CI run). A Windows **same-binary P2-A (no-contours) versus P2-B.1 portrait pair** has now been observed (see [P2C_PORTRAIT_AB.md](P2C_PORTRAIT_AB.md)). SHA manifest, additional fixtures, repeated seeds and matched-budget experiments remain pending.** This is the next gate, not a retroactive claim that P1–P2-B.1 were benchmarked. The owner of progress remains [PROJECT_STATE.md](PROJECT_STATE.md).
 
 ## 1. What are we testing?
 

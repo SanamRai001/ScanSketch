@@ -126,6 +126,19 @@ Hash values are not required to be posted publicly; keep them with the private l
 
 **Important limit:** current RMSE is unsigned. A higher dark-region RMSE does not by itself prove the sketch is too pale or too dark. Consider a *separately versioned future metric* of mean signed error (preview darkness minus target darkness) across fixed source masks; don't silently alter the v1 report definition.
 
+## 5. First portrait A/B is now complete — synthetic/nonportrait next
+
+The initial measurement error was expected: the P2-A control PNG and stroke JSON had not yet been generated. Once those two files were created, the one-line measurement command succeeded. The observed **P2-A control had 12,563 strokes**. Compared with P2-B.1's 12,671 strokes, the new contour marks raised this fixed image's edge-proxy F1 from **0.1840614** to **0.2887059** without altering measured white RMSE or highlight-ink fraction.
+
+The detailed table, raw values and caution about unequal accepted stroke counts are in [P2C_PORTRAIT_AB.md](P2C_PORTRAIT_AB.md). Both local report filenames in §4 should be **preserved**, not rerun and overwritten.
+
+Immediate remaining measurements:
+
+1. If not yet created, generate six public synthetic sources with `scansketch-fixtures` (§1). Render `step.png`, `square-white-channel.png` and `gradient.png` with paired PNG/JSON; run `scansketch-measure` for each using `--max-size 64` and unique report paths. Record observed behavior rather than assuming it from unit tests.
+2. Choose a permission-cleared nonportrait object image and repeat both original/no-contours modes on the **same** binary at max-side 512 and seed 42 with unique names, recording visual judgement and numeric metrics.
+3. Preserve local SHA-256 hashes of sources and paired outputs; do not publish the private source without permission.
+4. Signed tone bias (preview darkness minus source darkness) is useful to determine whether dark-region error is caused by underdraw or overdraw, but this metric is not in `p2c-v1` yet. Version any addition and reevaluate the baselines.
+
 ## Metrics and limitations
 
 - `tone_rmse`: root-mean-square error of target vs preview linear-light darkness; regional masks: white `D<=0.04`, dark `D>=0.65`, midtone between them.
