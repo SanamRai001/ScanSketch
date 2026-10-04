@@ -142,7 +142,7 @@ Immediate remaining measurements:
 ## 6. Paired synthetic fixture experiment (sources already generated)
 
 The user's Windows run successfully created all six 64×64 **source** PNGs in `experiments/local/p2c-v1/`:
-`white.png`, `transparent-black.png`, `step.png`, `square-white-channel.png`, `gradient.png` and `thin-lines.png`. **No new synthetic render/measurement scores have been claimed yet.**
+`white.png`, `transparent-black.png`, `step.png`, `square-white-channel.png`, `gradient.png` and `thin-lines.png`. **CI has already executed and measured the three paired fixture types successfully, with mixed outcome**: [P2-C synthetic CI result](P2C_SYNTHETIC_CI_RESULT.md). The user's local **sources** exist; the full-precision Windows results and image inspection are still next.
 
 A reusable script now runs three meaningfully different source types under the **same binary** with both `--no-contours` (P2-A) and enabled contours (P2-B.1), seed 42, max-side 64, and unique paired outputs. It refuses to overwrite an existing result directory and saves all six detailed reports + a local JSON summary with file SHA-256 hashes.
 
@@ -166,7 +166,7 @@ View the summary with:
 Get-Content ".\experiments\local\p2c-v1\results\summary.json" -Raw
 ```
 
-Paste that **synthetic-only** summary here. Inspect the step/white-channel/gradient PNGs visually, especially paper contamination and lost narrow structure. If the directory already exists, supply a new `-OutputDir` (for example `results-02`); do not delete the old experiment. The script records the actual run's Git SHA and hashes. See [phase evolution](PHASE_EVOLUTION.md) for what to retain after each phase.
+Paste that **synthetic-only** summary here. Inspect the step/white-channel/gradient PNGs visually, especially the white channel: the CI table displayed unwanted-white-ink fraction ~0.03 **in both modes**. The CI step edge's F1 also declined from ~0.82 to ~0.79 with contours, so our goal is to diagnose rather than assume improvements. If the directory already exists, supply a new `-OutputDir` (for example `results-02`); do not delete the old experiment. The script records the actual run's Git SHA and hashes. See [phase evolution](PHASE_EVOLUTION.md) for what to retain after each phase.
 
 This is the natural-output lane, **not** a matched-budget comparison. Later test a permission-cleared nonportrait photograph, also with both modes, before proceeding to P3-A.
 
