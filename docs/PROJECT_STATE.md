@@ -6,7 +6,7 @@ Last updated: **2026-10-04**. This is the single authoritative progress record; 
 
 ScanSketch is a deterministic, CPU-first Rust system for rebuilding images from **actual ordered pencil strokes**, not grayscale pixel painting. Top-to-bottom sampling remains the design identity. After the first portrait iterations, **P2-B.1 is the current strongest subjective visual candidate** but is still not a convincing finished portrait renderer or an objectively established winner.
 
-**Current active phase: P2-C — measurement implementation and real-fixture validation.** The first independent measurement utility is implemented and verified in GitHub Actions; numeric comparisons of the actual portrait and other photo fixtures have **not** yet been performed. Stop stacking additional raw-Sobel contour heuristics without controlled evidence. The leading next prototype to test is multi-scale, direction-aware source-based stroke placement (P3-A), with Primitive-inspired scoring (P3-B) gated behind measurements.
+**Current active phase: P2-C — measurement implementation and real-fixture validation.** The first independent measurement utility is implemented and verified in GitHub Actions; the **first single-version numeric result** for the local portrait is now recorded, but the same-binary P2-A control, multi-image and matched-budget comparisons remain pending. Stop stacking additional raw-Sobel contour heuristics without controlled evidence. The leading next prototype to test is multi-scale, direction-aware source-based stroke placement (P3-A), with Primitive-inspired scoring (P3-B) gated behind measurements.
 
 ## Stacked GitHub review
 
@@ -35,7 +35,8 @@ Full observed evidence and caveats: [P2 visual review](P2_VISUAL_REVIEW.md). Per
 - **Done in this documentation phase:** define fixed fixtures, rights/provenance, identical preprocessing/seed/size, same-output naming, two distinct comparison lanes, tone/highlight/edge metrics, stroke/length complexity, runtime notes, blinded visual criteria and actual exit gate. See [P2-C protocol](P2C_PROTOCOL.md).
 - **Implemented on the active branch:** public `measure_sketch` in `scansketch-core`, the `scansketch-measure` local CLI (source PNG/JPEG + output PNG + ordered stroke JSON), and `scansketch-fixtures` to generate six rights-clear synthetic images. Report metrics: linear-light tone RMSE (global and white/mid/dark), highlight ink, fixed-smoothed Sobel edge precision/recall/F1 with ±2px tolerance, and actual JSON stroke count/path length/width/opacity. Includes exact synthetic unit-test invariants. CLI mirrors the existing Triangle resize/white-matte policy and checks mismatched dimensions and bad JSON geometry. See [P2-C runbook](P2C_RUN.md).
 - **Observed synthetic result:** CI's 64×64 all-white fixture generated **0 strokes**, `tone_rmse = 0.0` and `unwanted_highlight_ink_fraction = 0.0`; the CI Python sanity assertion read the output JSON and passed. Eight new metrics tests passed alongside 23 prior core tests, for 31/31. More complex photographic results remain unobserved.
-- **Not done yet:** source/preview/strokes SHA-256 manifest for real examples, actual portrait numerical scores, matched-budget generator, performance benchmarking, multi-image blinded review. Do not invent missing results.
+- **User-verified Windows portrait execution (P2-B.1 on P2-C metrics branch):** the first paired PNG/JSON at 368×512, seed 42, produced 12,671 strokes and was successfully measured by `scansketch-measure`. Tone RMSE 0.3974361; white RMSE 0.0160805, midtone RMSE 0.3044462, dark RMSE 0.4472576; white-area unwanted-ink fraction 0.00025962. Preview/source Sobel-edge pixel counts 6,130/2,477; edge precision 0.1840131, recall 0.6697618, F1 0.2887059. Total path length ~80,222.51 working pixels. See [first real-image result](P2C_FIRST_PORTRAIT_RESULT.md) for full metrics and limitations. No source photograph or image has been checked in.
+- **Not done yet:** source/preview/strokes SHA-256 manifest for the real example, same-input no-contours P2-A measurement, matched-budget generator, performance benchmarking, second licensed photograph and multi-image blinded review. Do not infer an algorithmic win from one version's numbers.
 - Keep P1/P2-A/P2-B/P2-B.1 source branches as experimental controls.
 
 ## Next major algorithm decision (proposed, not coded)
@@ -45,7 +46,7 @@ Study [P3 multi-scale direction-aware design](P3_DIRECTIONAL_DESIGN.md). P3-A wo
 ## Next execution gate
 
 1. Done in Linux CI for all-white end-to-end and synthetic unit tests (31 passed). Next run step/channel/gradient with the actual Windows executable and record observed output hashes and scores, not merely expected values.
-2. Run equivalent recorded portrait and a permission-cleared nonportrait object through all preserved versions, preserving seeds, actual resized dimensions, JSON strokes, SHA-256 and build profile.
+2. **Immediate next:** run `--no-contours` on this same P2-C binary, save a new paired PNG/JSON, measure it with the same CLI and compare the two records using [P2-C runbook](P2C_RUN.md). Then record SHA-256, exact resized dimensions and build profile; extend comparisons to a permission-cleared nonportrait object.
 3. Human A/B evaluation and numeric metrics; document agreements, trade-offs and failures.
 4. Only then prototype P3-A behind an opt-in mode and compare at controlled ink/stroke budgets. Do not start P3-B just because the new geometry is interesting.
 

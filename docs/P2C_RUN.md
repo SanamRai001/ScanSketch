@@ -92,6 +92,40 @@ Get-FileHash ".\sample.jpg", ".\outputs\p2c-p2b1-512.png", ".\outputs\p2c-p2b1-5
 
 Keep hashes and the full flags alongside the report in a private run manifest; the first utility does not yet auto-embed SHA-256, CPU profiling or wall-clock generation time. `null` in a report indicates an absent region or no strokes, **not** a score of zero.
 
+## 4. Same-binary P2-A control — NEXT MEASUREMENT
+
+The user has successfully run the P2-B.1 render and measurement on Windows. Actual source 368×512 at max-side 512, seed 42; output: `outputs/p2c-portrait.png`, paired `outputs/p2c-portrait-strokes.json`, report `outputs/p2c-portrait-report.json` (recorded in [first portrait result](P2C_FIRST_PORTRAIT_RESULT.md)).
+
+Do **not** change branches or rerun the existing report file. On the **same** `feat/p2c-measurement-utility` checkout, render tonal-only by disabling contours, and save to new filenames:
+
+```powershell
+cargo run -p scansketch-cli -- `
+  --input ".\sample.jpg" `
+  --output ".\outputs\p2c-portrait-p2a-control.png" `
+  --strokes ".\outputs\p2c-portrait-p2a-control-strokes.json" `
+  --max-size 512 --seed 42 --no-contours
+
+cargo run -p scansketch-cli --bin scansketch-measure -- `
+  --source ".\sample.jpg" `
+  --preview ".\outputs\p2c-portrait-p2a-control.png" `
+  --strokes ".\outputs\p2c-portrait-p2a-control-strokes.json" `
+  --max-size 512 `
+  --report ".\outputs\p2c-portrait-p2a-control-report.json"
+```
+
+For the previous portrait, `--no-contours` produced 12,563 P2-A tonal strokes at the same 368×512 / seed 42. **That count is a consistency expectation, not proof of byte-for-byte equality.** Share the *new report text*, not the private original image. Retain the earlier P2-B.1 numeric report and compare: total/region RMSE, highlight ink, edge precision/recall/F1, stroke count and path length. Stroke count differences alone are not a quality judgement.
+
+For local provenance:
+
+```powershell
+git rev-parse HEAD
+Get-FileHash ".\sample.jpg", ".\outputs\p2c-portrait.png", ".\outputs\p2c-portrait-strokes.json", ".\outputs\p2c-portrait-p2a-control.png", ".\outputs\p2c-portrait-p2a-control-strokes.json" -Algorithm SHA256
+```
+
+Hash values are not required to be posted publicly; keep them with the private local experiment.
+
+**Important limit:** current RMSE is unsigned. A higher dark-region RMSE does not by itself prove the sketch is too pale or too dark. Consider a *separately versioned future metric* of mean signed error (preview darkness minus target darkness) across fixed source masks; don't silently alter the v1 report definition.
+
 ## Metrics and limitations
 
 - `tone_rmse`: root-mean-square error of target vs preview linear-light darkness; regional masks: white `D<=0.04`, dark `D>=0.65`, midtone between them.
