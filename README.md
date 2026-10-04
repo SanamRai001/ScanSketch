@@ -4,7 +4,7 @@
 
 ScanSketch is an early-stage, research-driven graphics project by **Sanam Rai**. Its aim is to transform raster photographs and illustrations into convincing hand-drawn-style sketches through adaptive scanline sampling, vector pencil strokes, and iterative reconstruction.
 
-> Status: **P1 native Rust scanline baseline committed on a feature branch; compilation and visual quality await local verification.** No browser app, optimized candidate search, or published package yet.
+> Status: **P1–P2-B.1 native Rust experiments compile and pass their documented tests; P2-B.1 is the strongest visual candidate so far but the portrait still needs substantial structural improvement.** P2-C measurement protocol and a proposed P3 directional algorithm are documented. Nothing has been merged into `main`; no browser app or optimized candidate search has been shipped.
 
 ## The idea
 
@@ -23,7 +23,7 @@ The intended result is visibly made from **lines and strokes**, not a grayscale 
 7. Optionally perform an additive, bounded error-guided refinement pass after the first scan.
 8. Preview as a raster drawing; later export recorded paths as SVG and the canvas as PNG.
 
-The current P1 baseline implements luminance, deterministic band sampling, short mostly-horizontal strokes, replayable vector records, and PNG preview. Candidate optimization, edge guidance and refinement remain proposals. See [Algorithm](docs/ALGORITHM.md).
+The current experimental branches implement luminance/white matting, seeded top-to-bottom fragment strokes, replayable vector records, PNG/JSON export, and an optional image-gradient contour accent pass (smoothed/coherence-ranked in P2-B.1). The current implementation is **not** semantic feature extraction, multi-scale directional tonal proposal generation, search-based candidate optimization, or erasing. See [Algorithm](docs/ALGORITHM.md), [P2 visual review](docs/P2_VISUAL_REVIEW.md), and the [P3 proposal](docs/P3_DIRECTIONAL_DESIGN.md).
 
 ## Current priorities
 
@@ -52,10 +52,13 @@ The proposed erasure/correction idea is recorded under [Future Experiments](docs
 | [Architecture](docs/ARCHITECTURE.md) | Rust workspace and proposed WASM/React integration |
 | [Roadmap](docs/ROADMAP.md) | Small gated phases and acceptance conditions |
 | [Research](docs/RESEARCH.md) | Prior art, inspiration, attribution and open questions |
-| [Experiments](docs/EXPERIMENTS.md) | Reproducible comparison methodology |
+| [Experiments](docs/EXPERIMENTS.md) | General reproducible comparison methodology |
+| [P2 visual review](docs/P2_VISUAL_REVIEW.md) | What actually happened in the P1–P2-B.1 portrait tests |
+| [P2-C protocol](docs/P2C_PROTOCOL.md) | Next-phase fixtures, metrics, comparisons and acceptance gate |
+| [P3 directional design](docs/P3_DIRECTIONAL_DESIGN.md) | Proposed multiscale geometry-first architecture |
 | [Future experiments](docs/FUTURE_EXPERIMENTS.md) | Ideas parked until core output is convincing |
 | [Project state](docs/PROJECT_STATE.md) | Single authoritative progress, risks and next phase |
-| [P1 verification](docs/P1_VERIFY.md) | Windows commands, expected results and manual visual checks |
+| [P1 verification](docs/P1_VERIFY.md) | Historical baseline validation |
 | [Contributing](CONTRIBUTING.md) | How to propose changes and provide reproducible results |
 
 ## Inspiration and attribution
@@ -64,30 +67,30 @@ ScanSketch is conceptually inspired in part by Michael Fogleman's [Primitive](ht
 
 Read [Research](docs/RESEARCH.md) before importing or adapting third-party implementation code. Preserve applicable upstream licenses and notices.
 
-## Getting started
+## Getting started with the current research renderer
 
-Install a current stable [Rust toolchain](https://rustup.rs/) (Cargo included). **Use the P1 feature branch**, since the foundation PR has not been merged:
+Install current stable [Rust/Cargo](https://rustup.rs/) and Windows C++ MSVC Build Tools when prompted. The default branch still contains only the bootstrap README; the latest tested renderer lives on a feature branch:
 
 ```powershell
 git clone https://github.com/SanamRai001/ScanSketch.git
 cd ScanSketch
-git switch feat/p1-rust-scanline-baseline
-
+git switch feat/p2b1-contour-coherence
+$env:CARGO_BUILD_JOBS = "2"
 cargo check --workspace
-cargo test -p scansketch-core
-cargo run -p scansketch-cli -- --help
+cargo test --workspace
 ```
 
-Place a photo at `sample.jpg`, then create an output directory and render:
+Put a locally permitted photograph at `sample.jpg` (never commit it), then:
 
 ```powershell
 New-Item -ItemType Directory -Force outputs | Out-Null
-cargo run -p scansketch-cli -- --input .\sample.jpg --output .\outputs\sample-sketch.png --strokes .\outputs\sample-strokes.json --seed 42 --max-size 512
+cargo run -p scansketch-cli -- --input .\sample.jpg --output .\outputs\p2b1.png --strokes .\outputs\p2b1.json --seed 42 --max-size 512
+cargo run -p scansketch-cli -- --input .\sample.jpg --output .\outputs\p2a-control.png --seed 42 --max-size 512 --no-contours
 ```
 
-The CLI supports **local PNG/JPEG input**, white-paper PNG output, and optional ordered stroke records in JSON. Processing is capped to a 1024px working side; default maximum is 768px. This is an experimental baseline; no quality claim is made yet.
+Inputs are local PNG/JPEG. The CLI enforces bounded decoding and a 1024px maximum working-image side. P2-B.1 defaults to optional coherence-ranked contours; `--no-contours` preserves the P2-A tonal stroke output. This is a **research prototype**, not a validated portrait product.
 
-See [P1 verification](docs/P1_VERIFY.md) for exact Windows test commands and expected output. A Rust `Cargo.lock` has not been generated in this connector environment and should be checked in following the first successful local dependency resolution.
+The P2-C documentation branch (`docs/p2c-measurement-and-p3-design`) contains the same renderer plus research plans. The first local Cargo build generated `Cargo.lock` on Windows; it has not yet been checked into the remote repository. Preserve it locally. Do not commit personal samples, `outputs/` or `target/`.
 
 ## License and ownership
 

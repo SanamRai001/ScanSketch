@@ -1,6 +1,6 @@
 # Experiments and Verification Protocol
 
-**Status:** plan only; no experimental results yet.
+**Status:** general research protocol. Qualitative portrait comparisons have occurred (see [P2_VISUAL_REVIEW.md](P2_VISUAL_REVIEW.md)), but the proposed numeric metrics have **not** yet been computed. The concrete next-phase specification is [P2C_PROTOCOL.md](P2C_PROTOCOL.md).
 
 ## Test categories
 
@@ -17,13 +17,13 @@ Keep originals, attribution/license and fixture hashes in a future fixture manif
 
 ## Experimental comparisons
 
-A. Baseline top-to-bottom deterministic short-stroke renderer.
-B. Same stroke family and budget plus Primitive-inspired candidate optimization.
-C. B plus optional structure-aware scoring and additive refinement.
+A. Historic version comparison at their actual default budgets: P1 bars, P2-A fragments, P2-B raw-Sobel contours, P2-B.1 coherence-ranked contours.
+B. Matched-budget comparisons when an explicit allocation mechanism exists. Current `--max-strokes` rejects overflow and is NOT such a mechanism.
+C. Proposed P3-A multi-scale directional strokes vs P2-B.1, then P3-B Primitive-inspired optimization versus unoptimized P3-A if justified.
 
 Hold input size, random seed, permitted stroke count, output resolution and target image constant. Record runtime and parameters. Repeat stochastic tests over a predetermined seed set; do not report only the nicest sample.
 
-## Proposed measurements
+## Proposed measurements (see P2C_PROTOCOL.md for exact formulas and masks)
 
 - Pixelwise tone MSE/RMSE (clearly identified as approximation, not artistry).
 - Extra ink coverage in near-white target areas.

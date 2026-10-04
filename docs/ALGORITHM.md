@@ -1,6 +1,6 @@
 # Adaptive Scanline Stroke Reconstruction (Proposed)
 
-**Status:** research specification, not implemented or experimentally validated.
+**Status:** forward-looking algorithm/research specification. P1–P2-B.1 already implement source darkness, broken tonal strokes and optional source-derived contours, with passing test suites and qualitative portrait trials. The candidate optimizer, multiscale direction field, analytic opacity search and scored refinement in this document remain **unimplemented**. For the next prioritized proposal, see [P3_DIRECTIONAL_DESIGN.md](P3_DIRECTIONAL_DESIGN.md).
 
 ## 1. Inputs, output and representation
 

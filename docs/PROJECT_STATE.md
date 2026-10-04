@@ -1,41 +1,54 @@
 # Project State
 
-Last updated: **2026-10-04**. Single authoritative progress record; Git history, verified CI and visually inspected outputs supersede phase plans.
+Last updated: **2026-10-04**. This is the single authoritative progress record; Git/CI, actual run outputs and observed visuals override planning documents.
 
-## Vision
+## Goal and current decision
 
-ScanSketch reconstructs images using actual bounded ordered pencil strokes, not grayscale painting. The tonal identity is top-to-bottom sampling. Improvements must be compared against the same input, seed and output size. The initial subject portrait is a research fixture; do not commit the personal photograph or generated outputs without permission.
+ScanSketch is a deterministic, CPU-first Rust system for rebuilding images from **actual ordered pencil strokes**, not grayscale pixel painting. Top-to-bottom sampling remains the design identity. After the first portrait iterations, **P2-B.1 is the current strongest subjective visual candidate** but is still not a convincing finished portrait renderer or an objectively established winner.
 
-## Branches / stacked review
+**Current active phase: P2-C — measurement and next-algorithm design (documentation/protocol committed; measurement implementation and numeric results pending).** Stop stacking additional raw-Sobel contour heuristics without controlled evidence. The leading next prototype to test is multi-scale, direction-aware source-based stroke placement (P3-A), with Primitive-inspired scoring (P3-B) gated behind measurements.
 
-- `main`: repository bootstrap only; nothing merged.
+## Stacked GitHub review
+
+- `main`: initial bootstrap only. No branch merges, release or deployment.
 - `docs/foundation`: draft PR #1.
-- `feat/p1-rust-scanline-baseline`: draft PR #2 into foundation; Windows workspace check, 11/11 core tests and first CLI rendering passed, but continuous horizontal bars looked like engraving.
-- `feat/p2-sketch-stroke-language`: draft PR #3 into P1; CI passed (14/14 tests). Fragmented tone reduced long stripe artifacts, but weak face anchors remained.
-- `feat/p2b-contour-reinforcement`: draft PR #4 into P2-A; CI passed (20/20 tests). User rendered same original photograph at 368x512 / seed 42: P2-A control **12,563** strokes, P2-B **13,024** (+461). Two images were visually reviewed: difference subtle, glasses/eyes/lips still weak and hair texture prominent. Retain this branch as reference.
-- **Active:** `feat/p2b1-contour-coherence`: P2-B.1, branched from P2-B; target P2-B via separate draft PR. Previous branches remain unmodified.
+- `feat/p1-rust-scanline-baseline`: draft PR #2 into foundation. User's Windows build/check and 11/11 core tests passed; first source/photo preview looked mechanically striped.
+- `feat/p2-sketch-stroke-language`: draft PR #3 into P1. GitHub CI 14/14; fragmented marks helped compared with continuous horizontal bars.
+- `feat/p2b-contour-reinforcement`: draft PR #4 into P2-A. GitHub CI 20/20. Same-image CLI at 368x512, seed 42: no contours 12,563 strokes, contour-on 13,024 (+461), visually modest structural benefit.
+- `feat/p2b1-contour-coherence`: draft PR #5 into P2-B. GitHub CI 23/23. Same portrait preview received and qualitatively reviewed: strongest candidate so far, still an incremental improvement with weak glasses/eyes/lips and hair dominant.
+- **Active:** `docs/p2c-measurement-and-p3-design`, branched from P2-B.1; documentation-only changes, intended to target P2-B.1 via a new stacked draft PR. Keeps all baseline engines intact.
 
-## P2-B.1 implementation
+Review stack order is foundation → P1 → P2-A → P2-B → P2-B.1 → P2-C docs. Do not merge earlier feature history by accident while collecting results.
 
-Motivation: P2-B scans candidates from top-left, so fine texture can occupy positions before a stronger nearby contour. Raw Sobel also spends energy on small texture; just increasing opacity is insufficient.
+## Why we changed course
 
-- Apply a mild separable 3x3 Gaussian/binomial smoothing to darkness **for gradient estimation only**.
-- Compute Sobel gradient on the smoothed map and suppress local nonmaxima.
-- Confirm neighboring gradient alignment along the contour tangent; reject isolated low-coherence candidates.
-- Deterministically rank the surviving candidates by gradient strength + tangent continuity, with row-major tie-breaking.
-- Use small local occupancy spacing and a 32px-tile quota so one textured neighborhood cannot claim the entire global contour budget.
-- Increase structural stroke confidence moderately and retry shorter stroke lengths if longer ones cross a source highlight.
-- Validate line, rounded ends and both lateral sides against **unsmoothed** darkness; continue to protect true white gaps, canvas bounds and global stroke budget.
-- Keep P2-A tone generation and its RNG unchanged; CLI `--no-contours` remains an exact tonal-only control. CLI retains `--contour-threshold` (default 0.28). No new dependencies or stroke-schema changes.
+- Tonal run fragmentation had more visible effect than successive generic Sobel refinements.
+- P2-B.1 uses blur, directional nonmaximum suppression, tangent continuity ranking, dark-side source checks, tile quotas and stronger sparse contour marks; tests pass, but the key facial anchors remain insufficiently readable.
+- More contour ink is not the same as better structure. Avoid judging quality from the stroke count or a single preview.
+- No semantic face/eye/glasses recognition, true direction-aware tone generation, search-based candidate scoring, erasure or web UI has been built yet.
 
-**Verification:** P2-B.1 GitHub Actions `cargo check --workspace` and `cargo test --workspace` passed (**23/23 tests, 0 failed**), run https://github.com/SanamRai001/ScanSketch/actions/runs/37217765227. Its same-input portrait comparison is still pending; do not claim visual improvement until the image is reviewed. This is a generic nonsemantic edge procedure: there is no understanding of faces, spectacles or lips yet. It may still reinforce long hair strands. Do not jump to optimization based on a theoretical benefit.
+Full observed evidence and caveats: [P2 visual review](P2_VISUAL_REVIEW.md). Personal portrait/source images remain local and should not be uploaded to the public repo without permission.
 
-## Next gate
+## P2-C deliverables and status
 
-Follow `docs/P2B1_VERIFY.md` and preserve outputs: `sample-p2a.png`, `portrait-p2a-control.png`, `portrait-p2b-contours.png`. Compare the saved P2-B result with the new `portrait-p2b1-ranked.png` on the same original. Also test a simple object, white-only fixture and high-contrast object, plus repeatability (identical seed, same output hashes).
+- **Done in this documentation phase:** define fixed fixtures, rights/provenance, identical preprocessing/seed/size, same-output naming, two distinct comparison lanes, tone/highlight/edge metrics, stroke/length complexity, runtime notes, blinded visual criteria and actual exit gate. See [P2-C protocol](P2C_PROTOCOL.md).
+- **Not done yet:** implementing/running the measurement command, synthetic fixture generation, hashing/manifest for real examples, matched-budget generator, numerical outputs, multi-image blinded review. No invented scores or benchmark result.
+- Keep P1/P2-A/P2-B/P2-B.1 source branches as experimental controls.
 
-If P2-B.1 produces a similarly subtle difference, stop piling on contour heuristics. Move toward P2-C measurement (tone, structural fidelity and edge preservation) and research directional stroke placement, multiscale analysis or a better objective instead of endlessly darkening more Sobel pixels. Primitive-inspired optimization stays gated. No erasure, smudge or graphite residue until the fundamental renderer is satisfying.
+## Next major algorithm decision (proposed, not coded)
 
-## Development notes
+Study [P3 multi-scale direction-aware design](P3_DIRECTIONAL_DESIGN.md). P3-A would use coarse/fine gradients and structure-tensor orientation/confidence to propose source-supported short strokes along local geometry during the existing top-to-bottom sweep, reverting to P2-A tonal marks when direction is ambiguous. Avoid semantic portrait hacks. P3-B would later apply bounded Primitive-style candidate scoring if P3-A provides genuine wins at controlled resources.
 
-`Cargo.lock` currently exists locally on the user's Windows checkout but is not yet committed; preserve and review it. Existing local stash and `sample.jpg` must not be reset or accidentally committed. GitHub CI validates Linux Rust; local Windows and visual checks remain a separate gate.
+## Next execution gate
+
+1. Implement a small reproducible P2-C measurement tool and synthetic fixtures; first verify it on known white/shape/gradient inputs.
+2. Run equivalent recorded portrait and a permission-cleared nonportrait object through all preserved versions, preserving seeds, actual resized dimensions, JSON strokes, SHA-256 and build profile.
+3. Human A/B evaluation and numeric metrics; document agreements, trade-offs and failures.
+4. Only then prototype P3-A behind an opt-in mode and compare at controlled ink/stroke budgets. Do not start P3-B just because the new geometry is interesting.
+
+## Local safety and remaining risks
+
+- A generated `Cargo.lock` exists on the user's Windows checkout and is not committed in this connector branch; preserve it and commit separately after review.
+- `sample.jpg`, screenshots, `outputs/` and existing local stash should not be discarded/reset or committed accidentally. `--max-strokes` rejects overflow; it is **not** an equal-budget control.
+- Current white-gap invariants have core regression tests. Raster antialiasing, edge score proxy and real-photo aesthetics still need broader checks.
+- No erasure/residual graphite, smudging, paper texture or cloud processing until the fundamental sketch is convincing. See `FUTURE_EXPERIMENTS.md`.
