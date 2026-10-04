@@ -1,6 +1,6 @@
 //! ScanSketch's native, UI-independent stroke reconstruction engine.
 //!
-//! P2-B optionally reinforces image-derived contours after the P2-A tonal pass.
+//! P2-B.1 optionally reinforces coherent image-derived contours after P2-A.
 //! No semantic face recognition, optimization, erasure or AI.
 //! The output is a sequence of strokes; a PNG is only a rendering of that data.
 
