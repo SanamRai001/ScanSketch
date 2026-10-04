@@ -22,11 +22,19 @@ Deliver: seeded 2–10.5 px broken tonal marks, controlled gaps, small endpoint 
 
 Exit: new and old render of the **same** licensed portrait, same seed/max size, plus new regression tests and full-workspace compilation. Do not claim that more fragments automatically make a better picture.
 
-## P2-B — Edge / contour reinforcement [CI passed: 20/20 tests; visual comparison pending]
+## P2-B — Edge / contour reinforcement [20/20 tests; subtle portrait change documented]
 
 Deliver: normalized linear-darkness Sobel gradient, directional non-maximum suppression, short tangent-aligned marks anchored on the dark side with support checks, sparse acceptance and bounded extra stroke budget. `--no-contours` runs the identical P2-A tone pass as a control. No semantic face recognition. Compare toggled output against P2-A before judging any visual improvement.
 
 Exit: glasses/eyes/lips and hair contours are more recognizable without harsh synthetic outlines or dirty highlights.
+
+## P2-B.1 — Coherence-ranked contour accents [experimental implementation; verification pending]
+
+First same-photo P2-B comparison: 12,563 tonal marks versus 13,024 with raw-Sobel contours (+461). Structural improvement was subtle; most important facial boundaries remained hard to read. Preserve P2-B as the unmodified reference.
+
+Deliver: one separable 3x3 binomial blur before Sobel, require neighboring tangent continuity, stable global candidate ranking by strength and continuity instead of top-left-first acceptance, keep 32px-tile quotas and shared stroke budget, and use slightly stronger dark-side marks. Shorten a rejected mark before abandoning its candidate. Validate every stroke against the *original unsmoothed* darkness, including round caps and lateral pen reach; this is not face-feature recognition.
+
+Exit: same-portrait render at 512px / seed 42 alongside P2-A and P2-B; ensure glasses/lips improve without hair noise or white contamination. Keep P2-B.1 optional in a separate branch if it fails. Pass workspace CI/tests before evaluation.
 
 ## P2-C — Measurements and controlled alternatives [not started]
 

@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - feat/p2-sketch-stroke-language
+      - feat/p2b1-contour-coherence
 
 jobs:
   cargo:

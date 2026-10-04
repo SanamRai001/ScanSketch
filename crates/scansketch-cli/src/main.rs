@@ -3,7 +3,7 @@ use image::{imageops::FilterType, ImageFormat, ImageReader, Limits};
 use scansketch_core::{generate_sketch, render_sketch, SketchOptions};
 use std::{error::Error, fs, io, path::PathBuf};
 
-/// Deterministic native-first tonal + optional contour sketch (P2-B).
+/// Native tonal + optionally coherence-ranked contour sketch (P2-B.1).
 #[derive(Parser, Debug)]
 #[command(name = "scansketch", version, about)]
 struct Args {
@@ -101,7 +101,7 @@ fn run() -> Result<(), Box<dyn Error>> {
         fs::write(path, serde_json::to_vec_pretty(&sketch)?)?;
     }
     println!(
-        "ScanSketch P2-B: {}x{} | {} strokes | seed {} | saved {}",
+        "ScanSketch P2-B.1: {}x{} | {} strokes | seed {} | saved {}",
         sketch.width, sketch.height, sketch.strokes.len(), sketch.seed, args.output.display()
     );
     Ok(())
