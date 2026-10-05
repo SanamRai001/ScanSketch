@@ -135,3 +135,8 @@ P3-A.2.1 is the first P3 variant to produce a substantial structural-proxy gain 
 ## P3-A.2.2 architecture freeze
 
 P3-A.2.1 improved edge F1 substantially but spent most visible changes in upper hair/silhouette. P3-A.2.2 changes only the scoring field: compute a continuous **missing-edge residual** from source-edge strength minus frozen P2-B.1 preview-edge strength, then score both baseline contours and existing hybrid candidates against that deficit. Candidate generator, 40% cap, 15%+0.001 margin, tonal prefix and total count remain frozen. See [P3A22_ARCHITECTURE.md](P3A22_ARCHITECTURE.md).
+
+
+### P3-A.2.2 implementation
+
+Missing-structure scoring is now implemented as a separate mode: continuous edge strength is factored from the unchanged P2-C Sobel family; frozen P2-B.1 is rendered once; `max(source_edge - baseline_edge, 0)` becomes the new structural-deficit field. The P3-A.2.1 candidate generator, cap, replacement margin, prefix/count invariants and slot substitution are unchanged. CI and real-image outcome pending. See [P3A22_VERIFY.md](P3A22_VERIFY.md).

@@ -92,12 +92,19 @@ fn median(mut values: Vec<f32>) -> Option<f64> {
     }
 }
 
-/// One 3x3 binomial pass, then normalized Sobel magnitude, identically on both
-/// images. This proxy does not recognize faces and can favor texture.
-fn edge_mask(darkness: &[f32], width: usize, height: usize) -> Vec<bool> {
-    let mut mask = vec![false; darkness.len()];
+/// One 3x3 binomial pass, then normalized Sobel magnitude.
+///
+/// This continuous map is the exact response family used by the P2-C binary
+/// edge proxy. Keeping it here lets later research consume the same structural
+/// evidence without changing the metric threshold or semantics.
+pub(crate) fn edge_strength_map(
+    darkness: &[f32],
+    width: usize,
+    height: usize,
+) -> Vec<f32> {
+    let mut strength = vec![0.0; darkness.len()];
     if width < 3 || height < 3 {
-        return mask;
+        return strength;
     }
     let mut horizontal = vec![0.0; darkness.len()];
     let mut blur = vec![0.0; darkness.len()];
@@ -106,7 +113,9 @@ fn edge_mask(darkness: &[f32], width: usize, height: usize) -> Vec<bool> {
             let l = x.saturating_sub(1);
             let r = (x + 1).min(width - 1);
             horizontal[y * width + x] =
-                (darkness[y * width + l] + 2.0 * darkness[y * width + x] + darkness[y * width + r])
+                (darkness[y * width + l]
+                    + 2.0 * darkness[y * width + x]
+                    + darkness[y * width + r])
                     * 0.25;
         }
     }
@@ -115,8 +124,10 @@ fn edge_mask(darkness: &[f32], width: usize, height: usize) -> Vec<bool> {
             let t = y.saturating_sub(1);
             let b = (y + 1).min(height - 1);
             blur[y * width + x] =
-                (horizontal[t * width + x] + 2.0 * horizontal[y * width + x]
-                    + horizontal[b * width + x]) * 0.25;
+                (horizontal[t * width + x]
+                    + 2.0 * horizontal[y * width + x]
+                    + horizontal[b * width + x])
+                    * 0.25;
         }
     }
     for y in 1..height - 1 {
@@ -131,10 +142,18 @@ fn edge_mask(darkness: &[f32], width: usize, height: usize) -> Vec<bool> {
             let br = blur[(y + 1) * width + x + 1];
             let gx = (-tl - 2.0 * ml - bl + tr + 2.0 * mr + br) * 0.25;
             let gy = (-tl - 2.0 * tc - tr + bl + 2.0 * bc + br) * 0.25;
-            mask[y * width + x] = (gx * gx + gy * gy).sqrt() >= EDGE_THRESHOLD;
+            strength[y * width + x] = (gx * gx + gy * gy).sqrt().min(1.0);
         }
     }
-    mask
+    strength
+}
+
+/// Binary P2-C edge proxy. The threshold remains exactly unchanged.
+fn edge_mask(darkness: &[f32], width: usize, height: usize) -> Vec<bool> {
+    edge_strength_map(darkness, width, height)
+        .into_iter()
+        .map(|strength| strength >= EDGE_THRESHOLD)
+        .collect()
 }
 
 fn matched(a: &[bool], other: &[bool], width: usize, height: usize) -> usize {

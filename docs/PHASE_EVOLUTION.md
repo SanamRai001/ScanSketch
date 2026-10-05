@@ -108,3 +108,8 @@ Selective replacement produced the first substantial P3 edge gain without tonal 
 ### P3-A.2.2 architecture opened
 
 The next controlled hypothesis targets **missing baseline structure** rather than strongest source structure. It reuses the exact P3-A.2.1 candidate pool and replacement policy, changing only the utility map to source-edge minus P2-B.1-preview-edge residual. No outcome claimed yet. [Architecture](P3A22_ARCHITECTURE.md).
+
+
+### P3-A.2.2 implementation opened
+
+The missing-structure experiment is executable as a separate mode. It reuses the exact P3-A.2.1 candidate pool and replacement controls; only baseline/candidate utility changes to emphasize source edges absent from frozen P2-B.1. No quality result claimed until CI and portrait localization. [Verification](P3A22_VERIFY.md).

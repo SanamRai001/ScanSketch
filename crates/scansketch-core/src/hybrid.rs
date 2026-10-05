@@ -13,6 +13,7 @@ use serde::Serialize;
 
 use crate::analysis::darkness_map;
 use crate::directional::{source_supported, Direction, OrientationField};
+use crate::metrics::edge_strength_map;
 use crate::render::render_sketch;
 use crate::scanline::{generate_sketch, SketchOptions};
 use crate::stroke::{Sketch, Stroke};
@@ -43,6 +44,19 @@ pub struct SelectiveHybridStats {
     pub strongest_hybrid_utility: f32,
     pub last_replaced_baseline_utility: f32,
     pub last_replacement_hybrid_utility: f32,
+}
+
+#[derive(Clone, Debug, Default, Serialize)]
+pub struct MissingStructureStats {
+    pub tone_count: usize,
+    pub structural_budget: usize,
+    pub generated_hybrid_candidates: usize,
+    pub max_replacements: usize,
+    pub replacements_made: usize,
+    pub baseline_contours_retained: usize,
+    pub weakest_baseline_utility: f32,
+    pub strongest_hybrid_utility: f32,
+    pub mean_missing_edge_at_replacements: f32,
 }
 
 #[derive(Clone, Debug)]
@@ -692,6 +706,295 @@ pub fn generate_selective_hybrid_sketch(
         .map(|(sketch, _)| sketch)
 }
 
+fn missing_edge_residual(
+    source_darkness: &[f32],
+    baseline_darkness: &[f32],
+    width: usize,
+    height: usize,
+) -> Vec<f32> {
+    let source_edge = edge_strength_map(source_darkness, width, height);
+    let baseline_edge = edge_strength_map(baseline_darkness, width, height);
+    source_edge
+        .into_iter()
+        .zip(baseline_edge)
+        .map(|(source, baseline)| (source - baseline).max(0.0))
+        .collect()
+}
+
+fn stroke_missing_structure_utility(
+    stroke: &Stroke,
+    darkness: &[f32],
+    tone_residual: &[f32],
+    missing_edge: &[f32],
+    width: usize,
+    height: usize,
+    field: &OrientationField,
+) -> (f32, f32) {
+    let dx = stroke.x1 - stroke.x0;
+    let dy = stroke.y1 - stroke.y0;
+    let length = dx.hypot(dy);
+    if length < 0.1 {
+        return (0.0, 0.0);
+    }
+
+    let samples = (length / 0.75).ceil().max(2.0) as usize;
+    let mut missing_sum = 0.0_f32;
+    let mut residual_sum = 0.0_f32;
+    let mut target_sum = 0.0_f32;
+    for i in 0..=samples {
+        let t = i as f32 / samples as f32;
+        let sx = stroke.x0 + dx * t;
+        let sy = stroke.y0 + dy * t;
+        if sx < 0.0 || sy < 0.0 || sx >= width as f32 || sy >= height as f32 {
+            return (0.0, 0.0);
+        }
+        let index = sy.floor() as usize * width + sx.floor() as usize;
+        missing_sum += missing_edge[index];
+        residual_sum += tone_residual[index];
+        target_sum += darkness[index];
+    }
+    let count = (samples + 1) as f32;
+    let mean_missing = missing_sum / count;
+    let mean_residual = residual_sum / count;
+    let mean_target = target_sum / count;
+
+    // Require some actual baseline structural deficit. Pure tonal darkness
+    // cannot earn a P3-A.2.2 structural replacement by itself.
+    if mean_missing <= 0.008 {
+        return (0.0, mean_missing);
+    }
+
+    let mx = ((stroke.x0 + stroke.x1) * 0.5)
+        .floor()
+        .clamp(0.0, width.saturating_sub(1) as f32) as usize;
+    let my = ((stroke.y0 + stroke.y1) * 0.5)
+        .floor()
+        .clamp(0.0, height.saturating_sub(1) as f32) as usize;
+    let tx = dx / length;
+    let ty = dy / length;
+    let structural_alignment = choose_direction(field, mx, my)
+        .map(|direction| {
+            let alignment = (tx * direction.tx + ty * direction.ty).abs();
+            quality(direction) * alignment
+        })
+        .unwrap_or(0.0);
+
+    let deficit = 0.78 * mean_missing + 0.22 * mean_residual.min(1.0);
+    let utility = deficit
+        * (0.62 + 0.88 * structural_alignment)
+        * (0.78 + 0.22 * mean_target);
+    (utility, mean_missing)
+}
+
+/// P3-A.2.2: selective hybrid replacement driven by structural deficit in the
+/// frozen P2-B.1 preview. Candidate generation and replacement controls remain
+/// identical to P3-A.2.1; only the shared utility changes.
+pub fn generate_missing_structure_sketch_with_stats(
+    source: &RgbaImage,
+    options: &SketchOptions,
+) -> Result<(Sketch, MissingStructureStats), String> {
+    let (width, height) = source.dimensions();
+    let mut tonal_options = options.clone();
+    tonal_options.enable_contours = false;
+    let tone = generate_sketch(source, &tonal_options)?;
+
+    if !options.enable_contours {
+        return Ok((
+            tone.clone(),
+            MissingStructureStats {
+                tone_count: tone.strokes.len(),
+                ..MissingStructureStats::default()
+            },
+        ));
+    }
+
+    let baseline = generate_sketch(source, options)?;
+    if baseline.strokes.len() < tone.strokes.len()
+        || baseline.strokes[..tone.strokes.len()] != tone.strokes[..]
+    {
+        return Err(
+            "P3-A.2.2 invariant failed: P2-B.1 tonal prefix changed".into(),
+        );
+    }
+
+    let budget = baseline.strokes.len() - tone.strokes.len();
+    if budget == 0 {
+        return Ok((
+            tone.clone(),
+            MissingStructureStats {
+                tone_count: tone.strokes.len(),
+                ..MissingStructureStats::default()
+            },
+        ));
+    }
+
+    let source_darkness = darkness_map(source);
+
+    let tone_preview = pixmap_rgba(&tone)?;
+    let tone_darkness = darkness_map(&tone_preview);
+    let tone_residual: Vec<f32> = source_darkness
+        .iter()
+        .zip(&tone_darkness)
+        .map(|(&target, &preview)| (target - preview).max(0.0))
+        .collect();
+
+    let baseline_preview = pixmap_rgba(&baseline)?;
+    let baseline_darkness = darkness_map(&baseline_preview);
+    let missing_edge = missing_edge_residual(
+        &source_darkness,
+        &baseline_darkness,
+        width as usize,
+        height as usize,
+    );
+
+    let field = OrientationField::new(
+        &source_darkness,
+        width as usize,
+        height as usize,
+    );
+
+    // Deliberately reuse the P3-A.2/P3-A.2.1 candidate generator unchanged.
+    let candidates = hybrid_candidates(
+        &source_darkness,
+        &tone_residual,
+        width as usize,
+        height as usize,
+        &field,
+        options,
+    );
+    let generated = candidates.len();
+
+    let max_replacements = ((budget * SELECTIVE_MAX_PERCENT) / 100)
+        .max(1)
+        .min(budget);
+    let preselection_limit = (max_replacements * 3).min(budget);
+    let spaced = select_spaced(
+        candidates,
+        preselection_limit,
+        width as usize,
+        height as usize,
+    );
+
+    let mut scored_hybrids: Vec<(Candidate, f32, f32)> = spaced
+        .into_iter()
+        .map(|candidate| {
+            let (utility, missing) = stroke_missing_structure_utility(
+                &candidate.stroke,
+                &source_darkness,
+                &tone_residual,
+                &missing_edge,
+                width as usize,
+                height as usize,
+                &field,
+            );
+            (candidate, utility, missing)
+        })
+        .filter(|(_, utility, _)| *utility > 0.0)
+        .collect();
+    scored_hybrids.sort_by(|(a, au, _), (b, bu, _)| {
+        bu.total_cmp(au)
+            .then_with(|| a.y.cmp(&b.y))
+            .then_with(|| a.x.cmp(&b.x))
+    });
+
+    let baseline_contours = &baseline.strokes[tone.strokes.len()..];
+    let mut baseline_scores: Vec<(usize, f32)> = baseline_contours
+        .iter()
+        .enumerate()
+        .map(|(index, stroke)| {
+            let (utility, _) = stroke_missing_structure_utility(
+                stroke,
+                &source_darkness,
+                &tone_residual,
+                &missing_edge,
+                width as usize,
+                height as usize,
+                &field,
+            );
+            (index, utility)
+        })
+        .collect();
+    baseline_scores.sort_by(|(ai, au), (bi, bu)| {
+        au.total_cmp(bu).then_with(|| ai.cmp(bi))
+    });
+
+    let weakest_baseline_utility =
+        baseline_scores.first().map(|(_, score)| *score).unwrap_or(0.0);
+    let strongest_hybrid_utility =
+        scored_hybrids.first().map(|(_, score, _)| *score).unwrap_or(0.0);
+
+    let mut structural = baseline_contours.to_vec();
+    let mut replacements = 0_usize;
+    let mut replacement_missing_sum = 0.0_f32;
+
+    for (candidate, hybrid_utility, candidate_missing) in scored_hybrids {
+        if replacements >= max_replacements {
+            break;
+        }
+        let Some(&(baseline_index, baseline_utility)) =
+            baseline_scores.get(replacements)
+        else {
+            break;
+        };
+        let required = baseline_utility * SELECTIVE_RELATIVE_MARGIN
+            + SELECTIVE_ABSOLUTE_MARGIN;
+        if hybrid_utility < required {
+            break;
+        }
+
+        structural[baseline_index] = candidate.stroke;
+        replacements += 1;
+        replacement_missing_sum += candidate_missing;
+    }
+
+    let mut strokes = tone.strokes.clone();
+    strokes.extend(structural);
+    if strokes.len() != baseline.strokes.len() {
+        return Err(
+            "P3-A.2.2 failed to preserve the frozen P2-B.1 total stroke count"
+                .into(),
+        );
+    }
+    if strokes.len() > options.max_strokes {
+        return Err(
+            "stroke budget exceeded during P3-A.2.2 missing-structure pass"
+                .into(),
+        );
+    }
+
+    Ok((
+        Sketch {
+            width,
+            height,
+            seed: options.seed,
+            strokes,
+        },
+        MissingStructureStats {
+            tone_count: tone.strokes.len(),
+            structural_budget: budget,
+            generated_hybrid_candidates: generated,
+            max_replacements,
+            replacements_made: replacements,
+            baseline_contours_retained: budget - replacements,
+            weakest_baseline_utility,
+            strongest_hybrid_utility,
+            mean_missing_edge_at_replacements: if replacements > 0 {
+                replacement_missing_sum / replacements as f32
+            } else {
+                0.0
+            },
+        },
+    ))
+}
+
+pub fn generate_missing_structure_sketch(
+    source: &RgbaImage,
+    options: &SketchOptions,
+) -> Result<Sketch, String> {
+    generate_missing_structure_sketch_with_stats(source, options)
+        .map(|(sketch, _)| sketch)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -781,6 +1084,55 @@ mod tests {
         assert_eq!(hybrid, baseline);
         assert_eq!(stats.structural_budget, 0);
         assert_eq!(stats.hybrid_selected, 0);
+    }
+
+    #[test]
+    fn missing_edge_residual_is_zero_when_source_and_preview_match() {
+        let source = vec![0.0_f32; 16 * 16];
+        let residual = missing_edge_residual(&source, &source, 16, 16);
+        assert!(residual.iter().all(|value| *value == 0.0));
+    }
+
+    #[test]
+    fn missing_structure_preserves_prefix_total_and_cap() {
+        let source = step();
+        let options = SketchOptions::default();
+        let baseline = generate_sketch(&source, &options).unwrap();
+        let mut tonal_options = options.clone();
+        tonal_options.enable_contours = false;
+        let tone = generate_sketch(&source, &tonal_options).unwrap();
+        let (missing, stats) =
+            generate_missing_structure_sketch_with_stats(&source, &options).unwrap();
+
+        assert_eq!(missing.strokes.len(), baseline.strokes.len());
+        assert_eq!(
+            &missing.strokes[..tone.strokes.len()],
+            tone.strokes.as_slice()
+        );
+        assert_eq!(
+            stats.replacements_made + stats.baseline_contours_retained,
+            stats.structural_budget
+        );
+        assert!(stats.replacements_made <= stats.max_replacements);
+        assert!(stats.generated_hybrid_candidates > 0);
+    }
+
+    #[test]
+    fn missing_structure_is_deterministic() {
+        let source = step();
+        let options = SketchOptions::default();
+        let a = generate_missing_structure_sketch_with_stats(&source, &options).unwrap();
+        let b = generate_missing_structure_sketch_with_stats(&source, &options).unwrap();
+        assert_eq!(a.0, b.0);
+        assert_eq!(a.1.replacements_made, b.1.replacements_made);
+        assert_eq!(
+            a.1.baseline_contours_retained,
+            b.1.baseline_contours_retained
+        );
+        assert_eq!(
+            a.1.mean_missing_edge_at_replacements,
+            b.1.mean_missing_edge_at_replacements
+        );
     }
 
     #[test]

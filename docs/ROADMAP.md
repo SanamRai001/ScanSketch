@@ -108,3 +108,6 @@ The selective hybrid achieved edge F1 **0.2887→0.3326 (+15.2%)** at exact tota
 ### P3-A.2.2 missing-structure gate
 
 Keep the P3-A.2.1 candidate generator and selective replacement controls fixed. Change only structural utility to reward source edges underrepresented by the frozen baseline preview. This isolates whether spatial priority—not candidate geometry—is the remaining bottleneck. [P3-A.2.2 architecture](P3A22_ARCHITECTURE.md).
+
+
+P3-A.2.2 implementation is now available as a controlled opt-in mode. Engineering acceptance requires exact count/prefix parity and changed-slot accounting; quality acceptance additionally requires changed structure to move toward underrepresented regions, not merely improve aggregate edge F1. [Verification](P3A22_VERIFY.md).
