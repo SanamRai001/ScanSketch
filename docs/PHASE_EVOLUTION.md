@@ -63,3 +63,8 @@ P3-A.0 demonstrated that changing direction alone was insufficient. P3-A.1 there
 ### P3-A.1 portrait outcome
 
 The first portrait pair decisively rejects whole-field placement-aware direction as the main tonal carrier. P3-A.1 changed the visual language dramatically (**2367 strongly nonhorizontal strokes vs 97 baseline**) while keeping total count at 12,671, yet overall tone RMSE worsened **33.13%** and dark-region RMSE **34.44%**. The result is more directional but less faithful. [Exact result](P3A1_FIRST_PORTRAIT_RESULT.md). This motivates P3-A.2: preserve P2 tonal mass and use only a small, earned structural reinforcement budget.
+
+
+### P3-A.2 architecture opened
+
+After P3-A.1 proved that whole-field direction damages tonal mass, the next experiment is deliberately hybrid: preserve P2 tone exactly and spend only the existing P2-B.1 contour budget on smarter residual-aware structural accents, falling back to original contours when needed. Architecture frozen in [P3A2_ARCHITECTURE.md](P3A2_ARCHITECTURE.md); no outcome claimed yet.

@@ -6,7 +6,7 @@ Last updated: **2026-10-04**. This is the single authoritative progress record; 
 
 ScanSketch is a deterministic, CPU-first Rust system for rebuilding images from **actual ordered pencil strokes**, not grayscale pixel painting. Top-to-bottom sampling remains the design identity. After the first portrait iterations, **P2-B.1 is the current strongest subjective visual candidate** but is still not a convincing finished portrait renderer or an objectively established winner.
 
-**Current active decision: P3-A.1 placement-dominant rendering is REJECTED after a controlled portrait regression; P2-B.1 remains the frozen tonal baseline. Next research target: P3-A.2 Hybrid Structural Reinforcement. P2-C's genuine nonportrait photo gate remains OPEN.** The first independent measurement utility is implemented and verified in GitHub Actions; the first **same-binary portrait A/B numeric comparison** (P2-A tonal-only versus P2-B.1 with contours) is now recorded. Multi-fixture, repeated-seed, signed tone-bias and matched-budget experiments remain pending. Stop stacking additional raw-Sobel contour heuristics without controlled evidence. The leading next prototype to test is multi-scale, direction-aware source-based stroke placement (P3-A), with Primitive-inspired scoring (P3-B) gated behind measurements.
+**Current active design: P3-A.2 Hybrid Structural Reinforcement, after rejecting P3-A.0 rotation-only and P3-A.1 placement-dominant rendering. P2-B.1 remains the frozen tonal baseline. P2-C's genuine nonportrait photo gate remains OPEN.** The first independent measurement utility is implemented and verified in GitHub Actions; the first **same-binary portrait A/B numeric comparison** (P2-A tonal-only versus P2-B.1 with contours) is now recorded. Multi-fixture, repeated-seed, signed tone-bias and matched-budget experiments remain pending. Stop stacking additional raw-Sobel contour heuristics without controlled evidence. The leading next prototype to test is multi-scale, direction-aware source-based stroke placement (P3-A), with Primitive-inspired scoring (P3-B) gated behind measurements.
 
 ## Stacked GitHub review
 
@@ -86,3 +86,8 @@ PR #9 engineering checks passed: **47/47 Rust tests** and the full inherited wor
 P3-A.1 succeeded in changing stroke language but failed reconstruction. With exactly 12,671 strokes, strongly nonhorizontal marks increased **97→2367**, path length rose ~3.06%, overall tone RMSE worsened **0.397436→0.529120**, midtone **0.304446→0.324213**, dark **0.447258→0.601276**, while white RMSE improved slightly **0.016081→0.015784**. The image became more directional but lost stable tonal mass. See [P3A1_FIRST_PORTRAIT_RESULT.md](P3A1_FIRST_PORTRAIT_RESULT.md).
 
 **Next hypothesis: P3-A.2 Hybrid Structural Reinforcement.** Freeze the P2 tonal body, keep a small structural budget, and spend that budget on source-driven accents selected by structural confidence + positive tonal residual. Prefer replacing/reusing the existing P2-B.1 contour budget instead of adding unlimited strokes. P3-B optimization remains gated.
+
+
+## P3-A.2 architecture freeze
+
+Before implementation, P3-A.2 is defined to preserve the **exact P2 tonal prefix** and reuse the **existing P2-B.1 structural stroke budget**. It will rank multiscale structural candidates using **positive tonal residual + source structure confidence**; any unfilled structural slots fall back to original P2-B.1 contours. Total stroke count must therefore equal P2-B.1. See [P3A2_ARCHITECTURE.md](P3A2_ARCHITECTURE.md).

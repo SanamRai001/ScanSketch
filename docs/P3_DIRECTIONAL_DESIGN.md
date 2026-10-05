@@ -170,3 +170,8 @@ The next prototype should be **hybrid augmentation**:
 10. reject the hybrid if it only raises edge F1 while visibly harming tonal mass.
 
 This architecture isolates the next question cleanly: **can smarter structural accents improve a proven tonal base without asking structure to reconstruct the entire image?**
+
+
+## P3-A.2 architecture freeze: structural accents, not tonal replacement
+
+P3-A.2 keeps the P2 tonal prefix untouched. It uses the existing P2-B.1 contour count as an exact structural budget and attempts to replace those generic contour accents with multiscale source-tangent candidates **only where the rendered tonal base still has positive darkness residual**. Any unused budget falls back to the original P2-B.1 contours. This tests whether smarter structure can improve a proven tonal body at the same total stroke count. Full specification: [P3A2_ARCHITECTURE.md](P3A2_ARCHITECTURE.md).
