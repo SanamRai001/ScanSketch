@@ -135,3 +135,8 @@ P3-A.2.3 CI gate passed: 62 tests, exact tonal-prefix/total-count parity, 6/20 r
 ### P3-A.2.3 portrait decision
 
 The portrait gate is promising but not sufficient for promotion: edge F1 +8.918% at exact stroke count and unchanged white RMSE, with very small path/tone changes and modest midtone regression. Freeze P3-A.2.3. **Next phase is P3-G1 multi-image nonportrait generalization**, not another parameter/algorithm tweak.
+
+
+## P3-G1 — nonportrait generalization [validation infrastructure]
+
+Freeze P3-A.2.3 and run 3–5 genuine nonportrait photographs spanning distinct source classes. Use same-source P2-B.1/P3-A.2.3 pairs, exact invariant checks, p2c-v1 metrics and manual same-zoom review. No renderer tuning during collection. Exit only after per-class evidence is recorded. [Protocol](P3G1_PROTOCOL.md) · [Runbook](P3G1_RUN.md).

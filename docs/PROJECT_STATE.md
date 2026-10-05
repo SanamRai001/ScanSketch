@@ -174,3 +174,8 @@ Draft PR #13 passed [GitHub Actions run 37348529191](https://github.com/SanamRai
 The controlled portrait A/B shows a **promising but provisional** result: same 12,671 strokes, white RMSE unchanged, path +0.0601%, edge F1 **+8.918%**, dark RMSE ~0.0109% better, while tone ~0.0380% and midtone ~0.9357% worsen. Visual difference remains subtle and stable. P3-A.2.1 still has the higher global portrait edge-F1 result, so P3-A.2.3 is not called the numeric winner; its significance is evidence that changing proposal origin can recover structural signal without tonal collapse. [Exact result](P3A23_FIRST_PORTRAIT_RESULT.md).
 
 **Next:** freeze P3-A.2.3 and run P3-G1 multi-image genuine nonportrait validation. No additional renderer tuning until that evidence exists.
+
+
+## P3-G1 generalization gate opened
+
+P3-A.2.3 is frozen after a promising portrait result. New branch `test/p3g1-nonportrait-generalization` adds **validation infrastructure only**, not renderer changes: a 3–5 image local batch harness that runs frozen P2-B.1 vs P3-A.2.3, verifies prefix/count/slot invariants, aggregates metrics, writes CSV/JSON, and produces a local side-by-side `review.html`. See [P3-G1 protocol](P3G1_PROTOCOL.md) and [runbook](P3G1_RUN.md).
