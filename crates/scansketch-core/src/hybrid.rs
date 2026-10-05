@@ -335,7 +335,7 @@ pub fn generate_hybrid_sketch_with_stats(
     // original contour records used as deterministic fallback.
     let baseline = generate_sketch(source, options)?;
     if baseline.strokes.len() < tone.strokes.len()
-        || baseline.strokes[..tone.strokes.len()] != tone.strokes
+        || baseline.strokes[..tone.strokes.len()] != tone.strokes[..]
     {
         return Err("P3-A.2 invariant failed: P2-B.1 tonal prefix changed".into());
     }
