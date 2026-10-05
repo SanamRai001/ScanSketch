@@ -87,3 +87,19 @@ P3-A.2 CI gate passed: 53 tests, exact tonal-prefix parity and exact total-count
 ### P3-A.2 first portrait gate
 
 Hybrid preservation worked: exact tonal prefix and exact total stroke count. But the selector replaced all 108 structural slots from 2,024 candidates, producing only small metric changes and no clear visual improvement. Therefore P3-A.2 is not promoted. Next is **P3-A.2.1 selective structural replacement**, comparing hybrid candidate utility against the existing P2-B.1 contour layer and retaining baseline contours unless a replacement earns the slot. [Result](P3A2_FIRST_PORTRAIT_RESULT.md).
+
+
+### P3-A.2.1 selective-replacement gate
+
+The next hybrid refinement preserves the P3-A.2 tonal/body invariants but introduces direct baseline-vs-hybrid utility comparison and a 40% structural replacement cap. This is deliberately conservative: zero replacements is acceptable if no hybrid earns a slot. [P3-A.2.1 architecture](P3A21_ARCHITECTURE.md).
+
+
+P3-A.2.1 is now implemented as a separate opt-in experiment. Its engineering gate requires exact tone/count parity and verifies that changed structural slots exactly equal the reported selective replacements. [P3-A.2.1 verification](P3A21_VERIFY.md).
+
+
+P3-A.2.1 CI gate passed: 56 tests, exact tonal-prefix/total-count parity, 6/20 selective replacements under an 8-stroke cap on the step fixture. Portrait and genuine nonportrait visual gates remain open.
+
+
+### P3-A.2.1 portrait gate
+
+The selective hybrid achieved edge F1 **0.2887→0.3326 (+15.2%)** at exact total count and tonal-prefix parity, with essentially unchanged path/tone budget. However, visual changes remain subtle and concentrated in hair/silhouette. Next P3-A.2.2 should use a **missing-edge residual** (source structure minus frozen baseline-preview structure) so the structural budget targets underrepresented details rather than already-strong edges. No semantic face rules. [Result](P3A21_FIRST_PORTRAIT_RESULT.md).

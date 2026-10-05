@@ -182,3 +182,22 @@ P3-A.2 keeps the P2 tonal prefix untouched. It uses the existing P2-B.1 contour 
 The hybrid architecture avoided P3-A.1's tonal collapse, but the first portrait selected 108/108 hybrid structural strokes and 0 original contour fallback. Because 2,024 valid candidates competed for only 108 slots, the policy effectively guaranteed full replacement. The resulting image was almost indistinguishable from P2-B.1 and did not improve edge F1 or midtone RMSE.
 
 P3-A.2.1 should score the **baseline structural layer itself** under the same residual/structure evidence. A hybrid candidate should replace baseline structure only when it clears a baseline-derived utility threshold by a margin, and the experiment should impose a conservative maximum replacement fraction. This keeps the useful hybrid architecture while making the intervention genuinely selective.
+
+
+## P3-A.2.1 selective replacement rule
+
+Because the first hybrid selected 108/108 new structural strokes, the next test directly scores the baseline structural layer. P3-A.2.1 uses one comparable residual/structure/alignment utility for original P2-B.1 contours and hybrid candidates, replacing only the weakest baseline slots when the hybrid exceeds them by a relative + absolute margin. Replacements are capped at 40% and occur in-place in the structural tail. Full specification: [P3A21_ARCHITECTURE.md](P3A21_ARCHITECTURE.md).
+
+
+## Implemented P3-A.2.1 slice
+
+P3-A.2.1 now compares baseline P2-B.1 contour utility directly against hybrid candidate utility. Candidate utility and baseline utility use the same positive-residual, source-darkness and tensor-alignment terms. Strong hybrids replace weakest baseline structural slots only when they clear the frozen relative+absolute margin, with a 40% hard cap. Substitution occurs at the original contour indices, preserving every retained contour's order. [Verification](P3A21_VERIFY.md).
+
+
+## P3-A.2.1 result: safe structural improvement, wrong spatial priority
+
+The first portrait selective run replaced 43 of 108 structural slots and retained 65 original P2-B.1 contours. At exact tonal-prefix/total-count parity it improved edge F1 by **15.22%** while keeping tone/dark slightly better and white unchanged. The visual difference is still subtle because replacements cluster mostly in the upper hair/silhouette region. This implies the current residual+tensor utility rewards *strong/easy structure*, not necessarily *missing structure*.
+
+### P3-A.2.2 design consequence
+
+Compute a frozen baseline structural deficit map from source and P2-B.1 preview, e.g. `max(source_edge_strength - baseline_edge_strength, 0)`. Use that missing-edge residual alongside positive tonal residual and tensor alignment when scoring both baseline and candidate structural strokes. Keep the P3-A.2.1 replacement margin/cap and exact prefix/count invariants. The goal is generic underrepresented-structure recovery, not portrait semantics.

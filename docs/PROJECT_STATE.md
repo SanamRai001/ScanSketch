@@ -108,3 +108,25 @@ Draft PR #10 passed [GitHub Actions run 37334525616](https://github.com/SanamRai
 The first controlled portrait hybrid preserved the exact **12,563-stroke tonal prefix** and **12,671 total strokes**, but replaced **all 108 structural slots** (108 hybrid, 0 contour fallback) from 2,024 candidates. Tone RMSE improved ~0.41%, dark RMSE ~0.54%, white RMSE was identical, while midtone worsened ~1.91% and edge F1 ~0.10%; path length +0.10%. The uploaded previews are extremely similar and do not establish a clear visual win. [Exact result](P3A2_FIRST_PORTRAIT_RESULT.md).
 
 **Decision:** hybrid architecture is promising because it preserves tone, but the replacement policy is too permissive. Next P3-A.2.1 should selectively replace baseline contours only when hybrid utility clearly exceeds baseline structural utility, with a conservative replacement cap. P2-B.1 remains default.
+
+
+## P3-A.2.1 architecture freeze
+
+P3-A.2 preserved tone but replaced all 108 portrait structural slots and produced no clear visual win. P3-A.2.1 therefore scores **baseline contours and hybrid candidates with the same utility**, replaces only when hybrid utility exceeds the weakest baseline contour by `15% + 0.001`, and caps replacements at **40%** of structural budget. Replacement occurs in the exact baseline contour slots, preserving all retained ordering and the tonal prefix. See [P3A21_ARCHITECTURE.md](P3A21_ARCHITECTURE.md).
+
+
+## P3-A.2.1 implementation
+
+Selective hybrid replacement is now implemented as a separate opt-in mode. It scores baseline contour strokes and hybrid candidates with the same residual/structure/alignment utility, replaces only when the hybrid exceeds the weakest baseline by `15% + 0.001`, and caps replacement at **40%** of structural budget. Replacements occur in the exact baseline contour slots; tonal prefix and total stroke count remain frozen. See [P3A21_VERIFY.md](P3A21_VERIFY.md).
+
+
+### P3-A.2.1 CI result
+
+Draft PR #11 passed [GitHub Actions run 37340548611](https://github.com/SanamRai001/ScanSketch/actions/runs/37340548611): **56/56 Rust tests**, all inherited checks, and the selective hybrid step smoke. Step fixture: same 193 strokes, exact 173 tonal prefix, 20 structural slots, cap 8, **6 replacements / 14 retained**, 55 candidates. This confirms the policy is selective rather than full replacement. Real portrait quality gate remains open.
+
+
+## P3-A.2.1 first portrait result
+
+P3-A.2.1 is the first P3 variant to produce a substantial structural-proxy gain without damaging the tonal body: same 12,671 strokes and exact 12,563 tonal prefix; 43/108 structural slots selectively replaced (65 retained); edge F1 **0.288706→0.332647 (+15.22%)**; tone ~0.247% better, dark ~0.301% better, white unchanged, midtone ~0.740% worse, path +0.072%. The images remain very close and changes cluster mostly in upper hair/silhouette. [Exact result](P3A21_FIRST_PORTRAIT_RESULT.md).
+
+**Next research target:** P3-A.2.2 missing-structure residual. Score candidate value using source edge strength minus frozen baseline-preview edge strength so replacements target structure P2-B.1 actually misses, while retaining exact tone/count and conservative replacement controls.

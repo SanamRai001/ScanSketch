@@ -83,3 +83,23 @@ CI passed **53/53** tests. On the step fixture, P3-A.2 preserved all 173 tonal s
 ### P3-A.2 portrait outcome
 
 P3-A.2 preserved the exact 12,563 tonal prefix and 12,671 total strokes. It nevertheless replaced **all 108** baseline structural strokes (2,024 hybrid candidates, 0 fallback). Metrics changed only slightly: overall tone −0.41% RMSE (better), dark −0.54% (better), midtone +1.91% (worse), edge F1 −0.10% (worse), white unchanged; path +0.10%. The previews are nearly indistinguishable. **Result: promising hybrid architecture, inconclusive replacement policy.** [Exact result](P3A2_FIRST_PORTRAIT_RESULT.md). Next refine to selective contour-vs-hybrid replacement rather than increasing budget.
+
+
+### P3-A.2.1 architecture opened
+
+Selective hybrid replacement is now the next controlled hypothesis. Rather than replace all P2-B.1 contours, score both baseline structural strokes and hybrid candidates under one residual/structure utility; replace only weakest baseline slots when a hybrid clears a 15% + 0.001 margin, capped at 40% of the structural budget. No outcome claimed yet. [Architecture](P3A21_ARCHITECTURE.md).
+
+
+### P3-A.2.1 implementation opened
+
+The selective hybrid architecture is executable as a separate experiment: exact tonal prefix, exact total stroke count, same structural-tail length, direct baseline-vs-hybrid utility comparison, 15% + 0.001 replacement margin and 40% cap. CI and visual outcome pending. [Verification](P3A21_VERIFY.md).
+
+
+### P3-A.2.1 first engineering evidence
+
+CI passed **56/56** tests. On the step fixture, P3-A.2.1 preserved 173 tonal strokes and all 193 total strokes, replacing only **6 of 20** baseline structural slots under a cap of 8 and retaining 14 original contours. Rounded tone/dark/edge proxies improved slightly, with a small white-RMSE increase. No quality claim until portrait/nonportrait review. [Verification](P3A21_VERIFY.md).
+
+
+### P3-A.2.1 portrait outcome
+
+Selective replacement produced the first substantial P3 edge gain without tonal collapse: edge F1 **+15.22%**, overall tone ~0.247% better, dark ~0.301% better, white unchanged, at only +0.072% path length. Midtone worsened ~0.740%. It replaced 43/108 structural slots and retained 65. The visual delta is still subtle and concentrated mostly in upper hair/silhouette. **Promising, not promoted.** Next target missing baseline structure rather than strongest source structure. [Exact result](P3A21_FIRST_PORTRAIT_RESULT.md).

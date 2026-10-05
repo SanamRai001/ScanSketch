@@ -31,6 +31,20 @@ pub struct HybridStats {
     pub baseline_contour_fallback: usize,
 }
 
+#[derive(Clone, Debug, Default, Serialize)]
+pub struct SelectiveHybridStats {
+    pub tone_count: usize,
+    pub structural_budget: usize,
+    pub generated_hybrid_candidates: usize,
+    pub max_replacements: usize,
+    pub replacements_made: usize,
+    pub baseline_contours_retained: usize,
+    pub weakest_baseline_utility: f32,
+    pub strongest_hybrid_utility: f32,
+    pub last_replaced_baseline_utility: f32,
+    pub last_replacement_hybrid_utility: f32,
+}
+
 #[derive(Clone, Debug)]
 struct Candidate {
     stroke: Stroke,
@@ -418,6 +432,266 @@ pub fn generate_hybrid_sketch(
     generate_hybrid_sketch_with_stats(source, options).map(|(sketch, _)| sketch)
 }
 
+const SELECTIVE_MAX_PERCENT: usize = 40;
+const SELECTIVE_RELATIVE_MARGIN: f32 = 1.15;
+const SELECTIVE_ABSOLUTE_MARGIN: f32 = 0.001;
+
+fn stroke_utility(
+    stroke: &Stroke,
+    darkness: &[f32],
+    residual: &[f32],
+    width: usize,
+    height: usize,
+    field: &OrientationField,
+) -> f32 {
+    let dx = stroke.x1 - stroke.x0;
+    let dy = stroke.y1 - stroke.y0;
+    let length = dx.hypot(dy);
+    if length < 0.1 {
+        return 0.0;
+    }
+    let samples = (length / 0.75).ceil().max(2.0) as usize;
+    let mut residual_sum = 0.0_f32;
+    let mut target_sum = 0.0_f32;
+    for i in 0..=samples {
+        let t = i as f32 / samples as f32;
+        let sx = stroke.x0 + dx * t;
+        let sy = stroke.y0 + dy * t;
+        if sx < 0.0 || sy < 0.0 || sx >= width as f32 || sy >= height as f32 {
+            return 0.0;
+        }
+        let index = sy.floor() as usize * width + sx.floor() as usize;
+        residual_sum += residual[index];
+        target_sum += darkness[index];
+    }
+    let count = (samples + 1) as f32;
+    let mean_residual = residual_sum / count;
+    if mean_residual <= 0.0 {
+        return 0.0;
+    }
+    let mean_target = target_sum / count;
+
+    let mx = ((stroke.x0 + stroke.x1) * 0.5)
+        .floor()
+        .clamp(0.0, width.saturating_sub(1) as f32) as usize;
+    let my = ((stroke.y0 + stroke.y1) * 0.5)
+        .floor()
+        .clamp(0.0, height.saturating_sub(1) as f32) as usize;
+    let tx = dx / length;
+    let ty = dy / length;
+    let structural_alignment = choose_direction(field, mx, my)
+        .map(|direction| {
+            let alignment = (tx * direction.tx + ty * direction.ty).abs();
+            quality(direction) * alignment
+        })
+        .unwrap_or(0.0);
+
+    mean_residual
+        * (0.58 + 0.92 * structural_alignment)
+        * (0.70 + 0.30 * mean_target)
+}
+
+/// P3-A.2.1: keep the exact P2-B.1 structural tail by default and substitute
+/// only baseline contour slots that are clearly weaker than a source-supported
+/// hybrid candidate under the same residual/structure utility.
+///
+/// This is intentionally NOT global rendered optimization. The 15% + 0.001
+/// margin and 40% hard cap are fixed experiment controls recorded in docs.
+pub fn generate_selective_hybrid_sketch_with_stats(
+    source: &RgbaImage,
+    options: &SketchOptions,
+) -> Result<(Sketch, SelectiveHybridStats), String> {
+    let (width, height) = source.dimensions();
+    let mut tonal_options = options.clone();
+    tonal_options.enable_contours = false;
+    let tone = generate_sketch(source, &tonal_options)?;
+
+    if !options.enable_contours {
+        return Ok((
+            tone.clone(),
+            SelectiveHybridStats {
+                tone_count: tone.strokes.len(),
+                ..SelectiveHybridStats::default()
+            },
+        ));
+    }
+
+    let baseline = generate_sketch(source, options)?;
+    if baseline.strokes.len() < tone.strokes.len()
+        || baseline.strokes[..tone.strokes.len()] != tone.strokes[..]
+    {
+        return Err("P3-A.2.1 invariant failed: P2-B.1 tonal prefix changed".into());
+    }
+
+    let budget = baseline.strokes.len() - tone.strokes.len();
+    if budget == 0 {
+        return Ok((
+            tone.clone(),
+            SelectiveHybridStats {
+                tone_count: tone.strokes.len(),
+                ..SelectiveHybridStats::default()
+            },
+        ));
+    }
+
+    let source_darkness = darkness_map(source);
+    let tone_preview = pixmap_rgba(&tone)?;
+    let tone_darkness = darkness_map(&tone_preview);
+    let residual: Vec<f32> = source_darkness
+        .iter()
+        .zip(&tone_darkness)
+        .map(|(&target, &preview)| (target - preview).max(0.0))
+        .collect();
+    let field = OrientationField::new(
+        &source_darkness,
+        width as usize,
+        height as usize,
+    );
+
+    let candidates = hybrid_candidates(
+        &source_darkness,
+        &residual,
+        width as usize,
+        height as usize,
+        &field,
+        options,
+    );
+    let generated = candidates.len();
+
+    let max_replacements = ((budget * SELECTIVE_MAX_PERCENT) / 100)
+        .max(1)
+        .min(budget);
+    let preselection_limit = (max_replacements * 3).min(budget);
+    let spaced = select_spaced(
+        candidates,
+        preselection_limit,
+        width as usize,
+        height as usize,
+    );
+
+    let mut scored_hybrids: Vec<(Candidate, f32)> = spaced
+        .into_iter()
+        .map(|candidate| {
+            let utility = stroke_utility(
+                &candidate.stroke,
+                &source_darkness,
+                &residual,
+                width as usize,
+                height as usize,
+                &field,
+            );
+            (candidate, utility)
+        })
+        .filter(|(_, utility)| *utility > 0.0)
+        .collect();
+    scored_hybrids.sort_by(|(a, au), (b, bu)| {
+        bu.total_cmp(au)
+            .then_with(|| a.y.cmp(&b.y))
+            .then_with(|| a.x.cmp(&b.x))
+    });
+
+    let baseline_contours = &baseline.strokes[tone.strokes.len()..];
+    let mut baseline_scores: Vec<(usize, f32)> = baseline_contours
+        .iter()
+        .enumerate()
+        .map(|(index, stroke)| {
+            (
+                index,
+                stroke_utility(
+                    stroke,
+                    &source_darkness,
+                    &residual,
+                    width as usize,
+                    height as usize,
+                    &field,
+                ),
+            )
+        })
+        .collect();
+    baseline_scores.sort_by(|(ai, au), (bi, bu)| {
+        au.total_cmp(bu).then_with(|| ai.cmp(bi))
+    });
+
+    let weakest_baseline_utility =
+        baseline_scores.first().map(|(_, score)| *score).unwrap_or(0.0);
+    let strongest_hybrid_utility =
+        scored_hybrids.first().map(|(_, score)| *score).unwrap_or(0.0);
+
+    let mut structural = baseline_contours.to_vec();
+    let mut replacements = 0_usize;
+    let mut last_baseline = 0.0_f32;
+    let mut last_hybrid = 0.0_f32;
+
+    for (candidate, hybrid_utility) in scored_hybrids {
+        if replacements >= max_replacements {
+            break;
+        }
+        let Some(&(baseline_index, baseline_utility)) =
+            baseline_scores.get(replacements)
+        else {
+            break;
+        };
+
+        let required = baseline_utility * SELECTIVE_RELATIVE_MARGIN
+            + SELECTIVE_ABSOLUTE_MARGIN;
+        if hybrid_utility < required {
+            // Hybrids are descending and baseline candidates are ascending.
+            // If the strongest remaining hybrid cannot beat the weakest
+            // remaining contour, no later pair can qualify.
+            break;
+        }
+
+        structural[baseline_index] = candidate.stroke;
+        replacements += 1;
+        last_baseline = baseline_utility;
+        last_hybrid = hybrid_utility;
+    }
+
+    let mut strokes = tone.strokes.clone();
+    strokes.extend(structural);
+    if strokes.len() != baseline.strokes.len() {
+        return Err(
+            "P3-A.2.1 failed to preserve the frozen P2-B.1 total stroke count"
+                .into(),
+        );
+    }
+    if strokes.len() > options.max_strokes {
+        return Err(
+            "stroke budget exceeded during P3-A.2.1 selective hybrid pass"
+                .into(),
+        );
+    }
+
+    Ok((
+        Sketch {
+            width,
+            height,
+            seed: options.seed,
+            strokes,
+        },
+        SelectiveHybridStats {
+            tone_count: tone.strokes.len(),
+            structural_budget: budget,
+            generated_hybrid_candidates: generated,
+            max_replacements,
+            replacements_made: replacements,
+            baseline_contours_retained: budget - replacements,
+            weakest_baseline_utility,
+            strongest_hybrid_utility,
+            last_replaced_baseline_utility: last_baseline,
+            last_replacement_hybrid_utility: last_hybrid,
+        },
+    ))
+}
+
+pub fn generate_selective_hybrid_sketch(
+    source: &RgbaImage,
+    options: &SketchOptions,
+) -> Result<Sketch, String> {
+    generate_selective_hybrid_sketch_with_stats(source, options)
+        .map(|(sketch, _)| sketch)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -507,6 +781,62 @@ mod tests {
         assert_eq!(hybrid, baseline);
         assert_eq!(stats.structural_budget, 0);
         assert_eq!(stats.hybrid_selected, 0);
+    }
+
+    #[test]
+    fn selective_hybrid_preserves_prefix_total_and_replacement_cap() {
+        let source = step();
+        let options = SketchOptions::default();
+        let baseline = generate_sketch(&source, &options).unwrap();
+        let mut tonal_options = options.clone();
+        tonal_options.enable_contours = false;
+        let tone = generate_sketch(&source, &tonal_options).unwrap();
+        let (selective, stats) =
+            generate_selective_hybrid_sketch_with_stats(&source, &options).unwrap();
+
+        assert_eq!(selective.strokes.len(), baseline.strokes.len());
+        assert_eq!(
+            &selective.strokes[..tone.strokes.len()],
+            tone.strokes.as_slice()
+        );
+        assert_eq!(stats.tone_count, tone.strokes.len());
+        assert_eq!(
+            stats.replacements_made + stats.baseline_contours_retained,
+            stats.structural_budget
+        );
+        assert!(stats.replacements_made <= stats.max_replacements);
+        assert!(stats.max_replacements <= (stats.structural_budget * 40 / 100).max(1));
+        assert!(stats.generated_hybrid_candidates > 0);
+    }
+
+    #[test]
+    fn selective_hybrid_is_deterministic() {
+        let source = step();
+        let options = SketchOptions::default();
+        let a = generate_selective_hybrid_sketch_with_stats(&source, &options).unwrap();
+        let b = generate_selective_hybrid_sketch_with_stats(&source, &options).unwrap();
+        assert_eq!(a.0, b.0);
+        assert_eq!(a.1.replacements_made, b.1.replacements_made);
+        assert_eq!(
+            a.1.baseline_contours_retained,
+            b.1.baseline_contours_retained
+        );
+        assert_eq!(a.1.max_replacements, b.1.max_replacements);
+    }
+
+    #[test]
+    fn selective_no_contours_is_exact_p2a() {
+        let source = step();
+        let options = SketchOptions {
+            enable_contours: false,
+            ..SketchOptions::default()
+        };
+        let baseline = generate_sketch(&source, &options).unwrap();
+        let (selective, stats) =
+            generate_selective_hybrid_sketch_with_stats(&source, &options).unwrap();
+        assert_eq!(selective, baseline);
+        assert_eq!(stats.structural_budget, 0);
+        assert_eq!(stats.replacements_made, 0);
     }
 
     #[test]
