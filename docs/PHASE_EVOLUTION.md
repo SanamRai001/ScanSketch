@@ -103,3 +103,8 @@ CI passed **56/56** tests. On the step fixture, P3-A.2.1 preserved 173 tonal str
 ### P3-A.2.1 portrait outcome
 
 Selective replacement produced the first substantial P3 edge gain without tonal collapse: edge F1 **+15.22%**, overall tone ~0.247% better, dark ~0.301% better, white unchanged, at only +0.072% path length. Midtone worsened ~0.740%. It replaced 43/108 structural slots and retained 65. The visual delta is still subtle and concentrated mostly in upper hair/silhouette. **Promising, not promoted.** Next target missing baseline structure rather than strongest source structure. [Exact result](P3A21_FIRST_PORTRAIT_RESULT.md).
+
+
+### P3-A.2.2 architecture opened
+
+The next controlled hypothesis targets **missing baseline structure** rather than strongest source structure. It reuses the exact P3-A.2.1 candidate pool and replacement policy, changing only the utility map to source-edge minus P2-B.1-preview-edge residual. No outcome claimed yet. [Architecture](P3A22_ARCHITECTURE.md).

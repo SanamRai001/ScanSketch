@@ -103,3 +103,8 @@ P3-A.2.1 CI gate passed: 56 tests, exact tonal-prefix/total-count parity, 6/20 s
 ### P3-A.2.1 portrait gate
 
 The selective hybrid achieved edge F1 **0.2887→0.3326 (+15.2%)** at exact total count and tonal-prefix parity, with essentially unchanged path/tone budget. However, visual changes remain subtle and concentrated in hair/silhouette. Next P3-A.2.2 should use a **missing-edge residual** (source structure minus frozen baseline-preview structure) so the structural budget targets underrepresented details rather than already-strong edges. No semantic face rules. [Result](P3A21_FIRST_PORTRAIT_RESULT.md).
+
+
+### P3-A.2.2 missing-structure gate
+
+Keep the P3-A.2.1 candidate generator and selective replacement controls fixed. Change only structural utility to reward source edges underrepresented by the frozen baseline preview. This isolates whether spatial priority—not candidate geometry—is the remaining bottleneck. [P3-A.2.2 architecture](P3A22_ARCHITECTURE.md).
