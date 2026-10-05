@@ -59,6 +59,19 @@ pub struct MissingStructureStats {
     pub mean_missing_edge_at_replacements: f32,
 }
 
+#[derive(Clone, Debug, Default, Serialize)]
+pub struct DeficitProposalStats {
+    pub tone_count: usize,
+    pub structural_budget: usize,
+    pub generated_deficit_candidates: usize,
+    pub max_replacements: usize,
+    pub replacements_made: usize,
+    pub baseline_contours_retained: usize,
+    pub weakest_baseline_utility: f32,
+    pub strongest_candidate_utility: f32,
+    pub mean_missing_edge_at_replacements: f32,
+}
+
 #[derive(Clone, Debug)]
 struct Candidate {
     stroke: Stroke,
@@ -995,6 +1008,217 @@ pub fn generate_missing_structure_sketch(
         .map(|(sketch, _)| sketch)
 }
 
+/// P3-A.2.3: keep P3-A.2.2 scoring/replacement controls frozen but drive
+/// proposal anchors from the missing-edge deficit itself instead of tonal
+/// residual. This isolates candidate availability as the changed variable.
+pub fn generate_deficit_proposal_sketch_with_stats(
+    source: &RgbaImage,
+    options: &SketchOptions,
+) -> Result<(Sketch, DeficitProposalStats), String> {
+    let (width, height) = source.dimensions();
+    let mut tonal_options = options.clone();
+    tonal_options.enable_contours = false;
+    let tone = generate_sketch(source, &tonal_options)?;
+
+    if !options.enable_contours {
+        return Ok((
+            tone.clone(),
+            DeficitProposalStats {
+                tone_count: tone.strokes.len(),
+                ..DeficitProposalStats::default()
+            },
+        ));
+    }
+
+    let baseline = generate_sketch(source, options)?;
+    if baseline.strokes.len() < tone.strokes.len()
+        || baseline.strokes[..tone.strokes.len()] != tone.strokes[..]
+    {
+        return Err(
+            "P3-A.2.3 invariant failed: P2-B.1 tonal prefix changed".into(),
+        );
+    }
+
+    let budget = baseline.strokes.len() - tone.strokes.len();
+    if budget == 0 {
+        return Ok((
+            tone.clone(),
+            DeficitProposalStats {
+                tone_count: tone.strokes.len(),
+                ..DeficitProposalStats::default()
+            },
+        ));
+    }
+
+    let source_darkness = darkness_map(source);
+
+    let tone_preview = pixmap_rgba(&tone)?;
+    let tone_darkness = darkness_map(&tone_preview);
+    let tone_residual: Vec<f32> = source_darkness
+        .iter()
+        .zip(&tone_darkness)
+        .map(|(&target, &preview)| (target - preview).max(0.0))
+        .collect();
+
+    let baseline_preview = pixmap_rgba(&baseline)?;
+    let baseline_darkness = darkness_map(&baseline_preview);
+    let missing_edge = missing_edge_residual(
+        &source_darkness,
+        &baseline_darkness,
+        width as usize,
+        height as usize,
+    );
+
+    let field = OrientationField::new(
+        &source_darkness,
+        width as usize,
+        height as usize,
+    );
+
+    // This is the single experimental change from P3-A.2.2: the exact same
+    // proposal machinery receives missing-edge deficit as its anchor signal.
+    let candidates = hybrid_candidates(
+        &source_darkness,
+        &missing_edge,
+        width as usize,
+        height as usize,
+        &field,
+        options,
+    );
+    let generated = candidates.len();
+
+    let max_replacements = ((budget * SELECTIVE_MAX_PERCENT) / 100)
+        .max(1)
+        .min(budget);
+    let preselection_limit = (max_replacements * 3).min(budget);
+    let spaced = select_spaced(
+        candidates,
+        preselection_limit,
+        width as usize,
+        height as usize,
+    );
+
+    let mut scored_candidates: Vec<(Candidate, f32, f32)> = spaced
+        .into_iter()
+        .map(|candidate| {
+            let (utility, missing) = stroke_missing_structure_utility(
+                &candidate.stroke,
+                &source_darkness,
+                &tone_residual,
+                &missing_edge,
+                width as usize,
+                height as usize,
+                &field,
+            );
+            (candidate, utility, missing)
+        })
+        .filter(|(_, utility, _)| *utility > 0.0)
+        .collect();
+    scored_candidates.sort_by(|(a, au, _), (b, bu, _)| {
+        bu.total_cmp(au)
+            .then_with(|| a.y.cmp(&b.y))
+            .then_with(|| a.x.cmp(&b.x))
+    });
+
+    let baseline_contours = &baseline.strokes[tone.strokes.len()..];
+    let mut baseline_scores: Vec<(usize, f32)> = baseline_contours
+        .iter()
+        .enumerate()
+        .map(|(index, stroke)| {
+            let (utility, _) = stroke_missing_structure_utility(
+                stroke,
+                &source_darkness,
+                &tone_residual,
+                &missing_edge,
+                width as usize,
+                height as usize,
+                &field,
+            );
+            (index, utility)
+        })
+        .collect();
+    baseline_scores.sort_by(|(ai, au), (bi, bu)| {
+        au.total_cmp(bu).then_with(|| ai.cmp(bi))
+    });
+
+    let weakest_baseline_utility =
+        baseline_scores.first().map(|(_, score)| *score).unwrap_or(0.0);
+    let strongest_candidate_utility =
+        scored_candidates.first().map(|(_, score, _)| *score).unwrap_or(0.0);
+
+    let mut structural = baseline_contours.to_vec();
+    let mut replacements = 0_usize;
+    let mut replacement_missing_sum = 0.0_f32;
+
+    for (candidate, candidate_utility, candidate_missing) in scored_candidates {
+        if replacements >= max_replacements {
+            break;
+        }
+        let Some(&(baseline_index, baseline_utility)) =
+            baseline_scores.get(replacements)
+        else {
+            break;
+        };
+
+        let required = baseline_utility * SELECTIVE_RELATIVE_MARGIN
+            + SELECTIVE_ABSOLUTE_MARGIN;
+        if candidate_utility < required {
+            break;
+        }
+
+        structural[baseline_index] = candidate.stroke;
+        replacements += 1;
+        replacement_missing_sum += candidate_missing;
+    }
+
+    let mut strokes = tone.strokes.clone();
+    strokes.extend(structural);
+    if strokes.len() != baseline.strokes.len() {
+        return Err(
+            "P3-A.2.3 failed to preserve the frozen P2-B.1 total stroke count"
+                .into(),
+        );
+    }
+    if strokes.len() > options.max_strokes {
+        return Err(
+            "stroke budget exceeded during P3-A.2.3 deficit-proposal pass"
+                .into(),
+        );
+    }
+
+    Ok((
+        Sketch {
+            width,
+            height,
+            seed: options.seed,
+            strokes,
+        },
+        DeficitProposalStats {
+            tone_count: tone.strokes.len(),
+            structural_budget: budget,
+            generated_deficit_candidates: generated,
+            max_replacements,
+            replacements_made: replacements,
+            baseline_contours_retained: budget - replacements,
+            weakest_baseline_utility,
+            strongest_candidate_utility,
+            mean_missing_edge_at_replacements: if replacements > 0 {
+                replacement_missing_sum / replacements as f32
+            } else {
+                0.0
+            },
+        },
+    ))
+}
+
+pub fn generate_deficit_proposal_sketch(
+    source: &RgbaImage,
+    options: &SketchOptions,
+) -> Result<Sketch, String> {
+    generate_deficit_proposal_sketch_with_stats(source, options)
+        .map(|(sketch, _)| sketch)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -1187,6 +1411,65 @@ mod tests {
         let (selective, stats) =
             generate_selective_hybrid_sketch_with_stats(&source, &options).unwrap();
         assert_eq!(selective, baseline);
+        assert_eq!(stats.structural_budget, 0);
+        assert_eq!(stats.replacements_made, 0);
+    }
+
+    #[test]
+    fn deficit_proposals_preserve_prefix_total_and_cap() {
+        let source = step();
+        let options = SketchOptions::default();
+        let baseline = generate_sketch(&source, &options).unwrap();
+        let mut tonal_options = options.clone();
+        tonal_options.enable_contours = false;
+        let tone = generate_sketch(&source, &tonal_options).unwrap();
+        let (deficit, stats) =
+            generate_deficit_proposal_sketch_with_stats(&source, &options).unwrap();
+
+        assert_eq!(deficit.strokes.len(), baseline.strokes.len());
+        assert_eq!(
+            &deficit.strokes[..tone.strokes.len()],
+            tone.strokes.as_slice()
+        );
+        assert_eq!(
+            stats.replacements_made + stats.baseline_contours_retained,
+            stats.structural_budget
+        );
+        assert!(stats.replacements_made <= stats.max_replacements);
+        assert!(stats.generated_deficit_candidates > 0);
+    }
+
+    #[test]
+    fn deficit_proposals_are_deterministic() {
+        let source = step();
+        let options = SketchOptions::default();
+        let a =
+            generate_deficit_proposal_sketch_with_stats(&source, &options).unwrap();
+        let b =
+            generate_deficit_proposal_sketch_with_stats(&source, &options).unwrap();
+        assert_eq!(a.0, b.0);
+        assert_eq!(a.1.replacements_made, b.1.replacements_made);
+        assert_eq!(
+            a.1.generated_deficit_candidates,
+            b.1.generated_deficit_candidates
+        );
+        assert_eq!(
+            a.1.mean_missing_edge_at_replacements,
+            b.1.mean_missing_edge_at_replacements
+        );
+    }
+
+    #[test]
+    fn deficit_no_contours_is_exact_p2a() {
+        let source = step();
+        let options = SketchOptions {
+            enable_contours: false,
+            ..SketchOptions::default()
+        };
+        let baseline = generate_sketch(&source, &options).unwrap();
+        let (deficit, stats) =
+            generate_deficit_proposal_sketch_with_stats(&source, &options).unwrap();
+        assert_eq!(deficit, baseline);
         assert_eq!(stats.structural_budget, 0);
         assert_eq!(stats.replacements_made, 0);
     }

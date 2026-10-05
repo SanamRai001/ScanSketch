@@ -152,3 +152,25 @@ Draft PR #12 passed [GitHub Actions run 37345281232](https://github.com/SanamRai
 P3-A.2.2 is a clean negative result. At exact total-count/tone-prefix controls, overall tone improved only ~0.042% and dark ~0.055%, midtone worsened ~0.195%, white stayed identical, path changed only +0.009%, while edge F1 **fell ~0.99% (0.288706→0.285843)**. The uploaded pair does not materially recover weak interior structure. [Exact result](P3A22_FIRST_PORTRAIT_RESULT.md).
 
 **Interpretation:** re-ranking the existing P3-A.2.1 candidate pool is insufficient. The pool is still created from positive tonal residual/dark anchors, so underrepresented edges in lighter/midtone regions may never become candidates. Next: P3-A.2.3 deficit-driven candidate proposals from missing-edge local maxima, retaining the same 40% cap, replacement margin, exact tonal prefix and total stroke count.
+
+
+## P3-A.2.3 architecture freeze
+
+After P3-A.2.2 showed that missing-edge **scoring** cannot recover structures absent from the proposal pool, P3-A.2.3 changes one variable: the existing short-stroke proposal machinery is driven by **missing-edge residual instead of positive tonal residual**. Exact tonal prefix, total count, 40% cap, 15%+0.001 margin, tensor direction, support checks, spatial fairness and P3-A.2.2 utility remain frozen. See [P3A23_ARCHITECTURE.md](P3A23_ARCHITECTURE.md).
+
+
+### P3-A.2.3 implementation
+
+The deficit-driven proposal experiment is now implemented as a separate opt-in mode. It reuses the existing P3-A.2 short-stroke proposal machinery but feeds **missing-edge residual** into candidate anchor/local-search selection. P3-A.2.2 scoring, 40% cap, 15%+0.001 margin, exact tonal prefix, exact total count, tensor direction, support checks and in-place replacement remain unchanged. CI/portrait outcome pending. See [P3A23_VERIFY.md](P3A23_VERIFY.md).
+
+
+### P3-A.2.3 first CI evidence
+
+Draft PR #13 passed [GitHub Actions run 37348529191](https://github.com/SanamRai001/ScanSketch/actions/runs/37348529191): **62/62 Rust tests**, all inherited checks, and the deficit-driven proposal smoke. Step fixture: same 193 total strokes, exact 173 tonal prefix, budget 20, cap 8, **6 replacements / 14 retained**. The proposal pool shrank from P3-A.2.2's 55 candidates to **26 deficit-driven candidates**, while mean missing-edge evidence at accepted replacements rose slightly **0.126235→0.127317**. Portrait quality/localization is the next gate.
+
+
+## P3-A.2.3 first portrait result
+
+The controlled portrait A/B shows a **promising but provisional** result: same 12,671 strokes, white RMSE unchanged, path +0.0601%, edge F1 **+8.918%**, dark RMSE ~0.0109% better, while tone ~0.0380% and midtone ~0.9357% worsen. Visual difference remains subtle and stable. P3-A.2.1 still has the higher global portrait edge-F1 result, so P3-A.2.3 is not called the numeric winner; its significance is evidence that changing proposal origin can recover structural signal without tonal collapse. [Exact result](P3A23_FIRST_PORTRAIT_RESULT.md).
+
+**Next:** freeze P3-A.2.3 and run P3-G1 multi-image genuine nonportrait validation. No additional renderer tuning until that evidence exists.

@@ -123,3 +123,23 @@ CI passed **59/59** tests. On the step fixture, missing-structure scoring preser
 ### P3-A.2.2 portrait outcome
 
 The scoring-only missing-edge experiment **did not improve the portrait**. Edge F1 fell ~0.99% (0.288706→0.285843); midtone worsened ~0.195%; tone/dark improved only ~0.042%/~0.055%; white stayed identical and path changed +0.009%. The visual pair remains nearly unchanged and weak interior structure is not recovered. **Reject scoring-only refinement.** This isolates the candidate pool as the next bottleneck: P3-A.2.3 should propose candidates directly from missing-structure peaks while freezing selective-replacement controls. [Exact result](P3A22_FIRST_PORTRAIT_RESULT.md).
+
+
+### P3-A.2.3 architecture opened
+
+The next controlled hypothesis changes proposal coverage rather than scoring. Candidate anchors are driven by missing-edge residual while P3-A.2.2 scoring/replacement controls remain frozen. This tests whether missing structure failed because useful strokes never entered the candidate pool. No result claimed yet. [Architecture](P3A23_ARCHITECTURE.md).
+
+
+### P3-A.2.3 implementation opened
+
+Deficit-driven proposal coverage is now executable as a separate experiment. Only the candidate signal changes from tonal residual to missing-edge residual; P3-A.2.2 scoring/replacement controls remain frozen. No quality result claimed until CI and portrait localization. [Verification](P3A23_VERIFY.md).
+
+
+### P3-A.2.3 first engineering evidence
+
+CI passed **62/62** tests. On the step fixture, candidate origin changed from tonal residual to missing-edge residual while all replacement controls remained fixed. Candidate count fell **55→26**, replacements stayed 6/20 under the same cap of 8, and mean missing-edge evidence at accepted replacements rose **0.126235→0.127317**. This is the intended proposal-coverage behavior; no quality win is claimed until portrait/nonportrait review. [Verification](P3A23_VERIFY.md).
+
+
+### P3-A.2.3 portrait outcome
+
+At the same 12,671 strokes, P3-A.2.3 improved edge F1 **8.918%** (0.288706→0.314451), kept white RMSE identical, changed path only +0.0601%, and kept tone/dark nearly flat; midtone worsened ~0.936%. The previews remain visually close. This is **promising proposal-origin evidence**, but P3-A.2.1 still has the higher absolute portrait edge F1. Decision: freeze P3-A.2.3 and test genuine nonportrait generalization before more tuning. [Result](P3A23_FIRST_PORTRAIT_RESULT.md).

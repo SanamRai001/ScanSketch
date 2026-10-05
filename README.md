@@ -66,7 +66,10 @@ The proposed erasure/correction idea is recorded under [Future Experiments](docs
 | [P3-A.2.1 architecture](docs/P3A21_ARCHITECTURE.md) | Selective baseline-contour vs hybrid utility replacement rule |
 | [P3-A.2.1 verification](docs/P3A21_VERIFY.md) | Exact-prefix selective replacement A/B and first promising result |
 | [P3-A.2.2 architecture](docs/P3A22_ARCHITECTURE.md) | Missing-baseline-edge residual while freezing the P3-A.2.1 candidate pool |
-| [P3-A.2.2 verification](docs/P3A22_VERIFY.md) | Paired missing-structure A/B, exact-budget gates and spatial review |
+| [P3-A.2.2 verification](docs/P3A22_VERIFY.md) | Rejected scoring-only missing-structure A/B evidence |
+| [P3-A.2.3 architecture](docs/P3A23_ARCHITECTURE.md) | Deficit-driven proposal coverage with frozen selective controls |
+| [P3-A.2.3 verification](docs/P3A23_VERIFY.md) | Exact-budget deficit-proposal A/B and first promising portrait result |
+| [P3-A.2.3 portrait result](docs/P3A23_FIRST_PORTRAIT_RESULT.md) | Same-count portrait metrics, visual interpretation and decision to generalize |
 | [Future experiments](docs/FUTURE_EXPERIMENTS.md) | Ideas parked until core output is convincing |
 | [Project state](docs/PROJECT_STATE.md) | Single authoritative progress, risks and next phase |
 | [P1 verification](docs/P1_VERIFY.md) | Historical baseline validation |
