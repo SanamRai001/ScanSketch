@@ -179,3 +179,8 @@ The controlled portrait A/B shows a **promising but provisional** result: same 1
 ## P3-G1 generalization gate opened
 
 P3-A.2.3 is frozen after a promising portrait result. New branch `test/p3g1-nonportrait-generalization` adds **validation infrastructure only**, not renderer changes: a 3–5 image local batch harness that runs frozen P2-B.1 vs P3-A.2.3, verifies prefix/count/slot invariants, aggregates metrics, writes CSV/JSON, and produces a local side-by-side `review.html`. See [P3-G1 protocol](P3G1_PROTOCOL.md) and [runbook](P3G1_RUN.md).
+
+
+### P3-G1 harness CI result
+
+Draft PR #14 validation tooling passed [GitHub Actions run 37354095490](https://github.com/SanamRai001/ScanSketch/actions/runs/37354095490), including the 3-case batch smoke and aggregate JSON/CSV/HTML outputs. The smoke intentionally showed mixed/no-op behavior (step 6 replacements; thin-lines 0; gradient no structural budget), confirming the harness does not force a difference. **Real 3–5 photo nonportrait evidence is still pending.**

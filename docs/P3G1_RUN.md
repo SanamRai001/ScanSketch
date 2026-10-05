@@ -89,3 +89,8 @@ Positive improvement percentages mean:
 `path_change_pct` is just resource change, not a quality score.
 
 Do not average your visual judgment. Review each source class individually, then make a phase decision.
+
+
+## Harness status
+
+The batch script itself is CI-verified on Windows-style PowerShell semantics in GitHub Actions: aggregate JSON, CSV and HTML were all produced successfully, and all frozen per-case invariants passed. Synthetic CI outputs are not substitutes for the required real nonportrait photographs.

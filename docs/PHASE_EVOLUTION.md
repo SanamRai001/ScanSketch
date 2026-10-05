@@ -148,3 +148,8 @@ At the same 12,671 strokes, P3-A.2.3 improved edge F1 **8.918%** (0.288706→0.3
 ### P3-G1 — nonportrait generalization validation
 
 After the promising P3-A.2.3 portrait result, renderer tuning is paused. P3-G1 adds a local-only 3–5 image validation harness: frozen P2-B.1 vs P3-A.2.3 for multiple permission-cleared nonportrait photos, exact invariant checks, aggregate JSON/CSV and local HTML A/B review. This phase tests generality; it does **not** change sketch generation. [Protocol](P3G1_PROTOCOL.md).
+
+
+### P3-G1 validation infrastructure verified
+
+The multi-photo harness passed CI end-to-end: three local-style cases, per-case frozen invariant checks, aggregate JSON/CSV and side-by-side HTML review. Synthetic smoke results were mixed rather than universally positive, which is desirable for an evidence tool. Real nonportrait photographic evidence remains the actual gate. [Run 37354095490](https://github.com/SanamRai001/ScanSketch/actions/runs/37354095490).

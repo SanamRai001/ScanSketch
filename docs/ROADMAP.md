@@ -140,3 +140,6 @@ The portrait gate is promising but not sufficient for promotion: edge F1 +8.918%
 ## P3-G1 — nonportrait generalization [validation infrastructure]
 
 Freeze P3-A.2.3 and run 3–5 genuine nonportrait photographs spanning distinct source classes. Use same-source P2-B.1/P3-A.2.3 pairs, exact invariant checks, p2c-v1 metrics and manual same-zoom review. No renderer tuning during collection. Exit only after per-class evidence is recorded. [Protocol](P3G1_PROTOCOL.md) · [Runbook](P3G1_RUN.md).
+
+
+P3-G1 validation tooling is CI-green. The next action is now data collection only: 3–5 permission-cleared genuine nonportrait photos, no renderer changes during the pack.

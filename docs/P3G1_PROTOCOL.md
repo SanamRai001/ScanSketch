@@ -94,3 +94,14 @@ If results are consistently neutral/negative, return to the prior evidence—esp
 ## Privacy
 
 Source photographs, generated previews and local HTML remain local unless the user explicitly chooses to publish them. Repository documentation records metrics/decisions, not private images.
+
+
+## Harness CI verification
+
+The validation infrastructure passed GitHub Actions [run 37354095490](https://github.com/SanamRai001/ScanSketch/actions/runs/37354095490). The smoke used three rights-clear **synthetic fixtures only to validate the harness**, not as nonportrait photographic evidence:
+
+- step: 193 strokes, 6/20 structural replacements, edge-F1 improvement ~2.54%;
+- thin-lines: 178 strokes, **0 replacements** from a 38-stroke structural budget;
+- gradient: 290 strokes, **0 structural budget / 0 replacements**.
+
+Aggregate smoke: edge wins 1/3, tone wins 1/3, midtone wins 0/3, dark wins 1/3, white non-worse 2/3. These values are not a quality benchmark. Their importance is that the harness correctly preserves neutral/no-op cases rather than forcing differences.
