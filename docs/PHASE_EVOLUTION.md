@@ -103,3 +103,23 @@ CI passed **56/56** tests. On the step fixture, P3-A.2.1 preserved 173 tonal str
 ### P3-A.2.1 portrait outcome
 
 Selective replacement produced the first substantial P3 edge gain without tonal collapse: edge F1 **+15.22%**, overall tone ~0.247% better, dark ~0.301% better, white unchanged, at only +0.072% path length. Midtone worsened ~0.740%. It replaced 43/108 structural slots and retained 65. The visual delta is still subtle and concentrated mostly in upper hair/silhouette. **Promising, not promoted.** Next target missing baseline structure rather than strongest source structure. [Exact result](P3A21_FIRST_PORTRAIT_RESULT.md).
+
+
+### P3-A.2.2 architecture opened
+
+The next controlled hypothesis targets **missing baseline structure** rather than strongest source structure. It reuses the exact P3-A.2.1 candidate pool and replacement policy, changing only the utility map to source-edge minus P2-B.1-preview-edge residual. No outcome claimed yet. [Architecture](P3A22_ARCHITECTURE.md).
+
+
+### P3-A.2.2 implementation opened
+
+The missing-structure experiment is executable as a separate mode. It reuses the exact P3-A.2.1 candidate pool and replacement controls; only baseline/candidate utility changes to emphasize source edges absent from frozen P2-B.1. No quality result claimed until CI and portrait localization. [Verification](P3A22_VERIFY.md).
+
+
+### P3-A.2.2 first engineering evidence
+
+CI passed **59/59** tests. On the step fixture, missing-structure scoring preserved 173 tonal strokes and all 193 total strokes, replacing **6 of 20** structural slots under the unchanged cap of 8 and retaining 14 baseline contours. The accepted replacements carried mean missing-edge evidence **0.126235**. Rounded tone/dark/edge proxies improved slightly with the same small white-RMSE caution. No phase win is claimed until portrait/nonportrait review. [Verification](P3A22_VERIFY.md).
+
+
+### P3-A.2.2 portrait outcome
+
+The scoring-only missing-edge experiment **did not improve the portrait**. Edge F1 fell ~0.99% (0.288706→0.285843); midtone worsened ~0.195%; tone/dark improved only ~0.042%/~0.055%; white stayed identical and path changed +0.009%. The visual pair remains nearly unchanged and weak interior structure is not recovered. **Reject scoring-only refinement.** This isolates the candidate pool as the next bottleneck: P3-A.2.3 should propose candidates directly from missing-structure peaks while freezing selective-replacement controls. [Exact result](P3A22_FIRST_PORTRAIT_RESULT.md).

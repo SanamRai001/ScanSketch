@@ -1,6 +1,6 @@
 use clap::Parser;
 use image::{imageops::FilterType, ImageFormat, ImageReader, Limits};
-use scansketch_core::{generate_directional_sketch, generate_hybrid_sketch_with_stats, generate_placement_sketch_with_stats, generate_selective_hybrid_sketch_with_stats, generate_sketch, render_sketch, SketchOptions};
+use scansketch_core::{generate_directional_sketch, generate_hybrid_sketch_with_stats, generate_missing_structure_sketch_with_stats, generate_placement_sketch_with_stats, generate_selective_hybrid_sketch_with_stats, generate_sketch, render_sketch, SketchOptions};
 use std::{error::Error, fs, io, path::PathBuf};
 
 /// Native tonal + optionally coherence-ranked contour sketch (P2-B.1).
@@ -56,6 +56,10 @@ struct Args {
     /// are clearly weaker than residual-aware hybrid alternatives.
     #[arg(long, default_value_t = false)]
     hybrid_selective: bool,
+    /// Experimental P3-A.2.2: use missing source-vs-baseline edge residual
+    /// to prioritize selective structural replacements.
+    #[arg(long, default_value_t = false)]
+    hybrid_missing_structure: bool,
 }
 
 fn run() -> Result<(), Box<dyn Error>> {
@@ -67,9 +71,10 @@ fn run() -> Result<(), Box<dyn Error>> {
         args.directional as u8
         + args.placement_aware as u8
         + args.hybrid_structural as u8
-        + args.hybrid_selective as u8;
+        + args.hybrid_selective as u8
+        + args.hybrid_missing_structure as u8;
     if experiment_count > 1 {
-        return Err("--directional, --placement-aware, --hybrid-structural and --hybrid-selective are separate experiments; choose only one".into());
+        return Err("--directional, --placement-aware, --hybrid-structural, --hybrid-selective and --hybrid-missing-structure are separate experiments; choose only one".into());
     }
     if !args.output.extension().and_then(|ext| ext.to_str()).is_some_and(|ext| ext.eq_ignore_ascii_case("png")) {
         return Err("--output must point to a .png file".into());
@@ -118,22 +123,27 @@ fn run() -> Result<(), Box<dyn Error>> {
         contour_threshold: args.contour_threshold,
     };
     let working_rgba = working.to_rgba8();
-    let (sketch, placement_stats, hybrid_stats, selective_stats) =
-        if args.hybrid_selective {
+    let (sketch, placement_stats, hybrid_stats, selective_stats, missing_stats) =
+        if args.hybrid_missing_structure {
+            let (sketch, stats) =
+                generate_missing_structure_sketch_with_stats(&working_rgba, &options)
+                    .map_err(io::Error::other)?;
+            (sketch, None, None, None, Some(stats))
+        } else if args.hybrid_selective {
             let (sketch, stats) =
                 generate_selective_hybrid_sketch_with_stats(&working_rgba, &options)
                     .map_err(io::Error::other)?;
-            (sketch, None, None, Some(stats))
+            (sketch, None, None, Some(stats), None)
         } else if args.hybrid_structural {
             let (sketch, stats) =
                 generate_hybrid_sketch_with_stats(&working_rgba, &options)
                     .map_err(io::Error::other)?;
-            (sketch, None, Some(stats), None)
+            (sketch, None, Some(stats), None, None)
         } else if args.placement_aware {
         let (sketch, stats) =
             generate_placement_sketch_with_stats(&working_rgba, &options)
                 .map_err(io::Error::other)?;
-        (sketch, Some(stats), None, None)
+        (sketch, Some(stats), None, None, None)
     } else if args.directional {
         (
             generate_directional_sketch(&working_rgba, &options)
@@ -141,10 +151,12 @@ fn run() -> Result<(), Box<dyn Error>> {
             None,
             None,
             None,
+            None,
         )
     } else {
         (
             generate_sketch(&working_rgba, &options).map_err(io::Error::other)?,
+            None,
             None,
             None,
             None,
@@ -157,7 +169,9 @@ fn run() -> Result<(), Box<dyn Error>> {
     }
     println!(
         "ScanSketch {}: {}x{} | {} strokes | seed {} | saved {}",
-        if args.hybrid_selective {
+        if args.hybrid_missing_structure {
+            "P3-A.2.2 missing-structure hybrid prototype"
+        } else if args.hybrid_selective {
             "P3-A.2.1 selective hybrid prototype"
         } else if args.hybrid_structural {
             "P3-A.2 hybrid structural prototype"
@@ -202,6 +216,20 @@ fn run() -> Result<(), Box<dyn Error>> {
             stats.generated_hybrid_candidates,
             stats.weakest_baseline_utility,
             stats.strongest_hybrid_utility,
+        );
+    }
+    if let Some(stats) = missing_stats {
+        println!(
+            "P3-A.2.2 missing: tone={} | structural-budget={} | max-replacements={} | replacements={} | baseline-retained={} | candidates={} | weakest-baseline={:.6} | strongest-hybrid={:.6} | mean-missing={:.6}",
+            stats.tone_count,
+            stats.structural_budget,
+            stats.max_replacements,
+            stats.replacements_made,
+            stats.baseline_contours_retained,
+            stats.generated_hybrid_candidates,
+            stats.weakest_baseline_utility,
+            stats.strongest_hybrid_utility,
+            stats.mean_missing_edge_at_replacements,
         );
     }
     Ok(())

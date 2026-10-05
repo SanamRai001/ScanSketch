@@ -103,3 +103,19 @@ P3-A.2.1 CI gate passed: 56 tests, exact tonal-prefix/total-count parity, 6/20 s
 ### P3-A.2.1 portrait gate
 
 The selective hybrid achieved edge F1 **0.2887→0.3326 (+15.2%)** at exact total count and tonal-prefix parity, with essentially unchanged path/tone budget. However, visual changes remain subtle and concentrated in hair/silhouette. Next P3-A.2.2 should use a **missing-edge residual** (source structure minus frozen baseline-preview structure) so the structural budget targets underrepresented details rather than already-strong edges. No semantic face rules. [Result](P3A21_FIRST_PORTRAIT_RESULT.md).
+
+
+### P3-A.2.2 missing-structure gate
+
+Keep the P3-A.2.1 candidate generator and selective replacement controls fixed. Change only structural utility to reward source edges underrepresented by the frozen baseline preview. This isolates whether spatial priority—not candidate geometry—is the remaining bottleneck. [P3-A.2.2 architecture](P3A22_ARCHITECTURE.md).
+
+
+P3-A.2.2 implementation is now available as a controlled opt-in mode. Engineering acceptance requires exact count/prefix parity and changed-slot accounting; quality acceptance additionally requires changed structure to move toward underrepresented regions, not merely improve aggregate edge F1. [Verification](P3A22_VERIFY.md).
+
+
+P3-A.2.2 CI gate passed: 59 tests, exact tonal-prefix/total-count parity, 6/20 replacements under the unchanged 8-stroke cap, and nonzero missing-edge evidence at accepted replacements. The portrait test now determines whether replacements actually move toward underrepresented structure rather than strong hair/silhouette edges.
+
+
+### P3-A.2.2 portrait decision
+
+Missing-edge **scoring alone** failed: edge F1 regressed ~0.99% and the weak interior structure remained underrepresented, despite exact budget/prefix controls. This indicates the current tone-residual-driven candidate pool is constraining what the selector can recover. Next P3-A.2.3 changes candidate anchor generation to missing-edge local maxima while keeping the P3-A.2.1/P3-A.2.2 replacement cap, margin, budget and source-support rules frozen.

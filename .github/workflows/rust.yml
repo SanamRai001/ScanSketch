@@ -9,6 +9,7 @@ on:
       - feat/p2c-measurement-utility
       - feat/p3a1-placement-aware-proposals
       - feat/p3a21-selective-hybrid-replacement
+      - feat/p3a22-missing-structure-residual
 
 jobs:
   cargo:
@@ -119,3 +120,18 @@ jobs:
           if ($s.selective_stats.replacements -gt $s.selective_stats.max_replacements) { throw "P3-A.2.1 exceeded replacement cap" }
           if ($s.changed_structural_slots -ne $s.selective_stats.replacements) { throw "P3-A.2.1 changed-slot accounting mismatch" }
           Write-Host ("P3-A.2.1 step smoke: total={0}; budget={1}; cap={2}; replacements={3}; retained={4}" -f $base.strokes,$s.selective_stats.structural_budget,$s.selective_stats.max_replacements,$s.selective_stats.replacements,$s.selective_stats.baseline_retained)
+
+      - name: Smoke-test P3-A.2.2 missing-structure residual
+        shell: pwsh
+        run: |
+          ./scripts/run-p3a22-ab.ps1 -InputImage experiments/local/ci/step.png -OutputDir experiments/local/ci/p3a22-step -MaxSize 64 -Seed 42 -RightsConfirmed
+          if ($LASTEXITCODE -ne 0) { throw "P3-A.2.2 paired smoke failed" }
+          $s = Get-Content experiments/local/ci/p3a22-step/summary.json -Raw | ConvertFrom-Json
+          $base = $s.fixtures | Where-Object { $_.mode -eq 'p2b1' }
+          $new = $s.fixtures | Where-Object { $_.mode -eq 'p3a22' }
+          if ($base.strokes -ne $new.strokes) { throw "P3-A.2.2 changed total stroke count" }
+          if ($s.tonal_prefix_identical_strokes -ne $s.missing_structure_stats.tone_count) { throw "P3-A.2.2 tonal prefix mismatch" }
+          if ($s.missing_structure_stats.replacements + $s.missing_structure_stats.baseline_retained -ne $s.missing_structure_stats.structural_budget) { throw "P3-A.2.2 budget accounting mismatch" }
+          if ($s.missing_structure_stats.replacements -gt $s.missing_structure_stats.max_replacements) { throw "P3-A.2.2 exceeded replacement cap" }
+          if ($s.changed_structural_slots -ne $s.missing_structure_stats.replacements) { throw "P3-A.2.2 changed-slot accounting mismatch" }
+          Write-Host ("P3-A.2.2 step smoke: total={0}; budget={1}; cap={2}; replacements={3}; retained={4}; mean-missing={5}" -f $base.strokes,$s.missing_structure_stats.structural_budget,$s.missing_structure_stats.max_replacements,$s.missing_structure_stats.replacements,$s.missing_structure_stats.baseline_retained,$s.missing_structure_stats.mean_missing)

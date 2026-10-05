@@ -130,3 +130,25 @@ Draft PR #11 passed [GitHub Actions run 37340548611](https://github.com/SanamRai
 P3-A.2.1 is the first P3 variant to produce a substantial structural-proxy gain without damaging the tonal body: same 12,671 strokes and exact 12,563 tonal prefix; 43/108 structural slots selectively replaced (65 retained); edge F1 **0.288706→0.332647 (+15.22%)**; tone ~0.247% better, dark ~0.301% better, white unchanged, midtone ~0.740% worse, path +0.072%. The images remain very close and changes cluster mostly in upper hair/silhouette. [Exact result](P3A21_FIRST_PORTRAIT_RESULT.md).
 
 **Next research target:** P3-A.2.2 missing-structure residual. Score candidate value using source edge strength minus frozen baseline-preview edge strength so replacements target structure P2-B.1 actually misses, while retaining exact tone/count and conservative replacement controls.
+
+
+## P3-A.2.2 architecture freeze
+
+P3-A.2.1 improved edge F1 substantially but spent most visible changes in upper hair/silhouette. P3-A.2.2 changes only the scoring field: compute a continuous **missing-edge residual** from source-edge strength minus frozen P2-B.1 preview-edge strength, then score both baseline contours and existing hybrid candidates against that deficit. Candidate generator, 40% cap, 15%+0.001 margin, tonal prefix and total count remain frozen. See [P3A22_ARCHITECTURE.md](P3A22_ARCHITECTURE.md).
+
+
+### P3-A.2.2 implementation
+
+Missing-structure scoring is now implemented as a separate mode: continuous edge strength is factored from the unchanged P2-C Sobel family; frozen P2-B.1 is rendered once; `max(source_edge - baseline_edge, 0)` becomes the new structural-deficit field. The P3-A.2.1 candidate generator, cap, replacement margin, prefix/count invariants and slot substitution are unchanged. Engineering CI now passes **59/59 Rust tests** plus the missing-structure smoke; real-image outcome remains pending. See [P3A22_VERIFY.md](P3A22_VERIFY.md).
+
+
+### P3-A.2.2 first CI evidence
+
+Draft PR #12 passed [GitHub Actions run 37345281232](https://github.com/SanamRai001/ScanSketch/actions/runs/37345281232): **59/59 Rust tests**, all inherited checks, and the new missing-structure smoke. Step fixture: same 193 total strokes, exact 173-stroke tonal prefix, 20 structural slots, cap 8, **6 replacements / 14 retained**, 55 candidates; weakest baseline utility 0.120863, strongest hybrid utility 0.366960, mean missing-edge evidence 0.126235. This confirms only the scoring field changed while the selective controls stayed fixed. Portrait quality gate remains open.
+
+
+## P3-A.2.2 first portrait result
+
+P3-A.2.2 is a clean negative result. At exact total-count/tone-prefix controls, overall tone improved only ~0.042% and dark ~0.055%, midtone worsened ~0.195%, white stayed identical, path changed only +0.009%, while edge F1 **fell ~0.99% (0.288706→0.285843)**. The uploaded pair does not materially recover weak interior structure. [Exact result](P3A22_FIRST_PORTRAIT_RESULT.md).
+
+**Interpretation:** re-ranking the existing P3-A.2.1 candidate pool is insufficient. The pool is still created from positive tonal residual/dark anchors, so underrepresented edges in lighter/midtone regions may never become candidates. Next: P3-A.2.3 deficit-driven candidate proposals from missing-edge local maxima, retaining the same 40% cap, replacement margin, exact tonal prefix and total stroke count.
