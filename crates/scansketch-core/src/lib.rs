@@ -21,7 +21,7 @@ pub use metrics::{measure_sketch, EdgeMetric, Measurement, RegionMetric, StrokeM
 pub use white_audit::{audit_white_pixels, AffectedPixel, AuditRoi, WhiteAudit};
 pub use scanline::{generate_sketch, SketchOptions};
 pub use directional::generate_directional_sketch;
-pub use hybrid::{generate_hybrid_sketch, generate_hybrid_sketch_with_stats, generate_missing_structure_sketch, generate_missing_structure_sketch_with_stats, generate_selective_hybrid_sketch, generate_selective_hybrid_sketch_with_stats, HybridStats, MissingStructureStats, SelectiveHybridStats};
+pub use hybrid::{generate_deficit_proposal_sketch, generate_deficit_proposal_sketch_with_stats, generate_hybrid_sketch, generate_hybrid_sketch_with_stats, generate_missing_structure_sketch, generate_missing_structure_sketch_with_stats, generate_selective_hybrid_sketch, generate_selective_hybrid_sketch_with_stats, DeficitProposalStats, HybridStats, MissingStructureStats, SelectiveHybridStats};
 pub use placement::{generate_placement_sketch, generate_placement_sketch_with_stats, PlacementStats};
 pub use stroke::{Sketch, Stroke};
 

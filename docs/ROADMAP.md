@@ -124,3 +124,6 @@ Missing-edge **scoring alone** failed: edge F1 regressed ~0.99% and the weak int
 ### P3-A.2.3 deficit-driven proposal gate
 
 Keep P3-A.2.2's missing-structure utility and all selective controls fixed. Change only candidate anchor signal from tonal residual to missing-edge residual. Acceptance requires exact prefix/count parity and evidence that candidate/replacement spatial coverage moves toward underrepresented structure rather than merely easy silhouette texture. [P3-A.2.3 architecture](P3A23_ARCHITECTURE.md).
+
+
+P3-A.2.3 implementation is now available behind a separate opt-in mode. Engineering acceptance requires exact tonal-prefix/total-count parity, selective budget accounting and a nonzero deficit-driven candidate pool before the portrait test. [Verification](P3A23_VERIFY.md).

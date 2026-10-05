@@ -157,3 +157,8 @@ P3-A.2.2 is a clean negative result. At exact total-count/tone-prefix controls, 
 ## P3-A.2.3 architecture freeze
 
 After P3-A.2.2 showed that missing-edge **scoring** cannot recover structures absent from the proposal pool, P3-A.2.3 changes one variable: the existing short-stroke proposal machinery is driven by **missing-edge residual instead of positive tonal residual**. Exact tonal prefix, total count, 40% cap, 15%+0.001 margin, tensor direction, support checks, spatial fairness and P3-A.2.2 utility remain frozen. See [P3A23_ARCHITECTURE.md](P3A23_ARCHITECTURE.md).
+
+
+### P3-A.2.3 implementation
+
+The deficit-driven proposal experiment is now implemented as a separate opt-in mode. It reuses the existing P3-A.2 short-stroke proposal machinery but feeds **missing-edge residual** into candidate anchor/local-search selection. P3-A.2.2 scoring, 40% cap, 15%+0.001 margin, exact tonal prefix, exact total count, tensor direction, support checks and in-place replacement remain unchanged. CI/portrait outcome pending. See [P3A23_VERIFY.md](P3A23_VERIFY.md).

@@ -128,3 +128,8 @@ The scoring-only missing-edge experiment **did not improve the portrait**. Edge 
 ### P3-A.2.3 architecture opened
 
 The next controlled hypothesis changes proposal coverage rather than scoring. Candidate anchors are driven by missing-edge residual while P3-A.2.2 scoring/replacement controls remain frozen. This tests whether missing structure failed because useful strokes never entered the candidate pool. No result claimed yet. [Architecture](P3A23_ARCHITECTURE.md).
+
+
+### P3-A.2.3 implementation opened
+
+Deficit-driven proposal coverage is now executable as a separate experiment. Only the candidate signal changes from tonal residual to missing-edge residual; P3-A.2.2 scoring/replacement controls remain frozen. No quality result claimed until CI and portrait localization. [Verification](P3A23_VERIFY.md).

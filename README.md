@@ -68,6 +68,7 @@ The proposed erasure/correction idea is recorded under [Future Experiments](docs
 | [P3-A.2.2 architecture](docs/P3A22_ARCHITECTURE.md) | Missing-baseline-edge residual while freezing the P3-A.2.1 candidate pool |
 | [P3-A.2.2 verification](docs/P3A22_VERIFY.md) | Rejected scoring-only missing-structure A/B evidence |
 | [P3-A.2.3 architecture](docs/P3A23_ARCHITECTURE.md) | Deficit-driven proposal coverage with frozen selective controls |
+| [P3-A.2.3 verification](docs/P3A23_VERIFY.md) | Exact-budget proposal-coverage A/B and spatial acceptance gate |
 | [Future experiments](docs/FUTURE_EXPERIMENTS.md) | Ideas parked until core output is convincing |
 | [Project state](docs/PROJECT_STATE.md) | Single authoritative progress, risks and next phase |
 | [P1 verification](docs/P1_VERIFY.md) | Historical baseline validation |
