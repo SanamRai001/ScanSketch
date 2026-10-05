@@ -1,6 +1,6 @@
 # P3-A.0 — Opt-in Direction-aware Tonal Proposals
 
-**Status:** first testable research implementation, **41/41 tests and end-to-end synthetic CI smoke passed** ([run 37256450858](https://github.com/SanamRai001/ScanSketch/actions/runs/37256450858)). The same-source step comparison rotated **24/193** stroke geometries and preserved the exact stroke count and width/opacity. **Not** P3-A completed or artistically accepted. The first user-supplied portrait A/B preview is now visually inspected and shows **no clear perceived improvement**; [recorded assessment](P3A0_FIRST_VISUAL_REVIEW.md). Numeric local paired report and actual rotation count have not been shared. P2-C still requires a confirmed genuinely nonportrait photographic source. Use the current staged PR branch `feat/p3a-directional-tonal-prototype`; parent `feat/p2c-measurement-utility` remains unmodified.
+**Status:** first testable research implementation, **41/41 tests and end-to-end synthetic CI smoke passed** ([run 37256450858](https://github.com/SanamRai001/ScanSketch/actions/runs/37256450858)). The same-source step comparison rotated **24/193** stroke geometries and preserved the exact stroke count and width/opacity. **P3-A.0 quality gate FAILED on the first portrait.** Visual comparison showed no clear improvement, and the paired numeric table at identical **12,671 stroke count** regressed overall/midtone/dark RMSE and edge F1; only white RMSE improved slightly. [Recorded result](P3A0_FIRST_VISUAL_REVIEW.md). Preserve this mode as research evidence; do not promote it. Portrait-specific rotation count remains pending. P2-C still requires a confirmed genuinely nonportrait photographic source. Use the current staged PR branch `feat/p3a-directional-tonal-prototype`; parent `feat/p2c-measurement-utility` remains unmodified.
 
 ## Hypothesis and what actually changed
 
@@ -71,3 +71,16 @@ $s.fixtures | Select-Object mode,width,height,strokes,path_length_px,tone_rmse,m
 ```
 
 If that directory is absent, share the exact console output of `run-p3a-ab.ps1` rather than generating another comparison on top of existing results. The separate genuinely nonportrait P2-C test is still required.
+
+
+## Final P3-A.0 portrait decision
+
+P2-B.1 → P3-A.0 at the same 12,671 accepted strokes and essentially unchanged total path length:
+
+- tone RMSE: 0.39743606 → **0.40178172** (worse);
+- midtone RMSE: 0.30444624 → **0.31133158** (worse);
+- dark RMSE: 0.44725756 → **0.45186692** (worse);
+- edge F1: 0.28870589 → **0.28588396** (worse);
+- white RMSE: 0.01608051 → **0.01572680** (slightly better).
+
+**Result: reject this rotation-only parameterization.** Do not tune it by merely raising the rotation quota or weakening source-support guards. The visual problem is still dominated by where tonal fragments originate and how the image budget is allocated. Next research slice: P3-A.1, independent direction-aware proposal placement with explicit coarse/fine/tonal quotas, still opt-in and measured against frozen P2-B.1.

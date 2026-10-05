@@ -104,3 +104,20 @@ Further reading/prior art: structure-tensor orientation and multiscale image pro
 ## Implemented first slice: P3-A.0 (opt-in only)
 
 The prototype changes direction rather than location/budget: original top-to-bottom P2-A tonal proposals keep their index, center, original length, width and opacity; a source-supported subset may rotate around the same midpoint using a fine/coarse structure tensor. Hard confidence, source-ink footprint and tile/global quota guards prevent unbounded extra texture. Default `generate_sketch` and the optional P2-B.1 contour pass remain unchanged. Invoke `generate_directional_sketch` or CLI `--directional` for the experiment. This does **not** implement a new candidate optimization loop, a fully independent anchor placement scheduler or equalized raster-ink loss; future P3-A.1 requires measurement evidence first. See [P3-A.0 verification](P3A0_VERIFY.md).
+
+
+## P3-A.0 result and P3-A.1 design consequence
+
+P3-A.0 answered one narrow question: *is rotating a subset of already-generated horizontal tonal fragments enough?* On the first controlled portrait, **no**. The paired run held accepted stroke count at 12,671 and total path length effectively constant, but the directional version worsened overall, midtone and dark RMSE as well as edge F1; visual hatching remained predominantly horizontal. White RMSE improved slightly.
+
+Therefore **do not iterate P3-A.0 by simply increasing the rotation quota or relaxing confidence/source-support thresholds**. The next P3-A.1 hypothesis should change proposal origin and allocation:
+
+1. derive coarse/fine orientation and confidence fields as before;
+2. identify eligible source-dark regions directly, rather than inheriting every P2-A horizontal anchor;
+3. allocate explicit bounded budgets for coarse structure, medium/form tone and fine texture;
+4. generate a new short segment at each accepted anchor, already tangent to reliable structure; fall back to P2-A only in ambiguous regions;
+5. keep protected-white footprint checks on unsmoothed source;
+6. preserve deterministic top-to-bottom commit order by sorting accepted proposal anchors by `(y, x, proposal_class)`;
+7. compare against **frozen P2-B.1**, recording count, path length and p2c-v1 metrics, and reject if it only changes proxies without improving the preview.
+
+P3-B search/optimization remains gated until P3-A.1 demonstrates a genuine visual win on at least a permitted portrait and a true nonportrait image.

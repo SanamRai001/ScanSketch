@@ -1,6 +1,6 @@
 # P3-A.0 — First Portrait Visual A/B (provisional)
 
-**Date:** 2026-10-05. **Status:** two user-uploaded preview images inspected; **the actual paired `summary.json`, per-mode `*-report.json`, source hashes and numerical metrics have not yet been supplied**. This is a qualitative finding only, not a final reject/accept decision. The input is the original locally held private portrait and must not be checked into the public repository without explicit redistribution permission.
+**Date:** 2026-10-05. **Status:** user-uploaded preview pair **and paired numeric summary table are now available**. The actual private source/hash values and portrait-specific `geometrically_changed_strokes` count have not been supplied. This is sufficient to reject the rotation-only variant as a quality candidate on this portrait, while preserving it as an experiment. The input is the original locally held private portrait and must not be checked into the public repository without explicit redistribution permission.
 
 ## Identity and context
 
@@ -39,3 +39,26 @@ The actual source photograph, SHA-256 hashes and private local filesystem paths 
 - The **genuine nonportrait photographic P2-C gate is still outstanding**; a previous `object-results/` test turned out to be another portrait. Neither prototype can be accepted across source classes until that gap is closed.
 
 Record the numeric follow-up as an append to this same phase entry rather than rewriting the original provisional observation.
+
+
+## Numeric follow-up — same portrait, same stroke count
+
+The user supplied the paired `p2c-v1` measurement table:
+
+| Metric | P2-B.1 | P3-A.0 | Change |
+| --- | ---: | ---: | ---: |
+| Strokes | 12671 | 12671 | identical |
+| Total path length px | 80222.50718482705 | 80222.50697448752 | effectively identical |
+| Tone RMSE ↓ | 0.39743605947970556 | 0.40178172261759293 | **+1.09% worse** |
+| Midtone RMSE ↓ | 0.30444623687925343 | 0.31133157822670754 | **+2.26% worse** |
+| Dark RMSE ↓ | 0.44725756214272244 | 0.45186691888988156 | **+1.03% worse** |
+| White RMSE ↓ | 0.016080508609430236 | 0.015726804644300135 | **~2.20% better** |
+| Edge F1 ↑ | 0.28870588594667923 | 0.28588395564233954 | **~0.98% worse** |
+
+The highlight-ink values were truncated in the user's formatted terminal table and are therefore **not recorded numerically here**. Do not infer them.
+
+### Decision
+
+**Reject P3-A.0 rotation-only as the candidate renderer.** It failed both the perceptual and numeric gate on this portrait while holding accepted stroke count constant and path length effectively constant. Keep P2-B.1 as default comparison baseline. Preserve PR #8 and its output as evidence that simply rotating existing horizontal proposals is insufficient.
+
+The next P3-A.1 hypothesis should modify **where strokes are proposed and how coarse/fine structural budgets are allocated**, instead of only reorienting existing horizontal anchors. Before implementing P3-A.1, capture the portrait's actual `geometrically_changed_strokes` count if available; that diagnostic will distinguish “too few rotations” from “many rotations but wrong proposal geometry.” The genuine nonportrait photograph gate remains open.
