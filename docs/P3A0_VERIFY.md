@@ -1,6 +1,6 @@
 # P3-A.0 — Opt-in Direction-aware Tonal Proposals
 
-**Status:** first testable research implementation; **not** P3-A completed or accepted. P2-C still requires a confirmed genuinely nonportrait photographic source. Use the current staged PR branch `feat/p3a-directional-tonal-prototype`; parent `feat/p2c-measurement-utility` remains unmodified.
+**Status:** first testable research implementation, **41/41 tests and end-to-end synthetic CI smoke passed** ([run 37256450858](https://github.com/SanamRai001/ScanSketch/actions/runs/37256450858)). The same-source step comparison rotated **24/193** stroke geometries and preserved the exact stroke count and width/opacity. **Not** P3-A completed or artistically accepted. P2-C still requires a confirmed genuinely nonportrait photographic source. Use the current staged PR branch `feat/p3a-directional-tonal-prototype`; parent `feat/p2c-measurement-utility` remains unmodified.
 
 ## Hypothesis and what actually changed
 
@@ -27,7 +27,7 @@ This deliberately tests directional geometry instead of inventing new shade/ink 
 
 Workspace compilation, inherited test suite and added checks for flat-image fallback, vertical step orientation, equal count/opacity/width/path length, deterministic repeatability, clear white internal channel, empty paper and budget handling.
 
-The checked-in `scripts/run-p3a-ab.ps1` is smoke-tested in GitHub CI against the existing synthetic `step.png`. It runs P2-B.1 and `--directional` with the **same binary**, seed 42, max-side 64; exports paired PNG/JSON/report, refuses to overwrite files, records SHA-256 identities and verifies stroke-count and ink metadata equality. **A successful script execution is not proof of better quality.** Check the commit's CI before visual review.
+The checked-in `scripts/run-p3a-ab.ps1` is smoke-tested in GitHub CI against the existing synthetic `step.png`. It runs P2-B.1 and `--directional` with the **same binary**, seed 42, max-side 64; exports paired PNG/JSON/report, refuses to overwrite files, records SHA-256 identities and verifies stroke-count and ink metadata equality. **A successful script execution is not proof of better quality.** CI's concrete observation: the step fixture changed 24 of 193 stroke geometries without changing their ink metadata; this confirms the opt-in geometry path is exercised. There is no real-photo quality score yet.
 
 ## Same-portrait A/B on Windows (after green CI)
 
