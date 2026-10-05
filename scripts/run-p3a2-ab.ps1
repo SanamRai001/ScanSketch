@@ -48,12 +48,16 @@ foreach ($mode in @("p2b1","p3a2")) {
     if ($mode -eq "p3a2") { $args += "--hybrid-structural" }
 
     Write-Host "Rendering $mode / max-side $MaxSize / seed $Seed"
-    $renderOutput = & cargo @args 2>&1
-    if ($LASTEXITCODE -ne 0) {
-        $renderOutput | ForEach-Object { Write-Host $_ }
-        throw "Rendering failed for $mode"
-    }
+    # Capture only the renderer's stdout. Cargo intentionally writes normal
+    # compile/progress messages to stderr; merging stderr into stdout (2>&1)
+    # makes Windows PowerShell 5.1 turn those harmless lines into terminating
+    # NativeCommandError records when $ErrorActionPreference is "Stop".
+    $renderOutput = @(& cargo @args)
+    $renderExit = $LASTEXITCODE
     $renderOutput | ForEach-Object { Write-Host $_ }
+    if ($renderExit -ne 0) {
+        throw "Rendering failed for $mode (cargo exit $renderExit)"
+    }
 
     if ($mode -eq "p3a2") {
         $line = $renderOutput | Where-Object { "$_" -like "P3-A.2 hybrid:*" } | Select-Object -Last 1
