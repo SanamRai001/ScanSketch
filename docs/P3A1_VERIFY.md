@@ -1,6 +1,6 @@
 # P3-A.1 — Placement-aware directional proposals
 
-**Status:** implementation on `feat/p3a1-placement-aware-proposals` passed GitHub CI engineering checks: **47/47 Rust tests**, all inherited P2-C/P3-A.0 smoke checks, and the new P3-A.1 paired step run. Real-photo quality results remain unobserved; no win is claimed. P2-B.1 remains the frozen baseline. P3-A.0 remains preserved as a rejected rotation-only experiment.
+**Status:** implementation passed **47/47 Rust tests**, but the first controlled portrait quality gate **FAILED**. The placement-aware variant dramatically increased directional geometry yet worsened overall and dark-tone reconstruction. Preserve it as a rejected experiment. See [P3-A.1 first portrait result](P3A1_FIRST_PORTRAIT_RESULT.md). P2-B.1 remains the frozen baseline. P3-A.0 remains preserved as a rejected rotation-only experiment.
 
 ## Hypothesis
 
@@ -111,3 +111,10 @@ GitHub Actions run `37265242828` completed successfully. On the 64×64 synthetic
 - rounded tone RMSE shown by the CI table: ~**0.32 → 0.49** (worse on this flat half-plane).
 
 The step fixture therefore proves the placement path is active and budget-matched, but **does not prove quality**. In fact, the flat-tone proxy gets worse there. This is an important warning that a vertical/form-following field can reduce uniform dark coverage at the same count. Portrait/nonportrait visual evidence must decide whether the new placement strategy is useful for real structure.
+
+
+## Final first-portrait decision
+
+At exactly **12,671 strokes**, strongly nonhorizontal geometry increased **97→2367**, but tone RMSE worsened **0.397436→0.529120** (+33.13%), midtone **0.304446→0.324213** (+6.49%), dark **0.447258→0.601276** (+34.44%), while path length grew ~3.06%. White RMSE improved slightly. Visual inspection agrees: P3-A.1 is more directional but loses the stable tonal body.
+
+**Reject P3-A.1 as a replacement renderer.** Do not fix it by further increasing directional quotas. The next experiment must be hybrid: retain the P2 tonal body and use only a small structure-aware accent budget.

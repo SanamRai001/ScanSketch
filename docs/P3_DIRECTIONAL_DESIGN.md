@@ -146,3 +146,27 @@ The P3-A.1 branch now implements the design consequence of the P3-A.0 failure:
 10. append the unchanged P2-B.1 contour pass.
 
 This keeps the **total accepted stroke count** comparable to frozen P2-B.1 while allowing path length, raster coverage and tonal distribution to change. Those differences must be measured, not assumed equal. See [P3-A.1 verification](P3A1_VERIFY.md).
+
+
+## P3-A.1 result: direction cannot carry the tonal body
+
+P3-A.1 deliberately changed anchor placement across the main tonal field. On the first portrait it kept total stroke count fixed at 12,671 while strongly nonhorizontal strokes increased **97→2367**. The geometry change was therefore substantial. Yet overall tone RMSE worsened **33.13%**, dark RMSE **34.44%**, midtone **6.49%**, and total path length increased **3.06%**. White RMSE improved slightly, but the picture lost broad tonal mass and became too structure/contour heavy.
+
+**Conclusion:** source-driven direction is useful information, but it should not replace the tonal reconstruction wholesale.
+
+### P3-A.2 design consequence
+
+The next prototype should be **hybrid augmentation**:
+
+1. preserve the frozen P2-A/P2-B.1 tonal body exactly;
+2. determine the existing P2-B.1 structural budget (number of contour accents) for the same source;
+3. build a stronger pool of multiscale source-structure candidates;
+4. rank those candidates using structural confidence **and positive tonal residual after the tonal base is rendered**;
+5. spend at most the existing structural budget on those candidates, with tile/regional quotas so hair/texture cannot dominate;
+6. if too few qualified hybrid candidates exist, fill the remaining budget with the original P2-B.1 contour strokes, preserving the total comparison count;
+7. keep strict unsmoothed source-support and protected-white checks;
+8. retain deterministic ordering and expose hybrid/fallback counts;
+9. measure tone, dark/midtone, edge proxy, white contamination, total path length and human visual readability;
+10. reject the hybrid if it only raises edge F1 while visibly harming tonal mass.
+
+This architecture isolates the next question cleanly: **can smarter structural accents improve a proven tonal base without asking structure to reconstruct the entire image?**
