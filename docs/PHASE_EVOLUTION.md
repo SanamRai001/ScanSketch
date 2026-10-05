@@ -113,3 +113,8 @@ The next controlled hypothesis targets **missing baseline structure** rather tha
 ### P3-A.2.2 implementation opened
 
 The missing-structure experiment is executable as a separate mode. It reuses the exact P3-A.2.1 candidate pool and replacement controls; only baseline/candidate utility changes to emphasize source edges absent from frozen P2-B.1. No quality result claimed until CI and portrait localization. [Verification](P3A22_VERIFY.md).
+
+
+### P3-A.2.2 first engineering evidence
+
+CI passed **59/59** tests. On the step fixture, missing-structure scoring preserved exact count/prefix and made 6/20 structural replacements under the same cap of 8, retaining 14 baseline contours. Mean missing-edge residual at replacements was 0.126235. No quality claim until the portrait shows whether interventions move away from already-strong hair/silhouette. [Verification](P3A22_VERIFY.md).

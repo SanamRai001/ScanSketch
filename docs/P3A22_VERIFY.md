@@ -1,6 +1,6 @@
 # P3-A.2.2 — Missing-Structure Residual Verification
 
-**Status:** implementation branch `feat/p3a22-missing-structure-residual`; engineering and visual gates pending.
+**Status:** implementation passed GitHub CI: **59/59 Rust tests**, all inherited P2-C/P3-A checks, and the P3-A.2.2 missing-structure smoke. Real-image spatial/quality gate remains pending. [CI run 37345281232](https://github.com/SanamRai001/ScanSketch/actions/runs/37345281232).
 
 ## Frozen comparison controls
 
@@ -87,3 +87,26 @@ The specific hypothesis is spatial:
 If the edge score rises but changed pixels remain concentrated in already-obvious contours, the missing-edge magnitude proxy is not enough and should be revised rather than rewarded.
 
 A genuine nonportrait photo remains required before any generality claim.
+
+
+## First CI observation
+
+On the 64×64 step fixture:
+
+- total strokes: **193 vs 193**;
+- exact tonal prefix: **173**;
+- structural budget: **20**;
+- replacement cap: **8**;
+- replacements: **6**;
+- baseline contours retained: **14**;
+- candidate pool: **55**;
+- weakest baseline missing-structure utility: **0.120863**;
+- strongest hybrid missing-structure utility: **0.366960**;
+- mean missing-edge residual at replacements: **0.126235**;
+- rounded P3-A.2.2 path length: ~1259.85px;
+- rounded tone RMSE: ~0.31;
+- rounded dark RMSE: ~0.44;
+- rounded edge F1: ~0.80;
+- rounded white RMSE: ~0.01.
+
+The engineering gate proves the deficit map is active and selection remains bounded. It does not prove better spatial targeting on a real image.
