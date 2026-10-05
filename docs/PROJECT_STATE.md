@@ -118,3 +118,8 @@ P3-A.2 preserved tone but replaced all 108 portrait structural slots and produce
 ## P3-A.2.1 implementation
 
 Selective hybrid replacement is now implemented as a separate opt-in mode. It scores baseline contour strokes and hybrid candidates with the same residual/structure/alignment utility, replaces only when the hybrid exceeds the weakest baseline by `15% + 0.001`, and caps replacement at **40%** of structural budget. Replacements occur in the exact baseline contour slots; tonal prefix and total stroke count remain frozen. See [P3A21_VERIFY.md](P3A21_VERIFY.md).
+
+
+### P3-A.2.1 CI result
+
+Draft PR #11 passed [GitHub Actions run 37340548611](https://github.com/SanamRai001/ScanSketch/actions/runs/37340548611): **56/56 Rust tests**, all inherited checks, and the selective hybrid step smoke. Step fixture: same 193 strokes, exact 173 tonal prefix, 20 structural slots, cap 8, **6 replacements / 14 retained**, 55 candidates. This confirms the policy is selective rather than full replacement. Real portrait quality gate remains open.

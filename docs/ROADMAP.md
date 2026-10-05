@@ -95,3 +95,6 @@ The next hybrid refinement preserves the P3-A.2 tonal/body invariants but introd
 
 
 P3-A.2.1 is now implemented as a separate opt-in experiment. Its engineering gate requires exact tone/count parity and verifies that changed structural slots exactly equal the reported selective replacements. [P3-A.2.1 verification](P3A21_VERIFY.md).
+
+
+P3-A.2.1 CI gate passed: 56 tests, exact tonal-prefix/total-count parity, 6/20 selective replacements under an 8-stroke cap on the step fixture. Portrait and genuine nonportrait visual gates remain open.

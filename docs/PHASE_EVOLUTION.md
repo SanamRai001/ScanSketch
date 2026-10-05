@@ -93,3 +93,8 @@ Selective hybrid replacement is now the next controlled hypothesis. Rather than 
 ### P3-A.2.1 implementation opened
 
 The selective hybrid architecture is executable as a separate experiment: exact tonal prefix, exact total stroke count, same structural-tail length, direct baseline-vs-hybrid utility comparison, 15% + 0.001 replacement margin and 40% cap. CI and visual outcome pending. [Verification](P3A21_VERIFY.md).
+
+
+### P3-A.2.1 first engineering evidence
+
+CI passed **56/56** tests. On the step fixture, P3-A.2.1 preserved 173 tonal strokes and all 193 total strokes, replacing only **6 of 20** baseline structural slots under a cap of 8 and retaining 14 original contours. Rounded tone/dark/edge proxies improved slightly, with a small white-RMSE increase. No quality claim until portrait/nonportrait review. [Verification](P3A21_VERIFY.md).

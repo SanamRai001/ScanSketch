@@ -1,6 +1,6 @@
 # P3-A.2.1 — Selective Hybrid Replacement Verification
 
-**Status:** implementation prepared on `feat/p3a21-selective-hybrid-replacement`; CI and real-image quality results pending.
+**Status:** implementation passed GitHub CI: **56/56 Rust tests**, all inherited P2-C/P3-A checks, and the P3-A.2.1 selective step smoke. Real-image quality remains pending. [CI run 37340548611](https://github.com/SanamRai001/ScanSketch/actions/runs/37340548611).
 
 ## What is different from P3-A.2
 
@@ -75,3 +75,25 @@ A zero-replacement result is valid: it means the baseline contours already beat 
 Do not loosen the 15%+0.001 margin or 40% cap merely because few strokes are replaced. First inspect the result.
 
 A genuine nonportrait test remains required before claiming generality.
+
+
+## First CI observation
+
+On the 64×64 step fixture:
+
+- total strokes: **193 vs 193**;
+- exact tonal prefix: **173**;
+- structural budget: **20**;
+- max replacements: **8**;
+- replacements actually made: **6**;
+- baseline contours retained: **14**;
+- candidate pool: **55**;
+- weakest baseline utility: **0.453165**;
+- strongest hybrid utility: **1.057108**;
+- rounded path length: ~1256.27→1262.04px;
+- rounded tone RMSE: ~0.32→0.31;
+- rounded dark RMSE: ~0.45→0.44;
+- rounded edge F1: ~0.79→0.81;
+- rounded white RMSE: ~0.00→0.01.
+
+This is engineering evidence only. The important result is that the selector is now genuinely selective rather than full replacement.
