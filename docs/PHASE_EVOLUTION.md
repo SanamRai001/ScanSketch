@@ -73,3 +73,8 @@ After P3-A.1 proved that whole-field direction damages tonal mass, the next expe
 ### P3-A.2 implementation opened
 
 The hybrid architecture is now executable behind `--hybrid-structural`. It preserves the exact tonal prefix and total P2-B.1 stroke count, replacing only qualified structural-budget slots with residual-aware multiscale accents. No quality result claimed until CI and A/B review. [Verification](P3A2_VERIFY.md).
+
+
+### P3-A.2 first engineering evidence
+
+CI passed **53/53** tests. On the step fixture, P3-A.2 preserved all 173 tonal strokes and the 193 total-stroke budget, replacing **6 of 20** structural slots with residual-aware accents and falling back to 14 original contours. Rounded step metrics improved slightly in tone/dark/edge F1 but white RMSE also rose slightly. No phase win is claimed until the portrait and genuine nonportrait are reviewed. [Runbook](P3A2_VERIFY.md).

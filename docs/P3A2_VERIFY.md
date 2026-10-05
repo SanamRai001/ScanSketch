@@ -1,6 +1,6 @@
 # P3-A.2 — Hybrid Structural Reinforcement Verification
 
-**Status:** implementation branch `feat/p3a2-hybrid-structural-reinforcement`; quality is unproven until CI and real A/B evidence.
+**Status:** implementation passed GitHub CI: **53/53 Rust tests**, all inherited P2-C/P3-A checks, and the P3-A.2 exact-budget step smoke. Real-photo quality remains unproven. [CI run 37334525616](https://github.com/SanamRai001/ScanSketch/actions/runs/37334525616).
 
 ## Invariants
 
@@ -76,3 +76,23 @@ Prefer:
 Then repeat on a **genuine permission-cleared nonportrait** before claiming generality.
 
 If it fails, preserve the phase result. Do not silently increase structural budget, because the whole purpose of P3-A.2 is bounded augmentation.
+
+
+## First CI observation
+
+On the 64×64 step fixture, the paired runner observed:
+
+- P2-B.1 total strokes: **193**
+- P3-A.2 total strokes: **193**
+- exact tonal prefix: **173 strokes**
+- structural budget: **20**
+- generated hybrid candidates: **55**
+- hybrid selected: **6**
+- original contour fallback: **14**
+- path length: ~**1256.27 → 1262.17 px**
+- rounded tone RMSE: ~**0.32 → 0.31**
+- rounded dark RMSE: ~**0.45 → 0.44**
+- rounded edge F1: ~**0.79 → 0.80**
+- rounded white RMSE: ~**0.00 → 0.01**
+
+These rounded values are useful only as a smoke observation. The exact portrait comparison is the real gate. The small white-RMSE change is explicitly recorded rather than ignored.

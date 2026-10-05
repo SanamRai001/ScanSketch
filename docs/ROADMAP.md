@@ -79,3 +79,6 @@ P3-A.2 must preserve the exact P2 tonal prefix and may spend only the number of 
 
 
 P3-A.2 implementation is now available as an opt-in branch mode. Its engineering gate requires exact P2 tonal-prefix and total-count parity before any visual comparison. [P3-A.2 verification](P3A2_VERIFY.md).
+
+
+P3-A.2 CI gate passed: 53 tests, exact tonal-prefix parity and exact total-count parity. The synthetic step selected 6 hybrid accents out of a 20-stroke structural budget with 14 P2-B.1 contour fallbacks. Real portrait and nonportrait quality gates remain open.

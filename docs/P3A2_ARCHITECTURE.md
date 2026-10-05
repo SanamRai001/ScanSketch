@@ -1,6 +1,6 @@
 # P3-A.2 — Hybrid Structural Reinforcement Architecture
 
-**Status:** architecture frozen before implementation on `feat/p3a2-hybrid-structural-reinforcement`. P2-B.1 remains the default/frozen baseline. P3-A.0 rotation-only and P3-A.1 placement-dominant experiments are preserved as rejected evidence.
+**Status:** architecture frozen first, then implemented on `feat/p3a2-hybrid-structural-reinforcement`; CI engineering gate passed. Real-image quality gate remains open. P2-B.1 remains the default/frozen baseline. P3-A.0 rotation-only and P3-A.1 placement-dominant experiments are preserved as rejected evidence.
 
 ## Why a hybrid?
 

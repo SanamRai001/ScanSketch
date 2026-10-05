@@ -96,3 +96,8 @@ Before implementation, P3-A.2 is defined to preserve the **exact P2 tonal prefix
 ### P3-A.2 implementation
 
 The architecture-frozen hybrid is now implemented behind `--hybrid-structural`: exact P2 tonal prefix, exact P2-B.1 total count, residual-aware multiscale structural candidates, and original-contour fallback for any unfilled structural slots. CI and portrait quality evidence remain pending until observed. See [P3A2_VERIFY.md](P3A2_VERIFY.md).
+
+
+### P3-A.2 first CI result
+
+Draft PR #10 passed [GitHub Actions run 37334525616](https://github.com/SanamRai001/ScanSketch/actions/runs/37334525616): **53/53 Rust tests**, all earlier P2-C/P3 smoke checks, and the new exact-budget hybrid step test. Step fixture: same 193 total strokes, exact 173-stroke tonal prefix, 20 structural slots, 6 hybrid-selected + 14 original-contour fallback from 55 candidates. Rounded metrics moved tone ~0.32→0.31, dark ~0.45→0.44, edge F1 ~0.79→0.80, white RMSE ~0.00→0.01; this is engineering evidence only, not a visual quality pass.
