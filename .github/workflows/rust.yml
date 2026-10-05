@@ -7,6 +7,7 @@ on:
       - feat/p2-sketch-stroke-language
       - feat/p2b1-contour-coherence
       - feat/p2c-measurement-utility
+      - feat/p3a1-placement-aware-proposals
 
 jobs:
   cargo:
@@ -75,3 +76,16 @@ jobs:
           if ($s.ink_metadata_changed_strokes -ne 0) { throw "Ink widths or opacity unexpectedly changed" }
           if ($s.geometrically_changed_strokes -le 0) { throw "Synthetic step did not exercise directional geometry" }
           Write-Host ("P3-A smoke: changed {0} directional segment geometries with matching total {1} strokes" -f $s.geometrically_changed_strokes, $s.fixtures[0].strokes)
+
+      - name: Smoke-test P3-A.1 placement-aware proposals against frozen P2-B.1
+        shell: pwsh
+        run: |
+          ./scripts/run-p3a1-ab.ps1 -InputImage experiments/local/ci/step.png -OutputDir experiments/local/ci/p3a1-step -MaxSize 64 -Seed 42 -RightsConfirmed
+          if ($LASTEXITCODE -ne 0) { throw "P3-A.1 paired smoke failed" }
+          $s = Get-Content experiments/local/ci/p3a1-step/summary.json -Raw | ConvertFrom-Json
+          if ($s.fixtures.Count -ne 2) { throw "Expected two P3-A.1 comparison reports" }
+          $base = $s.fixtures | Where-Object { $_.mode -eq 'p2b1' }
+          $new = $s.fixtures | Where-Object { $_.mode -eq 'p3a1' }
+          if ($base.strokes -ne $new.strokes) { throw "P3-A.1 changed total stroke count" }
+          if ($new.strong_nonhorizontal_strokes -le $base.strong_nonhorizontal_strokes) { throw "P3-A.1 did not change drawing direction" }
+          Write-Host ("P3-A.1 step smoke: same {0} strokes, strong nonhorizontal {1} -> {2}" -f $base.strokes, $base.strong_nonhorizontal_strokes, $new.strong_nonhorizontal_strokes)

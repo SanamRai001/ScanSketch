@@ -1,6 +1,6 @@
 use clap::Parser;
 use image::{imageops::FilterType, ImageFormat, ImageReader, Limits};
-use scansketch_core::{generate_directional_sketch, generate_sketch, render_sketch, SketchOptions};
+use scansketch_core::{generate_directional_sketch, generate_placement_sketch_with_stats, generate_sketch, render_sketch, SketchOptions};
 use std::{error::Error, fs, io, path::PathBuf};
 
 /// Native tonal + optionally coherence-ranked contour sketch (P2-B.1).
@@ -44,12 +44,19 @@ struct Args {
     /// Default (flag absent) retains exact P2-B.1 behavior.
     #[arg(long, default_value_t = false)]
     directional: bool,
+    /// Experimental P3-A.1: build new source-driven tonal anchors and directions.
+    /// Mutually exclusive with --directional; default still retains P2-B.1.
+    #[arg(long, default_value_t = false)]
+    placement_aware: bool,
 }
 
 fn run() -> Result<(), Box<dyn Error>> {
     let args = Args::parse();
     if !(32..=1024).contains(&args.max_size) {
         return Err("--max-size must be within 32..=1024".into());
+    }
+    if args.directional && args.placement_aware {
+        return Err("--directional and --placement-aware are separate experiments; choose only one".into());
     }
     if !args.output.extension().and_then(|ext| ext.to_str()).is_some_and(|ext| ext.eq_ignore_ascii_case("png")) {
         return Err("--output must point to a .png file".into());
@@ -98,11 +105,20 @@ fn run() -> Result<(), Box<dyn Error>> {
         contour_threshold: args.contour_threshold,
     };
     let working_rgba = working.to_rgba8();
-    let sketch = if args.directional {
-        generate_directional_sketch(&working_rgba, &options)
+    let (sketch, placement_stats) = if args.placement_aware {
+        let (sketch, stats) =
+            generate_placement_sketch_with_stats(&working_rgba, &options)
+                .map_err(io::Error::other)?;
+        (sketch, Some(stats))
+    } else if args.directional {
+        (
+            generate_directional_sketch(&working_rgba, &options)
+                .map_err(io::Error::other)?,
+            None,
+        )
     } else {
-        generate_sketch(&working_rgba, &options)
-    }.map_err(io::Error::other)?;
+        (generate_sketch(&working_rgba, &options).map_err(io::Error::other)?, None)
+    };
     let preview = render_sketch(&sketch).map_err(io::Error::other)?;
     preview.save_png(&args.output)?;
     if let Some(path) = args.strokes {
@@ -110,9 +126,26 @@ fn run() -> Result<(), Box<dyn Error>> {
     }
     println!(
         "ScanSketch {}: {}x{} | {} strokes | seed {} | saved {}",
-        if args.directional { "P3-A.0 directional prototype" } else { "P2-B.1" },
+        if args.placement_aware {
+            "P3-A.1 placement-aware prototype"
+        } else if args.directional {
+            "P3-A.0 directional prototype"
+        } else {
+            "P2-B.1"
+        },
         sketch.width, sketch.height, sketch.strokes.len(), sketch.seed, args.output.display()
     );
+    if let Some(stats) = placement_stats {
+        println!(
+            "P3-A.1 placement: target tone={} | coarse={} | fine={} | tonal={} | baseline-fallback={} | candidates={}",
+            stats.target_tonal_strokes,
+            stats.selected_coarse,
+            stats.selected_fine,
+            stats.selected_tonal,
+            stats.baseline_fallback,
+            stats.generated_candidate_count,
+        );
+    }
     Ok(())
 }
 

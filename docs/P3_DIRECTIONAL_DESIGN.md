@@ -1,6 +1,6 @@
 # P3 Research Decision — Multi-scale, Direction-aware Strokes First
 
-**Status: P3-A.0 has an opt-in first prototype (`--directional`) on a separate feature branch; the more ambitious independent placement/budget architecture below is still *proposed*, not implemented. P2-C's genuine nonportrait gate remains open.** P2-C is a prerequisite for claims that P3 improves rendering. This proposal extends the research specification in [ALGORITHM.md](ALGORITHM.md), while retaining Primitive-inspired search as a later step rather than abandoning it.
+**Status: P3-A.0 (`--directional`) was implemented and rejected. P3-A.1 now implements the first independent placement/budget prototype behind `--placement-aware`; CI and real-image quality review remain pending. P2-C's genuine nonportrait gate remains open.** P2-C is a prerequisite for claims that P3 improves rendering. This proposal extends the research specification in [ALGORITHM.md](ALGORITHM.md), while retaining Primitive-inspired search as a later step rather than abandoning it.
 
 ## Why not another raw Sobel threshold?
 
@@ -128,3 +128,45 @@ P3-B search/optimization remains gated until P3-A.1 demonstrates a genuine visua
 The portrait run reports **581 changed geometries out of 12,671 strokes**. P3-A.0 therefore exercised the direction field on a nontrivial subset of the image. Since the same run still worsened tone/midtone/dark RMSE and edge F1 and showed no clear visual gain, simply increasing the rotation quota or lowering confidence thresholds is not the preferred next experiment.
 
 P3-A.1 should instead test whether the **anchor distribution itself** is the bottleneck: sample/allocate candidate anchors from source structure and tone regions first, then choose orientation, rather than generate horizontal scanline fragments first and rotate a minority afterward.
+
+
+## Implemented P3-A.1 slice: placement before direction
+
+The P3-A.1 branch now implements the design consequence of the P3-A.0 failure:
+
+1. call the frozen P2-A tone pass only to obtain a target count for controlled comparison;
+2. scan 5×3 source cells and choose anchors from actual source-dark pixels nearest a weighted darkness centroid;
+3. use deterministic cell-local RNG for jitter/length/pressure so filtering one candidate does not perturb unrelated cells;
+4. choose coarse/fine source-tangent direction when confidence is sufficient; ambiguous proposals receive only a small seeded tonal-angle prior;
+5. add an offset second proposal in genuinely dark cells;
+6. apply whole-stroke source-support checks against the unsmoothed darkness map;
+7. select explicit initial budgets (24% coarse, 46% fine/form, remainder tonal), then fill unused quota from remaining highest-scored source-driven candidates;
+8. use exact historical tonal strokes only as a final, counted sparse-input fallback;
+9. restore deterministic top-to-bottom commit ordering;
+10. append the unchanged P2-B.1 contour pass.
+
+This keeps the **total accepted stroke count** comparable to frozen P2-B.1 while allowing path length, raster coverage and tonal distribution to change. Those differences must be measured, not assumed equal. See [P3-A.1 verification](P3A1_VERIFY.md).
+
+
+## P3-A.1 result: direction cannot carry the tonal body
+
+P3-A.1 deliberately changed anchor placement across the main tonal field. On the first portrait it kept total stroke count fixed at 12,671 while strongly nonhorizontal strokes increased **97→2367**. The geometry change was therefore substantial. Yet overall tone RMSE worsened **33.13%**, dark RMSE **34.44%**, midtone **6.49%**, and total path length increased **3.06%**. White RMSE improved slightly, but the picture lost broad tonal mass and became too structure/contour heavy.
+
+**Conclusion:** source-driven direction is useful information, but it should not replace the tonal reconstruction wholesale.
+
+### P3-A.2 design consequence
+
+The next prototype should be **hybrid augmentation**:
+
+1. preserve the frozen P2-A/P2-B.1 tonal body exactly;
+2. determine the existing P2-B.1 structural budget (number of contour accents) for the same source;
+3. build a stronger pool of multiscale source-structure candidates;
+4. rank those candidates using structural confidence **and positive tonal residual after the tonal base is rendered**;
+5. spend at most the existing structural budget on those candidates, with tile/regional quotas so hair/texture cannot dominate;
+6. if too few qualified hybrid candidates exist, fill the remaining budget with the original P2-B.1 contour strokes, preserving the total comparison count;
+7. keep strict unsmoothed source-support and protected-white checks;
+8. retain deterministic ordering and expose hybrid/fallback counts;
+9. measure tone, dark/midtone, edge proxy, white contamination, total path length and human visual readability;
+10. reject the hybrid if it only raises edge F1 while visibly harming tonal mass.
+
+This architecture isolates the next question cleanly: **can smarter structural accents improve a proven tonal base without asking structure to reconstruct the entire image?**
