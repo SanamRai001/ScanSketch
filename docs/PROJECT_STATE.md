@@ -191,3 +191,8 @@ Draft PR #14 validation tooling passed [GitHub Actions run 37354095490](https://
 Chair/mug/plant validation does **not** support promoting P3-A.2.3: edge wins 1/3, tone 0/3, midtone 0/3, dark 1/3; exploratory mean edge change -2.137%, tone -0.596%, midtone -1.869%, dark -0.365%. Visual review revealed the larger issue: both P2-B.1 and P3-A.2.3 still look like scanline reconstructions. Current P2 tonal marks are only **2.0–10.5 px** and P3 structural candidates **2.6–7.2 px** at a 512px work image. Long human-like gestural strokes have **not** been implemented. [Exact P3-G1 result](P3G1_FIRST_RESULT.md).
 
 **Current direction:** stop tuning P3 edge-selection heuristics. Begin P4-A human stroke hierarchy: long structural/gestural paths + medium form strokes + short hatching, with long curved marks as first-class editable records.
+
+
+## P4-A human stroke hierarchy opened
+
+P3-G1 confirms the renderer's dominant bottleneck is now its primitive vocabulary: P2 tonal fragments are only **2.0–10.5px** and P3 structural candidates **2.6–7.2px** at working scale. These are useful hatching marks but are not long human gestures. P4-A therefore redesigns the mark hierarchy around **long structural paths + medium form paths + short residual hatching**, with long curved paths as first-class editable records rather than chains of unrelated segments. See [P4-A architecture](P4A_HUMAN_STROKE_HIERARCHY.md).

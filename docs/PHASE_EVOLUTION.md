@@ -158,3 +158,8 @@ The multi-photo harness passed CI end-to-end: three local-style cases, per-case 
 ### P3-G1 real-pack outcome
 
 The first genuine nonportrait pack (chair, mug, plant) rejected broad P3-A.2.3 promotion: edge wins 1/3 and exploratory mean edge-F1 change -2.137%; tone/midtone means also regress. More importantly, visual review shows the shared P2/P3 primitive language is still dominated by 2–10px horizontal fragments. **Long human gesture/contour strokes do not exist yet.** Decision: end this line of selection-only tuning and move to P4 stroke hierarchy. [Exact result](P3G1_FIRST_RESULT.md).
+
+
+### P4-A — human stroke hierarchy architecture
+
+Opened after P3-G1. The project now explicitly separates three mark scales: long structural/gestural paths, medium form-following paths and short hatch/texture marks. Current 2–10px scan fragments remain useful only as the shortest layer. P4 begins with a first-class editable path primitive, then long tracing, medium form strokes and residual hatching. [Architecture](P4A_HUMAN_STROKE_HIERARCHY.md).
