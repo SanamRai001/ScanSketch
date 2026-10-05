@@ -119,3 +119,8 @@ P3-A.2.2 CI gate passed: 59 tests, exact tonal-prefix/total-count parity, 6/20 r
 ### P3-A.2.2 portrait decision
 
 Missing-edge **scoring alone** failed: edge F1 regressed ~0.99% and the weak interior structure remained underrepresented, despite exact budget/prefix controls. This indicates the current tone-residual-driven candidate pool is constraining what the selector can recover. Next P3-A.2.3 changes candidate anchor generation to missing-edge local maxima while keeping the P3-A.2.1/P3-A.2.2 replacement cap, margin, budget and source-support rules frozen.
+
+
+### P3-A.2.3 deficit-driven proposal gate
+
+Keep P3-A.2.2's missing-structure utility and all selective controls fixed. Change only candidate anchor signal from tonal residual to missing-edge residual. Acceptance requires exact prefix/count parity and evidence that candidate/replacement spatial coverage moves toward underrepresented structure rather than merely easy silhouette texture. [P3-A.2.3 architecture](P3A23_ARCHITECTURE.md).

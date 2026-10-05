@@ -215,3 +215,8 @@ The first portrait missing-edge scoring run did not improve the structure proxy 
 ### P3-A.2.3 design consequence
 
 Keep the selective replacement decision rule fixed, but generate anchors from spatially separated local maxima in the missing-edge residual rather than from positive tonal residual. Use the same source tensor for tangent direction, the same strict source-support check, the same tile fairness, and the same missing-structure utility for baseline-vs-candidate comparison. This tests proposal coverage as one variable without adding semantic feature detectors or extra stroke budget.
+
+
+## P3-A.2.3 proposal-coverage experiment
+
+P3-A.2.2 suggests the selector is limited by what P3-A.2's tone-residual-driven proposal stage makes available. P3-A.2.3 therefore reuses the exact short-stroke generator but feeds **missing-edge residual** into its anchor/local-search signal. Geometry, tensor direction, spacing, tile quotas, support checks, missing-structure utility, replacement margin and cap stay fixed. This isolates candidate availability as the variable. [Full architecture](P3A23_ARCHITECTURE.md).

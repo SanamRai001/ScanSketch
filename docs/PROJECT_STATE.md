@@ -152,3 +152,8 @@ Draft PR #12 passed [GitHub Actions run 37345281232](https://github.com/SanamRai
 P3-A.2.2 is a clean negative result. At exact total-count/tone-prefix controls, overall tone improved only ~0.042% and dark ~0.055%, midtone worsened ~0.195%, white stayed identical, path changed only +0.009%, while edge F1 **fell ~0.99% (0.288706→0.285843)**. The uploaded pair does not materially recover weak interior structure. [Exact result](P3A22_FIRST_PORTRAIT_RESULT.md).
 
 **Interpretation:** re-ranking the existing P3-A.2.1 candidate pool is insufficient. The pool is still created from positive tonal residual/dark anchors, so underrepresented edges in lighter/midtone regions may never become candidates. Next: P3-A.2.3 deficit-driven candidate proposals from missing-edge local maxima, retaining the same 40% cap, replacement margin, exact tonal prefix and total stroke count.
+
+
+## P3-A.2.3 architecture freeze
+
+After P3-A.2.2 showed that missing-edge **scoring** cannot recover structures absent from the proposal pool, P3-A.2.3 changes one variable: the existing short-stroke proposal machinery is driven by **missing-edge residual instead of positive tonal residual**. Exact tonal prefix, total count, 40% cap, 15%+0.001 margin, tensor direction, support checks, spatial fairness and P3-A.2.2 utility remain frozen. See [P3A23_ARCHITECTURE.md](P3A23_ARCHITECTURE.md).

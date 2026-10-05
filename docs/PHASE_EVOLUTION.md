@@ -123,3 +123,8 @@ CI passed **59/59** tests. On the step fixture, missing-structure scoring preser
 ### P3-A.2.2 portrait outcome
 
 The scoring-only missing-edge experiment **did not improve the portrait**. Edge F1 fell ~0.99% (0.288706→0.285843); midtone worsened ~0.195%; tone/dark improved only ~0.042%/~0.055%; white stayed identical and path changed +0.009%. The visual pair remains nearly unchanged and weak interior structure is not recovered. **Reject scoring-only refinement.** This isolates the candidate pool as the next bottleneck: P3-A.2.3 should propose candidates directly from missing-structure peaks while freezing selective-replacement controls. [Exact result](P3A22_FIRST_PORTRAIT_RESULT.md).
+
+
+### P3-A.2.3 architecture opened
+
+The next controlled hypothesis changes proposal coverage rather than scoring. Candidate anchors are driven by missing-edge residual while P3-A.2.2 scoring/replacement controls remain frozen. This tests whether missing structure failed because useful strokes never entered the candidate pool. No result claimed yet. [Architecture](P3A23_ARCHITECTURE.md).
