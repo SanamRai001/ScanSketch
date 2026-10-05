@@ -1,6 +1,6 @@
 use clap::Parser;
 use image::{imageops::FilterType, ImageFormat, ImageReader, Limits};
-use scansketch_core::{generate_sketch, render_sketch, SketchOptions};
+use scansketch_core::{generate_directional_sketch, generate_sketch, render_sketch, SketchOptions};
 use std::{error::Error, fs, io, path::PathBuf};
 
 /// Native tonal + optionally coherence-ranked contour sketch (P2-B.1).
@@ -40,6 +40,10 @@ struct Args {
     /// Normalized Sobel strength cutoff for optional contours, 0..=1.
     #[arg(long, default_value_t = 0.28)]
     contour_threshold: f32,
+    /// Experimental P3-A: reorient eligible tonal segments using a multiscale source tensor.
+    /// Default (flag absent) retains exact P2-B.1 behavior.
+    #[arg(long, default_value_t = false)]
+    directional: bool,
 }
 
 fn run() -> Result<(), Box<dyn Error>> {
@@ -93,15 +97,20 @@ fn run() -> Result<(), Box<dyn Error>> {
         enable_contours: !args.no_contours,
         contour_threshold: args.contour_threshold,
     };
-    let sketch = generate_sketch(&working.to_rgba8(), &options)
-        .map_err(io::Error::other)?;
+    let working_rgba = working.to_rgba8();
+    let sketch = if args.directional {
+        generate_directional_sketch(&working_rgba, &options)
+    } else {
+        generate_sketch(&working_rgba, &options)
+    }.map_err(io::Error::other)?;
     let preview = render_sketch(&sketch).map_err(io::Error::other)?;
     preview.save_png(&args.output)?;
     if let Some(path) = args.strokes {
         fs::write(path, serde_json::to_vec_pretty(&sketch)?)?;
     }
     println!(
-        "ScanSketch P2-B.1: {}x{} | {} strokes | seed {} | saved {}",
+        "ScanSketch {}: {}x{} | {} strokes | seed {} | saved {}",
+        if args.directional { "P3-A.0 directional prototype" } else { "P2-B.1" },
         sketch.width, sketch.height, sketch.strokes.len(), sketch.seed, args.output.display()
     );
     Ok(())

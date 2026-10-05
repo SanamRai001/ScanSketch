@@ -1,6 +1,6 @@
 # P3 Research Decision — Multi-scale, Direction-aware Strokes First
 
-**Status: proposed architecture only, not implemented.** P2-C is a prerequisite for claims that P3 improves rendering. This proposal extends the research specification in [ALGORITHM.md](ALGORITHM.md), while retaining Primitive-inspired search as a later step rather than abandoning it.
+**Status: P3-A.0 has an opt-in first prototype (`--directional`) on a separate feature branch; the more ambitious independent placement/budget architecture below is still *proposed*, not implemented. P2-C's genuine nonportrait gate remains open.** P2-C is a prerequisite for claims that P3 improves rendering. This proposal extends the research specification in [ALGORITHM.md](ALGORITHM.md), while retaining Primitive-inspired search as a later step rather than abandoning it.
 
 ## Why not another raw Sobel threshold?
 
@@ -100,3 +100,31 @@ Keep a `--mode` or similar explicit switch in a later prototype; exact option na
 Open questions: preferred scale normalization across image sizes, tonal-vs-structure budget allocation, alignment in isotropic/noisy texture, visual loss proxy for salient facial anchors without introducing pretrained recognition, and interactive CPU performance on a modest laptop.
 
 Further reading/prior art: structure-tensor orientation and multiscale image processing in classical vision; [Primitive (Michael Fogleman)](https://github.com/fogleman/primitive) for optimization mechanics, with appropriate license notice if code is incorporated. No imported third-party implementation is claimed here.
+
+## Implemented first slice: P3-A.0 (opt-in only)
+
+The prototype changes direction rather than location/budget: original top-to-bottom P2-A tonal proposals keep their index, center, original length, width and opacity; a source-supported subset may rotate around the same midpoint using a fine/coarse structure tensor. Hard confidence, source-ink footprint and tile/global quota guards prevent unbounded extra texture. Default `generate_sketch` and the optional P2-B.1 contour pass remain unchanged. Invoke `generate_directional_sketch` or CLI `--directional` for the experiment. This does **not** implement a new candidate optimization loop, a fully independent anchor placement scheduler or equalized raster-ink loss; future P3-A.1 requires measurement evidence first. See [P3-A.0 verification](P3A0_VERIFY.md).
+
+
+## P3-A.0 result and P3-A.1 design consequence
+
+P3-A.0 answered one narrow question: *is rotating a subset of already-generated horizontal tonal fragments enough?* On the first controlled portrait, **no**. The paired run held accepted stroke count at 12,671 and total path length effectively constant, but the directional version worsened overall, midtone and dark RMSE as well as edge F1; visual hatching remained predominantly horizontal. White RMSE improved slightly.
+
+Therefore **do not iterate P3-A.0 by simply increasing the rotation quota or relaxing confidence/source-support thresholds**. The next P3-A.1 hypothesis should change proposal origin and allocation:
+
+1. derive coarse/fine orientation and confidence fields as before;
+2. identify eligible source-dark regions directly, rather than inheriting every P2-A horizontal anchor;
+3. allocate explicit bounded budgets for coarse structure, medium/form tone and fine texture;
+4. generate a new short segment at each accepted anchor, already tangent to reliable structure; fall back to P2-A only in ambiguous regions;
+5. keep protected-white footprint checks on unsmoothed source;
+6. preserve deterministic top-to-bottom commit order by sorting accepted proposal anchors by `(y, x, proposal_class)`;
+7. compare against **frozen P2-B.1**, recording count, path length and p2c-v1 metrics, and reject if it only changes proxies without improving the preview.
+
+P3-B search/optimization remains gated until P3-A.1 demonstrates a genuine visual win on at least a permitted portrait and a true nonportrait image.
+
+
+### Activation result: why P3-A.1 should change placement, not thresholds
+
+The portrait run reports **581 changed geometries out of 12,671 strokes**. P3-A.0 therefore exercised the direction field on a nontrivial subset of the image. Since the same run still worsened tone/midtone/dark RMSE and edge F1 and showed no clear visual gain, simply increasing the rotation quota or lowering confidence thresholds is not the preferred next experiment.
+
+P3-A.1 should instead test whether the **anchor distribution itself** is the bottleneck: sample/allocate candidate anchors from source structure and tone regions first, then choose orientation, rather than generate horizontal scanline fragments first and rotate a minority afterward.
