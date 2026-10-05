@@ -187,3 +187,8 @@ P3-A.2.1 should score the **baseline structural layer itself** under the same re
 ## P3-A.2.1 selective replacement rule
 
 Because the first hybrid selected 108/108 new structural strokes, the next test directly scores the baseline structural layer. P3-A.2.1 uses one comparable residual/structure/alignment utility for original P2-B.1 contours and hybrid candidates, replacing only the weakest baseline slots when the hybrid exceeds them by a relative + absolute margin. Replacements are capped at 40% and occur in-place in the structural tail. Full specification: [P3A21_ARCHITECTURE.md](P3A21_ARCHITECTURE.md).
+
+
+## Implemented P3-A.2.1 slice
+
+P3-A.2.1 now compares baseline P2-B.1 contour utility directly against hybrid candidate utility. Candidate utility and baseline utility use the same positive-residual, source-darkness and tensor-alignment terms. Strong hybrids replace weakest baseline structural slots only when they clear the frozen relative+absolute margin, with a 40% hard cap. Substitution occurs at the original contour indices, preserving every retained contour's order. [Verification](P3A21_VERIFY.md).

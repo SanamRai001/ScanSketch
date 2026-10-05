@@ -8,6 +8,7 @@ on:
       - feat/p2b1-contour-coherence
       - feat/p2c-measurement-utility
       - feat/p3a1-placement-aware-proposals
+      - feat/p3a21-selective-hybrid-replacement
 
 jobs:
   cargo:
@@ -103,3 +104,18 @@ jobs:
           if ($s.hybrid_stats.hybrid_selected + $s.hybrid_stats.contour_fallback -ne $s.hybrid_stats.structural_budget) { throw "P3-A.2 budget accounting mismatch" }
           if ($s.hybrid_stats.structural_budget -gt 0 -and $s.hybrid_stats.hybrid_selected -le 0) { throw "P3-A.2 did not exercise hybrid selection" }
           Write-Host ("P3-A.2 step smoke: total={0}; tone={1}; budget={2}; hybrid={3}; fallback={4}" -f $base.strokes,$s.hybrid_stats.tone_count,$s.hybrid_stats.structural_budget,$s.hybrid_stats.hybrid_selected,$s.hybrid_stats.contour_fallback)
+
+      - name: Smoke-test P3-A.2.1 selective hybrid replacement
+        shell: pwsh
+        run: |
+          ./scripts/run-p3a21-ab.ps1 -InputImage experiments/local/ci/step.png -OutputDir experiments/local/ci/p3a21-step -MaxSize 64 -Seed 42 -RightsConfirmed
+          if ($LASTEXITCODE -ne 0) { throw "P3-A.2.1 paired smoke failed" }
+          $s = Get-Content experiments/local/ci/p3a21-step/summary.json -Raw | ConvertFrom-Json
+          $base = $s.fixtures | Where-Object { $_.mode -eq 'p2b1' }
+          $new = $s.fixtures | Where-Object { $_.mode -eq 'p3a21' }
+          if ($base.strokes -ne $new.strokes) { throw "P3-A.2.1 changed total stroke count" }
+          if ($s.tonal_prefix_identical_strokes -ne $s.selective_stats.tone_count) { throw "P3-A.2.1 tonal prefix mismatch" }
+          if ($s.selective_stats.replacements + $s.selective_stats.baseline_retained -ne $s.selective_stats.structural_budget) { throw "P3-A.2.1 budget accounting mismatch" }
+          if ($s.selective_stats.replacements -gt $s.selective_stats.max_replacements) { throw "P3-A.2.1 exceeded replacement cap" }
+          if ($s.changed_structural_slots -ne $s.selective_stats.replacements) { throw "P3-A.2.1 changed-slot accounting mismatch" }
+          Write-Host ("P3-A.2.1 step smoke: total={0}; budget={1}; cap={2}; replacements={3}; retained={4}" -f $base.strokes,$s.selective_stats.structural_budget,$s.selective_stats.max_replacements,$s.selective_stats.replacements,$s.selective_stats.baseline_retained)

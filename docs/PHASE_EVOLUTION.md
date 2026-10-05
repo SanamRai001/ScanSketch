@@ -88,3 +88,8 @@ P3-A.2 preserved the exact 12,563 tonal prefix and 12,671 total strokes. It neve
 ### P3-A.2.1 architecture opened
 
 Selective hybrid replacement is now the next controlled hypothesis. Rather than replace all P2-B.1 contours, score both baseline structural strokes and hybrid candidates under one residual/structure utility; replace only weakest baseline slots when a hybrid clears a 15% + 0.001 margin, capped at 40% of the structural budget. No outcome claimed yet. [Architecture](P3A21_ARCHITECTURE.md).
+
+
+### P3-A.2.1 implementation opened
+
+The selective hybrid architecture is executable as a separate experiment: exact tonal prefix, exact total stroke count, same structural-tail length, direct baseline-vs-hybrid utility comparison, 15% + 0.001 replacement margin and 40% cap. CI and visual outcome pending. [Verification](P3A21_VERIFY.md).

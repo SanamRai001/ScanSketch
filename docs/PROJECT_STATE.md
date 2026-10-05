@@ -113,3 +113,8 @@ The first controlled portrait hybrid preserved the exact **12,563-stroke tonal p
 ## P3-A.2.1 architecture freeze
 
 P3-A.2 preserved tone but replaced all 108 portrait structural slots and produced no clear visual win. P3-A.2.1 therefore scores **baseline contours and hybrid candidates with the same utility**, replaces only when hybrid utility exceeds the weakest baseline contour by `15% + 0.001`, and caps replacements at **40%** of structural budget. Replacement occurs in the exact baseline contour slots, preserving all retained ordering and the tonal prefix. See [P3A21_ARCHITECTURE.md](P3A21_ARCHITECTURE.md).
+
+
+## P3-A.2.1 implementation
+
+Selective hybrid replacement is now implemented as a separate opt-in mode. It scores baseline contour strokes and hybrid candidates with the same residual/structure/alignment utility, replaces only when the hybrid exceeds the weakest baseline by `15% + 0.001`, and caps replacement at **40%** of structural budget. Replacements occur in the exact baseline contour slots; tonal prefix and total stroke count remain frozen. See [P3A21_VERIFY.md](P3A21_VERIFY.md).

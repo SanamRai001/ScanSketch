@@ -92,3 +92,6 @@ Hybrid preservation worked: exact tonal prefix and exact total stroke count. But
 ### P3-A.2.1 selective-replacement gate
 
 The next hybrid refinement preserves the P3-A.2 tonal/body invariants but introduces direct baseline-vs-hybrid utility comparison and a 40% structural replacement cap. This is deliberately conservative: zero replacements is acceptable if no hybrid earns a slot. [P3-A.2.1 architecture](P3A21_ARCHITECTURE.md).
+
+
+P3-A.2.1 is now implemented as a separate opt-in experiment. Its engineering gate requires exact tone/count parity and verifies that changed structural slots exactly equal the reported selective replacements. [P3-A.2.1 verification](P3A21_VERIFY.md).
