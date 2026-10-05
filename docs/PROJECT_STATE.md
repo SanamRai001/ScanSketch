@@ -184,3 +184,10 @@ P3-A.2.3 is frozen after a promising portrait result. New branch `test/p3g1-nonp
 ### P3-G1 harness CI result
 
 Draft PR #14 validation tooling passed [GitHub Actions run 37354095490](https://github.com/SanamRai001/ScanSketch/actions/runs/37354095490), including the 3-case batch smoke and aggregate JSON/CSV/HTML outputs. The smoke intentionally showed mixed/no-op behavior (step 6 replacements; thin-lines 0; gradient no structural budget), confirming the harness does not force a difference. **Real 3–5 photo nonportrait evidence is still pending.**
+
+
+## P3-G1 first real nonportrait result
+
+Chair/mug/plant validation does **not** support promoting P3-A.2.3: edge wins 1/3, tone 0/3, midtone 0/3, dark 1/3; exploratory mean edge change -2.137%, tone -0.596%, midtone -1.869%, dark -0.365%. Visual review revealed the larger issue: both P2-B.1 and P3-A.2.3 still look like scanline reconstructions. Current P2 tonal marks are only **2.0–10.5 px** and P3 structural candidates **2.6–7.2 px** at a 512px work image. Long human-like gestural strokes have **not** been implemented. [Exact P3-G1 result](P3G1_FIRST_RESULT.md).
+
+**Current direction:** stop tuning P3 edge-selection heuristics. Begin P4-A human stroke hierarchy: long structural/gestural paths + medium form strokes + short hatching, with long curved marks as first-class editable records.

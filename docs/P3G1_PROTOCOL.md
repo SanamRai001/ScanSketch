@@ -105,3 +105,8 @@ The validation infrastructure passed GitHub Actions [run 37354095490](https://gi
 - gradient: 290 strokes, **0 structural budget / 0 replacements**.
 
 Aggregate smoke: edge wins 1/3, tone wins 1/3, midtone wins 0/3, dark wins 1/3, white non-worse 2/3. These values are not a quality benchmark. Their importance is that the harness correctly preserves neutral/no-op cases rather than forcing differences.
+
+
+## First real-pack decision
+
+The first genuine 3-image pack (chair, mug, plant) is complete. P3-A.2.3 won edge F1 on only 1/3 sources, tone on 0/3, midtone on 0/3 and dark on 1/3; exploratory mean edge change was -2.137%. Visual review also exposed a more fundamental problem: both variants remain dominated by short horizontal fragments and do not resemble confident human sketch strokes. See [P3-G1 first result](P3G1_FIRST_RESULT.md). **Decision: do not promote or keep tuning P3-A.2.3; move to P4 stroke-language redesign.**

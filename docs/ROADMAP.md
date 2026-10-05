@@ -143,3 +143,8 @@ Freeze P3-A.2.3 and run 3–5 genuine nonportrait photographs spanning distinct 
 
 
 P3-G1 validation tooling is CI-green. The next action is now data collection only: 3–5 permission-cleared genuine nonportrait photos, no renderer changes during the pack.
+
+
+### P3-G1 real-pack exit
+
+First real pack: chair, mug, plant. P3-A.2.3 does not generalize sufficiently (edge wins 1/3; mean edge change -2.137%). Exit P3-G1 with a stronger architectural finding: the current renderer's dominant 2–10px fragment vocabulary is itself the visual bottleneck. **Next: P4-A human stroke hierarchy**, not more P3 score tuning.

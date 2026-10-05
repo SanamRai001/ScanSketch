@@ -153,3 +153,8 @@ After the promising P3-A.2.3 portrait result, renderer tuning is paused. P3-G1 a
 ### P3-G1 validation infrastructure verified
 
 The multi-photo harness passed CI end-to-end: three local-style cases, per-case frozen invariant checks, aggregate JSON/CSV and side-by-side HTML review. Synthetic smoke results were mixed rather than universally positive, which is desirable for an evidence tool. Real nonportrait photographic evidence remains the actual gate. [Run 37354095490](https://github.com/SanamRai001/ScanSketch/actions/runs/37354095490).
+
+
+### P3-G1 real-pack outcome
+
+The first genuine nonportrait pack (chair, mug, plant) rejected broad P3-A.2.3 promotion: edge wins 1/3 and exploratory mean edge-F1 change -2.137%; tone/midtone means also regress. More importantly, visual review shows the shared P2/P3 primitive language is still dominated by 2–10px horizontal fragments. **Long human gesture/contour strokes do not exist yet.** Decision: end this line of selection-only tuning and move to P4 stroke hierarchy. [Exact result](P3G1_FIRST_RESULT.md).
