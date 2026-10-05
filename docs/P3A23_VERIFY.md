@@ -128,3 +128,10 @@ On the 64×64 step fixture:
 - rounded edge F1: **~0.81** for P3-A.2.3 on this engineering fixture.
 
 The important engineering signal is not the rounded metric itself: P3-A.2.3 produced a **smaller, more deficit-focused proposal pool** while preserving the same replacement count and every frozen invariant.
+
+
+## First portrait outcome
+
+The user completed the same-source portrait A/B. At identical **12,671 strokes**, P3-A.2.3 changed path length only +0.0601%, kept white RMSE identical, improved dark RMSE ~0.0109% and edge F1 **0.288706→0.314451 (+8.918%)**, while overall tone worsened ~0.0380% and midtone ~0.9357%. The uploaded previews remain visually close; no catastrophic tonal change is present. The portrait structural-stat line was not supplied, so portrait candidate/replacement counts are intentionally not inferred. See [P3-A.2.3 first portrait result](P3A23_FIRST_PORTRAIT_RESULT.md).
+
+**Decision:** promising proposal-origin evidence, not a default promotion. Freeze the algorithm and run a multi-image nonportrait generalization gate before any more tuning.

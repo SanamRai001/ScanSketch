@@ -167,3 +167,10 @@ The deficit-driven proposal experiment is now implemented as a separate opt-in m
 ### P3-A.2.3 first CI evidence
 
 Draft PR #13 passed [GitHub Actions run 37348529191](https://github.com/SanamRai001/ScanSketch/actions/runs/37348529191): **62/62 Rust tests**, all inherited checks, and the deficit-driven proposal smoke. Step fixture: same 193 total strokes, exact 173 tonal prefix, budget 20, cap 8, **6 replacements / 14 retained**. The proposal pool shrank from P3-A.2.2's 55 candidates to **26 deficit-driven candidates**, while mean missing-edge evidence at accepted replacements rose slightly **0.126235→0.127317**. Portrait quality/localization is the next gate.
+
+
+## P3-A.2.3 first portrait result
+
+The controlled portrait A/B shows a **promising but provisional** result: same 12,671 strokes, white RMSE unchanged, path +0.0601%, edge F1 **+8.918%**, dark RMSE ~0.0109% better, while tone ~0.0380% and midtone ~0.9357% worsen. Visual difference remains subtle and stable. P3-A.2.1 still has the higher global portrait edge-F1 result, so P3-A.2.3 is not called the numeric winner; its significance is evidence that changing proposal origin can recover structural signal without tonal collapse. [Exact result](P3A23_FIRST_PORTRAIT_RESULT.md).
+
+**Next:** freeze P3-A.2.3 and run P3-G1 multi-image genuine nonportrait validation. No additional renderer tuning until that evidence exists.

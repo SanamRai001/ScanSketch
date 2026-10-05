@@ -130,3 +130,8 @@ P3-A.2.3 implementation is now available behind a separate opt-in mode. Engineer
 
 
 P3-A.2.3 CI gate passed: 62 tests, exact tonal-prefix/total-count parity, 6/20 replacements under the unchanged cap, and a smaller deficit-focused candidate pool (26 vs P3-A.2.2's 55 on the same step fixture). The portrait test now determines whether that proposal shift reaches underrepresented interior structure.
+
+
+### P3-A.2.3 portrait decision
+
+The portrait gate is promising but not sufficient for promotion: edge F1 +8.918% at exact stroke count and unchanged white RMSE, with very small path/tone changes and modest midtone regression. Freeze P3-A.2.3. **Next phase is P3-G1 multi-image nonportrait generalization**, not another parameter/algorithm tweak.

@@ -220,3 +220,8 @@ Keep the selective replacement decision rule fixed, but generate anchors from sp
 ## P3-A.2.3 proposal-coverage experiment
 
 P3-A.2.2 suggests the selector is limited by what P3-A.2's tone-residual-driven proposal stage makes available. P3-A.2.3 therefore reuses the exact short-stroke generator but feeds **missing-edge residual** into its anchor/local-search signal. Geometry, tensor direction, spacing, tile quotas, support checks, missing-structure utility, replacement margin and cap stay fixed. This isolates candidate availability as the variable. [Full architecture](P3A23_ARCHITECTURE.md).
+
+
+## P3-A.2.3 portrait consequence: stop tuning and test generality
+
+Deficit-driven proposals improved the portrait edge proxy by ~8.9% while preserving count/white safety and nearly preserving tone. This is weaker in raw edge F1 than P3-A.2.1 but is positive causal evidence for proposal coverage. The renderer should now be frozen and tested across nonportrait source classes before combining or tuning ideas. The next work is validation infrastructure, not a new sketch heuristic.
