@@ -1,6 +1,6 @@
 # P3-A.2.2 — Missing-Structure Residual Verification
 
-**Status:** implementation passed GitHub CI: **59/59 Rust tests**, all inherited P2-C/P3-A checks, and the P3-A.2.2 missing-structure smoke. Real-image spatial/quality gate remains pending. [CI run 37345281232](https://github.com/SanamRai001/ScanSketch/actions/runs/37345281232).
+**Status:** implementation passed GitHub CI: **59/59 Rust tests**, all inherited P2-C/P3 checks, and the P3-A.2.2 missing-structure smoke. Real-image quality remains pending. [CI run 37345281232](https://github.com/SanamRai001/ScanSketch/actions/runs/37345281232).
 
 ## Frozen comparison controls
 
@@ -96,17 +96,17 @@ On the 64×64 step fixture:
 - total strokes: **193 vs 193**;
 - exact tonal prefix: **173**;
 - structural budget: **20**;
-- replacement cap: **8**;
-- replacements: **6**;
-- baseline contours retained: **14**;
+- maximum replacements: **8**;
+- replacements made: **6**;
+- baseline structural strokes retained: **14**;
 - candidate pool: **55**;
 - weakest baseline missing-structure utility: **0.120863**;
 - strongest hybrid missing-structure utility: **0.366960**;
-- mean missing-edge residual at replacements: **0.126235**;
-- rounded P3-A.2.2 path length: ~1259.85px;
-- rounded tone RMSE: ~0.31;
-- rounded dark RMSE: ~0.44;
-- rounded edge F1: ~0.80;
-- rounded white RMSE: ~0.01.
+- mean missing-edge evidence at accepted replacements: **0.126235**;
+- rounded path length: ~1256.27→1259.85 px;
+- rounded tone RMSE: ~0.32→0.31;
+- rounded dark RMSE: ~0.45→0.44;
+- rounded edge F1: ~0.79→0.80;
+- rounded white RMSE: ~0.00→0.01.
 
-The engineering gate proves the deficit map is active and selection remains bounded. It does not prove better spatial targeting on a real image.
+This is engineering evidence only. The important result is that the new missing-structure utility is active while the **candidate generator, 40% cap and 15%+0.001 replacement margin remain frozen** from P3-A.2.1.

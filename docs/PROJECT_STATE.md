@@ -139,9 +139,9 @@ P3-A.2.1 improved edge F1 substantially but spent most visible changes in upper 
 
 ### P3-A.2.2 implementation
 
-Missing-structure scoring is now implemented as a separate mode: continuous edge strength is factored from the unchanged P2-C Sobel family; frozen P2-B.1 is rendered once; `max(source_edge - baseline_edge, 0)` becomes the new structural-deficit field. The P3-A.2.1 candidate generator, cap, replacement margin, prefix/count invariants and slot substitution are unchanged. CI and real-image outcome pending. See [P3A22_VERIFY.md](P3A22_VERIFY.md).
+Missing-structure scoring is now implemented as a separate mode: continuous edge strength is factored from the unchanged P2-C Sobel family; frozen P2-B.1 is rendered once; `max(source_edge - baseline_edge, 0)` becomes the new structural-deficit field. The P3-A.2.1 candidate generator, cap, replacement margin, prefix/count invariants and slot substitution are unchanged. Engineering CI now passes **59/59 Rust tests** plus the missing-structure smoke; real-image outcome remains pending. See [P3A22_VERIFY.md](P3A22_VERIFY.md).
 
 
-### P3-A.2.2 CI result
+### P3-A.2.2 first CI evidence
 
-Draft PR #12 passed [GitHub Actions run 37345281232](https://github.com/SanamRai001/ScanSketch/actions/runs/37345281232): **59/59 Rust tests** and all inherited checks. Step fixture: exact 193 total / 173 tonal prefix, budget 20, cap 8, **6 replacements / 14 retained**, 55 candidates, mean missing-edge evidence **0.126235** at replacements. The missing-structure utility is active; portrait spatial localization remains the real gate.
+Draft PR #12 passed [GitHub Actions run 37345281232](https://github.com/SanamRai001/ScanSketch/actions/runs/37345281232): **59/59 Rust tests**, all inherited checks, and the new missing-structure smoke. Step fixture: same 193 total strokes, exact 173-stroke tonal prefix, 20 structural slots, cap 8, **6 replacements / 14 retained**, 55 candidates; weakest baseline utility 0.120863, strongest hybrid utility 0.366960, mean missing-edge evidence 0.126235. This confirms only the scoring field changed while the selective controls stayed fixed. Portrait quality gate remains open.

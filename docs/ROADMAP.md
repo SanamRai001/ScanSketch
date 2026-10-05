@@ -113,4 +113,4 @@ Keep the P3-A.2.1 candidate generator and selective replacement controls fixed. 
 P3-A.2.2 implementation is now available as a controlled opt-in mode. Engineering acceptance requires exact count/prefix parity and changed-slot accounting; quality acceptance additionally requires changed structure to move toward underrepresented regions, not merely improve aggregate edge F1. [Verification](P3A22_VERIFY.md).
 
 
-P3-A.2.2 CI gate passed: 59 tests, exact count/prefix parity and 6/20 bounded replacements on the step fixture using active missing-edge residual. The next gate is spatial portrait review, followed by a genuine nonportrait photograph.
+P3-A.2.2 CI gate passed: 59 tests, exact tonal-prefix/total-count parity, 6/20 replacements under the unchanged 8-stroke cap, and nonzero missing-edge evidence at accepted replacements. The portrait test now determines whether replacements actually move toward underrepresented structure rather than strong hair/silhouette edges.

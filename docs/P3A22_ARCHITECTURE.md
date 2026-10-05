@@ -1,6 +1,6 @@
 # P3-A.2.2 — Missing-Structure Residual Architecture
 
-**Status:** architecture frozen before implementation on `feat/p3a22-missing-structure-residual`. P3-A.2.1 is preserved as the first promising selective-hybrid result. P2-B.1 remains the default baseline.
+**Status:** architecture frozen before implementation on `feat/p3a22-missing-structure-residual`; implementation now passes the engineering CI gate. P3-A.2.1 is preserved as the first promising selective-hybrid result. P2-B.1 remains the default baseline.
 
 ## Motivation
 

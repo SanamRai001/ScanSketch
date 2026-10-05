@@ -117,4 +117,4 @@ The missing-structure experiment is executable as a separate mode. It reuses the
 
 ### P3-A.2.2 first engineering evidence
 
-CI passed **59/59** tests. On the step fixture, missing-structure scoring preserved exact count/prefix and made 6/20 structural replacements under the same cap of 8, retaining 14 baseline contours. Mean missing-edge residual at replacements was 0.126235. No quality claim until the portrait shows whether interventions move away from already-strong hair/silhouette. [Verification](P3A22_VERIFY.md).
+CI passed **59/59** tests. On the step fixture, missing-structure scoring preserved 173 tonal strokes and all 193 total strokes, replacing **6 of 20** structural slots under the unchanged cap of 8 and retaining 14 baseline contours. The accepted replacements carried mean missing-edge evidence **0.126235**. Rounded tone/dark/edge proxies improved slightly with the same small white-RMSE caution. No phase win is claimed until portrait/nonportrait review. [Verification](P3A22_VERIFY.md).
