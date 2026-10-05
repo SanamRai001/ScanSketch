@@ -148,3 +148,8 @@ P3-G1 validation tooling is CI-green. The next action is now data collection onl
 ### P3-G1 real-pack exit
 
 First real pack: chair, mug, plant. P3-A.2.3 does not generalize sufficiently (edge wins 1/3; mean edge change -2.137%). Exit P3-G1 with a stronger architectural finding: the current renderer's dominant 2–10px fragment vocabulary is itself the visual bottleneck. **Next: P4-A human stroke hierarchy**, not more P3 score tuning.
+
+
+## P4-A — human stroke hierarchy [architecture opened]
+
+P3 selection-only tuning is paused. Implement in gated slices: **P4-A.0 path primitive foundation → P4-A.1 long structural tracing → P4-A.2 medium form strokes → P4-A.3 residual hatching rebalance → P4-G human-likeness validation**. Do not add decorative realism before the hierarchy works. [Architecture](P4A_HUMAN_STROKE_HIERARCHY.md).
