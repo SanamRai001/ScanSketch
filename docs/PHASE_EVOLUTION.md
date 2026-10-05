@@ -133,3 +133,8 @@ The next controlled hypothesis changes proposal coverage rather than scoring. Ca
 ### P3-A.2.3 implementation opened
 
 Deficit-driven proposal coverage is now executable as a separate experiment. Only the candidate signal changes from tonal residual to missing-edge residual; P3-A.2.2 scoring/replacement controls remain frozen. No quality result claimed until CI and portrait localization. [Verification](P3A23_VERIFY.md).
+
+
+### P3-A.2.3 first engineering evidence
+
+CI passed **62/62** tests. On the step fixture, candidate origin changed from tonal residual to missing-edge residual while all replacement controls remained fixed. Candidate count fell **55→26**, replacements stayed 6/20 under the same cap of 8, and mean missing-edge evidence at accepted replacements rose **0.126235→0.127317**. This is the intended proposal-coverage behavior; no quality win is claimed until portrait/nonportrait review. [Verification](P3A23_VERIFY.md).

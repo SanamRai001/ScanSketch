@@ -1,6 +1,6 @@
 # P3-A.2.3 — Deficit-Driven Proposal Verification
 
-**Status:** implementation branch `feat/p3a23-deficit-driven-proposals`; CI and real-image quality result pending.
+**Status:** implementation passed GitHub CI: **62/62 Rust tests**, all inherited P2-C/P3 checks, and the P3-A.2.3 deficit-proposal smoke. Real-image quality remains pending. [CI run 37348529191](https://github.com/SanamRai001/ScanSketch/actions/runs/37348529191).
 
 ## Controlled change
 
@@ -108,3 +108,23 @@ Promising if:
 Then repeat on a **genuine permission-cleared nonportrait** before promoting.
 
 Reject if the candidate pool still mostly targets already-obvious structure, even if a global edge metric rises.
+
+
+## First CI observation
+
+On the 64×64 step fixture:
+
+- total strokes: **193 vs 193**;
+- exact tonal prefix: **173**;
+- structural budget: **20**;
+- maximum replacements: **8**;
+- replacements made: **6**;
+- baseline structural strokes retained: **14**;
+- deficit-driven candidate pool: **26**;
+- P3-A.2.2 tone-residual candidate pool on the same fixture: **55**;
+- weakest baseline utility: **0.120863**;
+- strongest deficit candidate utility: **0.356100**;
+- mean missing-edge evidence at accepted replacements: **0.127317** (P3-A.2.2: 0.126235);
+- rounded edge F1: **~0.81** for P3-A.2.3 on this engineering fixture.
+
+The important engineering signal is not the rounded metric itself: P3-A.2.3 produced a **smaller, more deficit-focused proposal pool** while preserving the same replacement count and every frozen invariant.

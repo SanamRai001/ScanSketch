@@ -162,3 +162,8 @@ After P3-A.2.2 showed that missing-edge **scoring** cannot recover structures ab
 ### P3-A.2.3 implementation
 
 The deficit-driven proposal experiment is now implemented as a separate opt-in mode. It reuses the existing P3-A.2 short-stroke proposal machinery but feeds **missing-edge residual** into candidate anchor/local-search selection. P3-A.2.2 scoring, 40% cap, 15%+0.001 margin, exact tonal prefix, exact total count, tensor direction, support checks and in-place replacement remain unchanged. CI/portrait outcome pending. See [P3A23_VERIFY.md](P3A23_VERIFY.md).
+
+
+### P3-A.2.3 first CI evidence
+
+Draft PR #13 passed [GitHub Actions run 37348529191](https://github.com/SanamRai001/ScanSketch/actions/runs/37348529191): **62/62 Rust tests**, all inherited checks, and the deficit-driven proposal smoke. Step fixture: same 193 total strokes, exact 173 tonal prefix, budget 20, cap 8, **6 replacements / 14 retained**. The proposal pool shrank from P3-A.2.2's 55 candidates to **26 deficit-driven candidates**, while mean missing-edge evidence at accepted replacements rose slightly **0.126235→0.127317**. Portrait quality/localization is the next gate.

@@ -127,3 +127,6 @@ Keep P3-A.2.2's missing-structure utility and all selective controls fixed. Chan
 
 
 P3-A.2.3 implementation is now available behind a separate opt-in mode. Engineering acceptance requires exact tonal-prefix/total-count parity, selective budget accounting and a nonzero deficit-driven candidate pool before the portrait test. [Verification](P3A23_VERIFY.md).
+
+
+P3-A.2.3 CI gate passed: 62 tests, exact tonal-prefix/total-count parity, 6/20 replacements under the unchanged cap, and a smaller deficit-focused candidate pool (26 vs P3-A.2.2's 55 on the same step fixture). The portrait test now determines whether that proposal shift reaches underrepresented interior structure.

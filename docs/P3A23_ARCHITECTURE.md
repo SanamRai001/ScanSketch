@@ -1,6 +1,6 @@
 # P3-A.2.3 — Deficit-Driven Candidate Proposals
 
-**Status:** architecture frozen before implementation on `feat/p3a23-deficit-driven-proposals`. P3-A.2.2 is preserved as a rejected scoring-only experiment. P2-B.1 remains the default baseline.
+**Status:** architecture frozen before implementation on `feat/p3a23-deficit-driven-proposals`; implementation now passes the engineering CI gate. P3-A.2.2 is preserved as a rejected scoring-only experiment. P2-B.1 remains the default baseline.
 
 ## Motivation
 
