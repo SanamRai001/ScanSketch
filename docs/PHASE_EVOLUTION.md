@@ -98,3 +98,8 @@ The selective hybrid architecture is executable as a separate experiment: exact 
 ### P3-A.2.1 first engineering evidence
 
 CI passed **56/56** tests. On the step fixture, P3-A.2.1 preserved 173 tonal strokes and all 193 total strokes, replacing only **6 of 20** baseline structural slots under a cap of 8 and retaining 14 original contours. Rounded tone/dark/edge proxies improved slightly, with a small white-RMSE increase. No quality claim until portrait/nonportrait review. [Verification](P3A21_VERIFY.md).
+
+
+### P3-A.2.1 portrait outcome
+
+Selective replacement produced the first substantial P3 edge gain without tonal collapse: edge F1 **+15.22%**, overall tone ~0.247% better, dark ~0.301% better, white unchanged, at only +0.072% path length. Midtone worsened ~0.740%. It replaced 43/108 structural slots and retained 65. The visual delta is still subtle and concentrated mostly in upper hair/silhouette. **Promising, not promoted.** Next target missing baseline structure rather than strongest source structure. [Exact result](P3A21_FIRST_PORTRAIT_RESULT.md).

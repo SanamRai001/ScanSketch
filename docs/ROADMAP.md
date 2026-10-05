@@ -98,3 +98,8 @@ P3-A.2.1 is now implemented as a separate opt-in experiment. Its engineering gat
 
 
 P3-A.2.1 CI gate passed: 56 tests, exact tonal-prefix/total-count parity, 6/20 selective replacements under an 8-stroke cap on the step fixture. Portrait and genuine nonportrait visual gates remain open.
+
+
+### P3-A.2.1 portrait gate
+
+The selective hybrid achieved edge F1 **0.2887→0.3326 (+15.2%)** at exact total count and tonal-prefix parity, with essentially unchanged path/tone budget. However, visual changes remain subtle and concentrated in hair/silhouette. Next P3-A.2.2 should use a **missing-edge residual** (source structure minus frozen baseline-preview structure) so the structural budget targets underrepresented details rather than already-strong edges. No semantic face rules. [Result](P3A21_FIRST_PORTRAIT_RESULT.md).

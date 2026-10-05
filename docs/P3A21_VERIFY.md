@@ -97,3 +97,10 @@ On the 64×64 step fixture:
 - rounded white RMSE: ~0.00→0.01.
 
 This is engineering evidence only. The important result is that the selector is now genuinely selective rather than full replacement.
+
+
+## First portrait result
+
+The selective portrait run completed with tone=12563, structural budget=108, max replacements=43, replacements=43, retained baseline contours=65, candidates=2024 and exactly 43 changed structural slots. Compared with P2-B.1 at the same 12,671 total strokes, edge F1 improved **0.288706→0.332647 (+15.22%)**; overall tone RMSE improved ~0.247%, dark ~0.301%, white RMSE stayed identical, path length +0.072%, while midtone RMSE worsened ~0.740%. Uploaded previews remain visually close. Direct image comparison indicates changes are concentrated mostly in upper hair/silhouette rather than weak interior facial landmarks. See [P3-A.2.1 first portrait result](P3A21_FIRST_PORTRAIT_RESULT.md).
+
+**Decision:** promising, not promoted. Next refine the utility toward *missing baseline structure* rather than simply strong source structure.
