@@ -59,14 +59,20 @@ foreach ($mode in @("p2b1","p3a2")) {
         $line = $renderOutput | Where-Object { "$_" -like "P3-A.2 hybrid:*" } | Select-Object -Last 1
         if (-not $line) { throw "Missing P3-A.2 hybrid statistics line" }
         $text = "$line"
-        $pattern = 'tone=(d+) | structural-budget=(d+) | hybrid-selected=(d+) | contour-fallback=(d+) | candidates=(d+)'
-        if ($text -notmatch $pattern) { throw "Unable to parse P3-A.2 hybrid statistics" }
+        function Read-Stat([string]$inputText, [string]$name) {
+            $pattern = [regex]::Escape($name) + '=([0-9]+)'
+            $match = [regex]::Match($inputText, $pattern)
+            if (-not $match.Success) {
+                throw "Unable to parse P3-A.2 hybrid statistic '$name' from: $inputText"
+            }
+            return [int]$match.Groups[1].Value
+        }
         $hybridStats = [pscustomobject]@{
-            tone_count = [int]$Matches[1]
-            structural_budget = [int]$Matches[2]
-            hybrid_selected = [int]$Matches[3]
-            contour_fallback = [int]$Matches[4]
-            candidate_count = [int]$Matches[5]
+            tone_count = Read-Stat $text "tone"
+            structural_budget = Read-Stat $text "structural-budget"
+            hybrid_selected = Read-Stat $text "hybrid-selected"
+            contour_fallback = Read-Stat $text "contour-fallback"
+            candidate_count = Read-Stat $text "candidates"
         }
     }
 
