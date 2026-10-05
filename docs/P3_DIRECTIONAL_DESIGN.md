@@ -121,3 +121,10 @@ Therefore **do not iterate P3-A.0 by simply increasing the rotation quota or rel
 7. compare against **frozen P2-B.1**, recording count, path length and p2c-v1 metrics, and reject if it only changes proxies without improving the preview.
 
 P3-B search/optimization remains gated until P3-A.1 demonstrates a genuine visual win on at least a permitted portrait and a true nonportrait image.
+
+
+### Activation result: why P3-A.1 should change placement, not thresholds
+
+The portrait run reports **581 changed geometries out of 12,671 strokes**. P3-A.0 therefore exercised the direction field on a nontrivial subset of the image. Since the same run still worsened tone/midtone/dark RMSE and edge F1 and showed no clear visual gain, simply increasing the rotation quota or lowering confidence thresholds is not the preferred next experiment.
+
+P3-A.1 should instead test whether the **anchor distribution itself** is the bottleneck: sample/allocate candidate anchors from source structure and tone regions first, then choose orientation, rather than generate horizontal scanline fragments first and rotate a minority afterward.

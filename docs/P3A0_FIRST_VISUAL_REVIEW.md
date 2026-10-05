@@ -1,6 +1,6 @@
 # P3-A.0 — First Portrait Visual A/B (provisional)
 
-**Date:** 2026-10-05. **Status:** user-uploaded preview pair **and paired numeric summary table are now available**. The actual private source/hash values and portrait-specific `geometrically_changed_strokes` count have not been supplied. This is sufficient to reject the rotation-only variant as a quality candidate on this portrait, while preserving it as an experiment. The input is the original locally held private portrait and must not be checked into the public repository without explicit redistribution permission.
+**Date:** 2026-10-05. **Status:** user-uploaded preview pair **and paired numeric summary table are now available**. The actual private source/hash values are not supplied, but the portrait-specific `geometrically_changed_strokes` count is now confirmed as **581**. This is sufficient to reject the rotation-only variant as a quality candidate on this portrait, while preserving it as an experiment. The input is the original locally held private portrait and must not be checked into the public repository without explicit redistribution permission.
 
 ## Identity and context
 
@@ -62,3 +62,16 @@ The highlight-ink values were truncated in the user's formatted terminal table a
 **Reject P3-A.0 rotation-only as the candidate renderer.** It failed both the perceptual and numeric gate on this portrait while holding accepted stroke count constant and path length effectively constant. Keep P2-B.1 as default comparison baseline. Preserve PR #8 and its output as evidence that simply rotating existing horizontal proposals is insufficient.
 
 The next P3-A.1 hypothesis should modify **where strokes are proposed and how coarse/fine structural budgets are allocated**, instead of only reorienting existing horizontal anchors. Before implementing P3-A.1, capture the portrait's actual `geometrically_changed_strokes` count if available; that diagnostic will distinguish “too few rotations” from “many rotations but wrong proposal geometry.” The genuine nonportrait photograph gate remains open.
+
+
+## Final activation diagnostic
+
+The user subsequently read `summary.json` and reported:
+
+```text
+Changed stroke geometries: 581
+```
+
+With 12,671 total strokes, the prototype changed roughly **4.6%** of the drawing geometry. This is not a near-zero activation failure. The mode materially exercised the new orientation logic, yet still produced worse overall/midtone/dark RMSE and edge F1 and no convincing visual improvement.
+
+**Interpretation:** do not spend another iteration simply weakening confidence gates or raising the rotation quota. The evidence points to the inherited horizontal **anchor/placement distribution** as the more fundamental limitation. P3-A.1 should generate structure-aware anchors/proposals directly, with explicit coarse/form/texture budgets and P2-A fallback only where orientation is ambiguous.
