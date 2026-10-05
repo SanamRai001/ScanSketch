@@ -18,7 +18,7 @@ function FromRoot([string]$path) {
     return Join-Path $root $path
 }
 function Read-Stat([string]$inputText, [string]$name) {
-    $pattern = '(?:^|\|\s*)' + [regex]::Escape($name) + '=([0-9]+)'
+    $pattern = '(?:^|:|\|)\s*' + [regex]::Escape($name) + '=([0-9]+)'
     $match = [regex]::Match($inputText, $pattern)
     if (-not $match.Success) {
         throw "Unable to parse P3-A.2.1 statistic '$name' from: $inputText"
@@ -26,7 +26,7 @@ function Read-Stat([string]$inputText, [string]$name) {
     return [int]$match.Groups[1].Value
 }
 function Read-FloatStat([string]$inputText, [string]$name) {
-    $pattern = '(?:^|\|\s*)' + [regex]::Escape($name) + '=([0-9]+(?:\.[0-9]+)?)'
+    $pattern = '(?:^|:|\|)\s*' + [regex]::Escape($name) + '=([0-9]+(?:\.[0-9]+)?)'
     $match = [regex]::Match($inputText, $pattern)
     if (-not $match.Success) {
         throw "Unable to parse P3-A.2.1 float statistic '$name' from: $inputText"
