@@ -74,3 +74,8 @@ An opt-in first prototype implemented [part of the P3 design](P3_DIRECTIONAL_DES
 P3-A.1 uses the frozen P2-A tonal generator only to derive a **target tonal stroke count** for controlled comparison, not to inherit its anchor positions. It scans 5×3 source cells, snaps candidates to real source-dark pixels near weighted darkness centroids, derives coarse/fine tangents from the existing multiscale structure tensor, applies strict unsmoothed footprint support, and sorts accepted anchors back into deterministic top-to-bottom order. Initial allocation targets are 24% coarse, 46% fine/form and the remainder tonal, with unused quota filled by the strongest remaining source-supported candidates. A visible `baseline_fallback` statistic reports any final shortfall filled from historical tonal marks.
 
 The same P2-B.1 contour pass is appended after the new tonal field; expected total stroke count therefore matches frozen P2-B.1 on supported fixtures. This is not equal raster-ink deposition and not P3-B optimization. See [P3A1_VERIFY.md](P3A1_VERIFY.md).
+
+
+### P3-A.1 first CI observation
+
+PR #9 engineering checks passed: **47/47 Rust tests** and the full inherited workflow. On the 64×64 step, P2-B.1 and P3-A.1 both produced 193 total strokes; P3-A.1 used 17 coarse + 91 fine + 65 tonal placements with **0 baseline fallback**, and strong nonhorizontal strokes increased **20→128**. The CI summary displayed tone RMSE about **0.32→0.49**, a regression on the flat half-plane. This is recorded as a caution, not hidden: P3-A.1 is active, but its real-image artistic benefit remains unproven. See [P3A1_VERIFY.md](P3A1_VERIFY.md).

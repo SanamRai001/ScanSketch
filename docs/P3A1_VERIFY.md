@@ -1,6 +1,6 @@
 # P3-A.1 — Placement-aware directional proposals
 
-**Status:** implementation prepared on `feat/p3a1-placement-aware-proposals`; CI and real-photo quality results must be observed before any win is claimed. P2-B.1 remains the frozen baseline. P3-A.0 remains preserved as a rejected rotation-only experiment.
+**Status:** implementation on `feat/p3a1-placement-aware-proposals` passed GitHub CI engineering checks: **47/47 Rust tests**, all inherited P2-C/P3-A.0 smoke checks, and the new P3-A.1 paired step run. Real-photo quality results remain unobserved; no win is claimed. P2-B.1 remains the frozen baseline. P3-A.0 remains preserved as a rejected rotation-only experiment.
 
 ## Hypothesis
 
@@ -95,3 +95,19 @@ If P3-A.1 fails:
 - do not silently raise candidate density;
 - inspect class/fallback statistics and regional failures;
 - reconsider the objective before P3-B optimization.
+
+
+## First CI observation — engineering pass, quality still open
+
+GitHub Actions run `37265242828` completed successfully. On the 64×64 synthetic step fixture:
+
+- total strokes: **193 vs 193** (P2-B.1 / P3-A.1);
+- P3-A.1 tonal target: **173**;
+- selected placement classes: **17 coarse, 91 fine, 65 tonal**;
+- baseline fallback: **0**;
+- generated source-driven candidates: **235**;
+- strongly nonhorizontal strokes: **20 → 128**;
+- total path length shown by CI: ~**1256.27 → 1271.43px**;
+- rounded tone RMSE shown by the CI table: ~**0.32 → 0.49** (worse on this flat half-plane).
+
+The step fixture therefore proves the placement path is active and budget-matched, but **does not prove quality**. In fact, the flat-tone proxy gets worse there. This is an important warning that a vertical/form-following field can reduce uniform dark coverage at the same count. Portrait/nonportrait visual evidence must decide whether the new placement strategy is useful for real structure.
