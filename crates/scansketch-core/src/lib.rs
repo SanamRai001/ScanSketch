@@ -6,6 +6,7 @@
 
 mod analysis;
 mod contour;
+mod directional;
 mod metrics;
 mod white_audit;
 mod render;
@@ -17,6 +18,7 @@ pub use render::render_sketch;
 pub use metrics::{measure_sketch, EdgeMetric, Measurement, RegionMetric, StrokeMetric};
 pub use white_audit::{audit_white_pixels, AffectedPixel, AuditRoi, WhiteAudit};
 pub use scanline::{generate_sketch, SketchOptions};
+pub use directional::generate_directional_sketch;
 pub use stroke::{Sketch, Stroke};
 
 #[cfg(test)]

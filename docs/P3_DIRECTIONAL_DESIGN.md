@@ -1,6 +1,6 @@
 # P3 Research Decision — Multi-scale, Direction-aware Strokes First
 
-**Status: proposed architecture only, not implemented.** P2-C is a prerequisite for claims that P3 improves rendering. This proposal extends the research specification in [ALGORITHM.md](ALGORITHM.md), while retaining Primitive-inspired search as a later step rather than abandoning it.
+**Status: P3-A.0 has an opt-in first prototype (`--directional`) on a separate feature branch; the more ambitious independent placement/budget architecture below is still *proposed*, not implemented. P2-C's genuine nonportrait gate remains open.** P2-C is a prerequisite for claims that P3 improves rendering. This proposal extends the research specification in [ALGORITHM.md](ALGORITHM.md), while retaining Primitive-inspired search as a later step rather than abandoning it.
 
 ## Why not another raw Sobel threshold?
 
@@ -100,3 +100,7 @@ Keep a `--mode` or similar explicit switch in a later prototype; exact option na
 Open questions: preferred scale normalization across image sizes, tonal-vs-structure budget allocation, alignment in isotropic/noisy texture, visual loss proxy for salient facial anchors without introducing pretrained recognition, and interactive CPU performance on a modest laptop.
 
 Further reading/prior art: structure-tensor orientation and multiscale image processing in classical vision; [Primitive (Michael Fogleman)](https://github.com/fogleman/primitive) for optimization mechanics, with appropriate license notice if code is incorporated. No imported third-party implementation is claimed here.
+
+## Implemented first slice: P3-A.0 (opt-in only)
+
+The prototype changes direction rather than location/budget: original top-to-bottom P2-A tonal proposals keep their index, center, original length, width and opacity; a source-supported subset may rotate around the same midpoint using a fine/coarse structure tensor. Hard confidence, source-ink footprint and tile/global quota guards prevent unbounded extra texture. Default `generate_sketch` and the optional P2-B.1 contour pass remain unchanged. Invoke `generate_directional_sketch` or CLI `--directional` for the experiment. This does **not** implement a new candidate optimization loop, a fully independent anchor placement scheduler or equalized raster-ink loss; future P3-A.1 requires measurement evidence first. See [P3-A.0 verification](P3A0_VERIFY.md).

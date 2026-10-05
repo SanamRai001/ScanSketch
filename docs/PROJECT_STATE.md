@@ -6,7 +6,7 @@ Last updated: **2026-10-04**. This is the single authoritative progress record; 
 
 ScanSketch is a deterministic, CPU-first Rust system for rebuilding images from **actual ordered pencil strokes**, not grayscale pixel painting. Top-to-bottom sampling remains the design identity. After the first portrait iterations, **P2-B.1 is the current strongest subjective visual candidate** but is still not a convincing finished portrait renderer or an objectively established winner.
 
-**Current active phase: P2-C — measurement implementation and real-fixture validation.** The first independent measurement utility is implemented and verified in GitHub Actions; the first **same-binary portrait A/B numeric comparison** (P2-A tonal-only versus P2-B.1 with contours) is now recorded. Multi-fixture, repeated-seed, signed tone-bias and matched-budget experiments remain pending. Stop stacking additional raw-Sobel contour heuristics without controlled evidence. The leading next prototype to test is multi-scale, direction-aware source-based stroke placement (P3-A), with Primitive-inspired scoring (P3-B) gated behind measurements.
+**Current active work: experimental P3-A.0 prototype built on top of P2-C measurement tooling, while P2-C's actual nonportrait photo gate remains OPEN.** The first independent measurement utility is implemented and verified in GitHub Actions; the first **same-binary portrait A/B numeric comparison** (P2-A tonal-only versus P2-B.1 with contours) is now recorded. Multi-fixture, repeated-seed, signed tone-bias and matched-budget experiments remain pending. Stop stacking additional raw-Sobel contour heuristics without controlled evidence. The leading next prototype to test is multi-scale, direction-aware source-based stroke placement (P3-A), with Primitive-inspired scoring (P3-B) gated behind measurements.
 
 ## Stacked GitHub review
 
@@ -17,9 +17,11 @@ ScanSketch is a deterministic, CPU-first Rust system for rebuilding images from 
 - `feat/p2b-contour-reinforcement`: draft PR #4 into P2-A. GitHub CI 20/20. Same-image CLI at 368x512, seed 42: no contours 12,563 strokes, contour-on 13,024 (+461), visually modest structural benefit.
 - `feat/p2b1-contour-coherence`: draft PR #5 into P2-B. GitHub CI 23/23. Same portrait preview received and qualitatively reviewed: strongest candidate so far, still an incremental improvement with weak glasses/eyes/lips and hair dominant.
 - `docs/p2c-measurement-and-p3-design`: draft PR #6 into P2-B.1; protocol, visual evidence and proposed P3 architecture; CI passed 23/23.
-- **Active:** `feat/p2c-measurement-utility`, draft PR #7 into P2-C docs. New metrics and synthetic fixture tooling; existing reconstruction logic unchanged. CI passed the later **34/34 Rust tests** (31 original + three white-audit tests), workspace check, white fixture smoke, all six paired synthetic runs and exact protected-channel audits; [run 37222335502](https://github.com/SanamRai001/ScanSketch/actions/runs/37222335502).
+- `feat/p2c-measurement-utility`, draft PR #7 into P2-C docs. New metrics and synthetic fixture tooling; existing reconstruction logic unchanged. CI passed the later **34/34 Rust tests** (31 original + three white-audit tests), workspace check, white fixture smoke, all six paired synthetic runs and exact protected-channel audits; [run 37222335502](https://github.com/SanamRai001/ScanSketch/actions/runs/37222335502).
 
-Review stack order is foundation → P1 → P2-A → P2-B → P2-B.1 → P2-C docs → P2-C metrics. Do not merge earlier feature history by accident while collecting results.
+- **Active P3-A.0 prototype:** `feat/p3a-directional-tonal-prototype`, based on P2-C metrics branch, to be reviewed in a stacked draft PR. Only `--directional` opts into a multi-scale structure-tensor rotation of source-supported existing tonal strokes; default P2-B.1 remains unchanged. CI and actual portrait/nonportrait outputs are pending at implementation time. See [P3A0_VERIFY.md](P3A0_VERIFY.md).
+
+Review stack order is foundation → P1 → P2-A → P2-B → P2-B.1 → P2-C docs → P2-C metrics → experimental P3-A.0. Do not merge earlier feature history by accident while collecting results.
 
 ## Why we changed course
 
@@ -46,16 +48,16 @@ The Windows paired photo script ran successfully on another selected `photo.jpg`
 
 This adds **second-portrait evidence**, NOT a completed cross-subject/nonportrait gate. A genuine permission-cleared object/building photograph is still needed; avoid declaring P2-C finished solely from the misleading output path.
 
-## Next major algorithm decision (proposed, not coded)
+## First P3-A.0 implementation boundary (experimental; no quality claim)
 
-Study [P3 multi-scale direction-aware design](P3_DIRECTIONAL_DESIGN.md). P3-A would use coarse/fine gradients and structure-tensor orientation/confidence to propose source-supported short strokes along local geometry during the existing top-to-bottom sweep, reverting to P2-A tonal marks when direction is ambiguous. Avoid semantic portrait hacks. P3-B would later apply bounded Primitive-style candidate scoring if P3-A provides genuine wins at controlled resources.
+An opt-in first prototype implements [part of the P3 design](P3_DIRECTIONAL_DESIGN.md): coarse/fine gradients and structure-tensor orientation/confidence rotate selected *existing* tonal fragments around their midpoint, reverting to their exact P2-A source-supported geometry when orientation is ambiguous or footprint unsafe. This is P3-A.0: it does **not** yet implement a new residual-based proposal scheduler or semantic portrait recognition, nor change the normal renderer. See [verification runbook](P3A0_VERIFY.md). P3-B Primitive-style candidate scoring remains deferred.
 
 ## Next execution gate
 
 1. Done in Linux CI for all-white end-to-end and synthetic unit tests (31 passed). Next run step/channel/gradient with the actual Windows executable and record observed output hashes and scores, not merely expected values.
 2. **Completed:** first same-binary portrait P2-A versus P2-B.1 numeric control recorded in [P2C_PORTRAIT_AB.md](P2C_PORTRAIT_AB.md). **Completed:** user-generated synthetic source fixtures (six PNGs). **Completed on GitHub Linux CI:** [paired synthetic batch](P2C_SYNTHETIC_CI_RESULT.md), with mixed findings. **Completed on Windows:** local [paired synthetic batch](P2C_SYNTHETIC_WINDOWS_RESULT.md) generated full-precision results and retained hashes. **Completed in CI:** [white-channel audit](P2C_WHITE_CHANNEL_AUDIT.md) against raw synthetic files, proving 0 affected pixels inside the 288-pixel protected channel for both modes. **Next:** a genuinely nonportrait paired photographic run remains outstanding. The latest paired run was actually a second **portrait** (see [Portrait B result](P2C_SECOND_PORTRAIT_AB.md)); choose and visually verify an object/architectural source before using [run-p2c-photo-ab.ps1](../scripts/run-p2c-photo-ab.ps1) with a NEW output folder. Then record the human comparison. A P3-A opt-in research design is warranted, but do not declare it validated or P2-C complete before cross-subject assessment. Individual gradient edge-positive counts and repeat seeds remain useful diagnostic follow-ups. Next run paired A/B on a permission-cleared **nonportrait** image. Do not proceed to P3-A based solely on the portrait result. Each result is retained in [phase evolution](PHASE_EVOLUTION.md).
 3. Human A/B evaluation and numeric metrics; document agreements, trade-offs and failures.
-4. Only then prototype P3-A behind an opt-in mode and compare at controlled ink/stroke budgets. Do not start P3-B just because the new geometry is interesting.
+4. Opt-in P3-A.0 code can be verified in parallel, but **do not declare it a quality win** until paired previews/metrics on the original portrait and genuinely nonportrait image are reviewed. Its unchanged stroke count/path-length intent is stricter than adding extra contours, but rotated raster deposition is not automatically equal. No P3-B until an honest improvement gate.
 
 ## Local safety and remaining risks
 
