@@ -1,6 +1,6 @@
 # P3-A.0 — Opt-in Direction-aware Tonal Proposals
 
-**Status:** first testable research implementation, **41/41 tests and end-to-end synthetic CI smoke passed** ([run 37256450858](https://github.com/SanamRai001/ScanSketch/actions/runs/37256450858)). The same-source step comparison rotated **24/193** stroke geometries and preserved the exact stroke count and width/opacity. **Not** P3-A completed or artistically accepted. P2-C still requires a confirmed genuinely nonportrait photographic source. Use the current staged PR branch `feat/p3a-directional-tonal-prototype`; parent `feat/p2c-measurement-utility` remains unmodified.
+**Status:** first testable research implementation, **41/41 tests and end-to-end synthetic CI smoke passed** ([run 37256450858](https://github.com/SanamRai001/ScanSketch/actions/runs/37256450858)). The same-source step comparison rotated **24/193** stroke geometries and preserved the exact stroke count and width/opacity. **Not** P3-A completed or artistically accepted. The first user-supplied portrait A/B preview is now visually inspected and shows **no clear perceived improvement**; [recorded assessment](P3A0_FIRST_VISUAL_REVIEW.md). Numeric local paired report and actual rotation count have not been shared. P2-C still requires a confirmed genuinely nonportrait photographic source. Use the current staged PR branch `feat/p3a-directional-tonal-prototype`; parent `feat/p2c-measurement-utility` remains unmodified.
 
 ## Hypothesis and what actually changed
 
@@ -57,3 +57,17 @@ powershell -NoProfile -ExecutionPolicy Bypass -File ".\scripts\run-p3a-ab.ps1" -
 Also execute the P2-C tonal-only versus P2-B.1 photo script on that nonportrait subject to close the previous cross-category requirement; its outcomes are not retroactively supplied by P3-A. At least two input classes, actual preview inspection and the previous p2c-v1 metrics are necessary before claiming an improvement. Record numerical and visual regressions in [PHASE_EVOLUTION.md](PHASE_EVOLUTION.md).
 
 **Next design gate:** if directional rotation changes too few strokes or yields distracting edge-aligned hatching, measure why: confidence gate, source-support rejections and tile quota. Revise a falsifiable P3-A.1 placement proposal instead of blindly boosting angular density. P3-B candidate optimization remains deferred.
+
+## After first portrait preview upload (provisional)
+
+The user uploaded two images following the listed `p2b1.png` then `p3a.png` open commands. If upload order matches that sequence, the first is baseline and second is experimental. The directional version still has extensive horizontal hatching and does not clearly improve eyewear/central facial structure. Don't silently promote it over P2-B.1. See [full qualitative record](P3A0_FIRST_VISUAL_REVIEW.md).
+
+**Next:** share only the nonprivate P3-A `summary.json` metrics via this Windows one-line-friendly PowerShell snippet:
+
+```powershell
+$s = Get-Content ".\experiments\local\p3a\portrait-a\summary.json" -Raw | ConvertFrom-Json
+"Changed stroke geometries: $($s.geometrically_changed_strokes)"
+$s.fixtures | Select-Object mode,width,height,strokes,path_length_px,tone_rmse,midtone_rmse,dark_rmse,white_rmse,edge_f1,highlight_ink | Format-Table -AutoSize
+```
+
+If that directory is absent, share the exact console output of `run-p3a-ab.ps1` rather than generating another comparison on top of existing results. The separate genuinely nonportrait P2-C test is still required.
