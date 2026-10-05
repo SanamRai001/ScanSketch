@@ -118,3 +118,8 @@ The missing-structure experiment is executable as a separate mode. It reuses the
 ### P3-A.2.2 first engineering evidence
 
 CI passed **59/59** tests. On the step fixture, missing-structure scoring preserved 173 tonal strokes and all 193 total strokes, replacing **6 of 20** structural slots under the unchanged cap of 8 and retaining 14 baseline contours. The accepted replacements carried mean missing-edge evidence **0.126235**. Rounded tone/dark/edge proxies improved slightly with the same small white-RMSE caution. No phase win is claimed until portrait/nonportrait review. [Verification](P3A22_VERIFY.md).
+
+
+### P3-A.2.2 portrait outcome
+
+The scoring-only missing-edge experiment **did not improve the portrait**. Edge F1 fell ~0.99% (0.288706→0.285843); midtone worsened ~0.195%; tone/dark improved only ~0.042%/~0.055%; white stayed identical and path changed +0.009%. The visual pair remains nearly unchanged and weak interior structure is not recovered. **Reject scoring-only refinement.** This isolates the candidate pool as the next bottleneck: P3-A.2.3 should propose candidates directly from missing-structure peaks while freezing selective-replacement controls. [Exact result](P3A22_FIRST_PORTRAIT_RESULT.md).

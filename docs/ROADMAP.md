@@ -114,3 +114,8 @@ P3-A.2.2 implementation is now available as a controlled opt-in mode. Engineerin
 
 
 P3-A.2.2 CI gate passed: 59 tests, exact tonal-prefix/total-count parity, 6/20 replacements under the unchanged 8-stroke cap, and nonzero missing-edge evidence at accepted replacements. The portrait test now determines whether replacements actually move toward underrepresented structure rather than strong hair/silhouette edges.
+
+
+### P3-A.2.2 portrait decision
+
+Missing-edge **scoring alone** failed: edge F1 regressed ~0.99% and the weak interior structure remained underrepresented, despite exact budget/prefix controls. This indicates the current tone-residual-driven candidate pool is constraining what the selector can recover. Next P3-A.2.3 changes candidate anchor generation to missing-edge local maxima while keeping the P3-A.2.1/P3-A.2.2 replacement cap, margin, budget and source-support rules frozen.

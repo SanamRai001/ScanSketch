@@ -145,3 +145,10 @@ Missing-structure scoring is now implemented as a separate mode: continuous edge
 ### P3-A.2.2 first CI evidence
 
 Draft PR #12 passed [GitHub Actions run 37345281232](https://github.com/SanamRai001/ScanSketch/actions/runs/37345281232): **59/59 Rust tests**, all inherited checks, and the new missing-structure smoke. Step fixture: same 193 total strokes, exact 173-stroke tonal prefix, 20 structural slots, cap 8, **6 replacements / 14 retained**, 55 candidates; weakest baseline utility 0.120863, strongest hybrid utility 0.366960, mean missing-edge evidence 0.126235. This confirms only the scoring field changed while the selective controls stayed fixed. Portrait quality gate remains open.
+
+
+## P3-A.2.2 first portrait result
+
+P3-A.2.2 is a clean negative result. At exact total-count/tone-prefix controls, overall tone improved only ~0.042% and dark ~0.055%, midtone worsened ~0.195%, white stayed identical, path changed only +0.009%, while edge F1 **fell ~0.99% (0.288706→0.285843)**. The uploaded pair does not materially recover weak interior structure. [Exact result](P3A22_FIRST_PORTRAIT_RESULT.md).
+
+**Interpretation:** re-ranking the existing P3-A.2.1 candidate pool is insufficient. The pool is still created from positive tonal residual/dark anchors, so underrepresented edges in lighter/midtone regions may never become candidates. Next: P3-A.2.3 deficit-driven candidate proposals from missing-edge local maxima, retaining the same 40% cap, replacement margin, exact tonal prefix and total stroke count.

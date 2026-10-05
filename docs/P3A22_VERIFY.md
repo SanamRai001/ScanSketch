@@ -110,3 +110,10 @@ On the 64×64 step fixture:
 - rounded white RMSE: ~0.00→0.01.
 
 This is engineering evidence only. The important result is that the new missing-structure utility is active while the **candidate generator, 40% cap and 15%+0.001 replacement margin remain frozen** from P3-A.2.1.
+
+
+## First portrait outcome
+
+The portrait A/B kept 12,671 total strokes and the frozen baseline invariants, but the missing-edge scoring-only variant did **not** improve structural quality. Exact metrics: tone RMSE 0.397436→0.397271 (0.0416% better), dark 0.447258→0.447014 (0.0545% better), midtone 0.304446→0.305038 (0.1945% worse), white unchanged, path +0.0087%, and edge F1 **0.288706→0.285843 (0.9915% worse)**. Visual differences remain subtle and do not materially recover weak interior structure. See [P3-A.2.2 first portrait result](P3A22_FIRST_PORTRAIT_RESULT.md).
+
+**Decision:** reject scoring-only P3-A.2.2. The next controlled variable should be candidate generation from missing-structure peaks, while keeping cap/margin/budget fixed.

@@ -206,3 +206,12 @@ Compute a frozen baseline structural deficit map from source and P2-B.1 preview,
 ## P3-A.2.2 missing-structure residual
 
 P3-A.2.1's aggregate edge gain is promising, but image-difference localization shows the intervention clusters in already-strong upper hair/silhouette. P3-A.2.2 therefore computes a continuous source-minus-baseline edge-strength deficit and uses that map in the shared baseline/candidate utility. Candidate generation, replacement margin and 40% cap remain unchanged so the experiment isolates spatial value assignment. [Full architecture](P3A22_ARCHITECTURE.md).
+
+
+## P3-A.2.2 result: candidate availability is the bottleneck
+
+The first portrait missing-edge scoring run did not improve the structure proxy or visible weak details: edge F1 fell from 0.288706 to 0.285843 while tone/dark were nearly unchanged and white stayed identical. Since P3-A.2.2 deliberately reused the exact P3-A.2.1 candidate generator, this is useful causal evidence: **utility cannot select a useful structural stroke that the proposal stage never generated**.
+
+### P3-A.2.3 design consequence
+
+Keep the selective replacement decision rule fixed, but generate anchors from spatially separated local maxima in the missing-edge residual rather than from positive tonal residual. Use the same source tensor for tangent direction, the same strict source-support check, the same tile fairness, and the same missing-structure utility for baseline-vs-candidate comparison. This tests proposal coverage as one variable without adding semantic feature detectors or extra stroke budget.
