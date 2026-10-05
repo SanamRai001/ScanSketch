@@ -1,6 +1,6 @@
 # P3 Research Decision — Multi-scale, Direction-aware Strokes First
 
-**Status: P3-A.0 has an opt-in first prototype (`--directional`) on a separate feature branch; the more ambitious independent placement/budget architecture below is still *proposed*, not implemented. P2-C's genuine nonportrait gate remains open.** P2-C is a prerequisite for claims that P3 improves rendering. This proposal extends the research specification in [ALGORITHM.md](ALGORITHM.md), while retaining Primitive-inspired search as a later step rather than abandoning it.
+**Status: P3-A.0 (`--directional`) was implemented and rejected. P3-A.1 now implements the first independent placement/budget prototype behind `--placement-aware`; CI and real-image quality review remain pending. P2-C's genuine nonportrait gate remains open.** P2-C is a prerequisite for claims that P3 improves rendering. This proposal extends the research specification in [ALGORITHM.md](ALGORITHM.md), while retaining Primitive-inspired search as a later step rather than abandoning it.
 
 ## Why not another raw Sobel threshold?
 
@@ -128,3 +128,21 @@ P3-B search/optimization remains gated until P3-A.1 demonstrates a genuine visua
 The portrait run reports **581 changed geometries out of 12,671 strokes**. P3-A.0 therefore exercised the direction field on a nontrivial subset of the image. Since the same run still worsened tone/midtone/dark RMSE and edge F1 and showed no clear visual gain, simply increasing the rotation quota or lowering confidence thresholds is not the preferred next experiment.
 
 P3-A.1 should instead test whether the **anchor distribution itself** is the bottleneck: sample/allocate candidate anchors from source structure and tone regions first, then choose orientation, rather than generate horizontal scanline fragments first and rotate a minority afterward.
+
+
+## Implemented P3-A.1 slice: placement before direction
+
+The P3-A.1 branch now implements the design consequence of the P3-A.0 failure:
+
+1. call the frozen P2-A tone pass only to obtain a target count for controlled comparison;
+2. scan 5×3 source cells and choose anchors from actual source-dark pixels nearest a weighted darkness centroid;
+3. use deterministic cell-local RNG for jitter/length/pressure so filtering one candidate does not perturb unrelated cells;
+4. choose coarse/fine source-tangent direction when confidence is sufficient; ambiguous proposals receive only a small seeded tonal-angle prior;
+5. add an offset second proposal in genuinely dark cells;
+6. apply whole-stroke source-support checks against the unsmoothed darkness map;
+7. select explicit initial budgets (24% coarse, 46% fine/form, remainder tonal), then fill unused quota from remaining highest-scored source-driven candidates;
+8. use exact historical tonal strokes only as a final, counted sparse-input fallback;
+9. restore deterministic top-to-bottom commit ordering;
+10. append the unchanged P2-B.1 contour pass.
+
+This keeps the **total accepted stroke count** comparable to frozen P2-B.1 while allowing path length, raster coverage and tonal distribution to change. Those differences must be measured, not assumed equal. See [P3-A.1 verification](P3A1_VERIFY.md).

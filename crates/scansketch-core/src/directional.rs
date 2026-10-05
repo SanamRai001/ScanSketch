@@ -15,11 +15,11 @@ use crate::scanline::{generate_sketch, SketchOptions};
 use crate::stroke::{Sketch, Stroke};
 
 #[derive(Clone, Copy, Debug, Default)]
-struct Direction {
-    tx: f32,
-    ty: f32,
-    coherence: f32,
-    energy: f32,
+pub(crate) struct Direction {
+    pub(crate) tx: f32,
+    pub(crate) ty: f32,
+    pub(crate) coherence: f32,
+    pub(crate) energy: f32,
 }
 
 /// Binomial kernel [1,2,1]/4 in each axis: variance = 0.5 pixel^2 per pass.
@@ -112,7 +112,7 @@ fn tensor_directions(darkness: &[f32], width: usize, height: usize) -> Vec<Direc
     result
 }
 
-struct OrientationField {
+pub(crate) struct OrientationField {
     fine: Vec<Direction>,
     coarse: Vec<Direction>,
     width: usize,
@@ -120,7 +120,7 @@ struct OrientationField {
 }
 
 impl OrientationField {
-    fn new(darkness: &[f32], width: usize, height: usize) -> Self {
+    pub(crate) fn new(darkness: &[f32], width: usize, height: usize) -> Self {
         // Fine ~sigma 0.71px; coarse ~sigma 2.0px at working resolution.
         let fine = repeated_blur(darkness, width, height, 1);
         let coarse = repeated_blur(darkness, width, height, 8);
@@ -131,9 +131,58 @@ impl OrientationField {
         }
     }
 
+
+    /// P3-A.1 placement support: inspect the fine/coarse field directly at
+    /// an image location. The returned directions retain their raw coherence
+    /// and energy so the new proposal scheduler can apply its own thresholds
+    /// without changing the rejected P3-A.0 `local()` behavior.
+    pub(crate) fn components(&self, x: usize, y: usize) -> (Direction, Direction) {
+        let x = x.min(self.width - 1);
+        let y = y.min(self.height - 1);
+        let index = y * self.width + x;
+        (self.fine[index], self.coarse[index])
+    }
+
+    /// Search a bounded neighborhood for the best direction at a requested
+    /// scale. Unlike P3-A.0's `local()`, near-horizontal directions are valid:
+    /// P3-A.1 chooses anchors first, then lets source geometry pick the tangent.
+    pub(crate) fn best_near(
+        &self,
+        x: usize,
+        y: usize,
+        radius: usize,
+        coarse: bool,
+        min_energy: f32,
+        min_coherence: f32,
+    ) -> Option<Direction> {
+        let mut best = None;
+        let mut best_score = 0.0_f32;
+        let xmax = (x + radius).min(self.width - 1);
+        let ymax = (y + radius).min(self.height - 1);
+        for yy in y.saturating_sub(radius)..=ymax {
+            for xx in x.saturating_sub(radius)..=xmax {
+                let index = yy * self.width + xx;
+                let direction = if coarse { self.coarse[index] } else { self.fine[index] };
+                if direction.energy < min_energy || direction.coherence < min_coherence {
+                    continue;
+                }
+                let distance = x.abs_diff(xx) + y.abs_diff(yy);
+                let strength =
+                    (direction.energy / (direction.energy + 0.05)).clamp(0.0, 1.0);
+                let score =
+                    direction.coherence * strength / (1.0 + distance as f32 * 0.11);
+                if score > best_score {
+                    best_score = score;
+                    best = Some(direction);
+                }
+            }
+        }
+        best
+    }
+
     /// Stable nearby search supports a tonal midpoint a few pixels *inside*
     /// an edge without pulling marks towards unsupported white pixels.
-    fn local(&self, x: usize, y: usize) -> Option<Direction> {
+    pub(crate) fn local(&self, x: usize, y: usize) -> Option<Direction> {
         let mut best: Option<Direction> = None;
         let mut best_score = 0.0_f32;
         let xmax = (x + 4).min(self.width - 1);
@@ -171,7 +220,7 @@ impl OrientationField {
 /// round-cap endpoints, and both lateral pen sides on UNSMOOTHED source.
 /// Anti-aliased raster edge pixels can still exist close to source boundaries;
 /// this constraint prevents a candidate centerline from crossing a white gap.
-fn source_supported(
+pub(crate) fn source_supported(
     darkness: &[f32],
     width: usize,
     height: usize,

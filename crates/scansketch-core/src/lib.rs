@@ -7,6 +7,7 @@
 mod analysis;
 mod contour;
 mod directional;
+mod placement;
 mod metrics;
 mod white_audit;
 mod render;
@@ -19,6 +20,7 @@ pub use metrics::{measure_sketch, EdgeMetric, Measurement, RegionMetric, StrokeM
 pub use white_audit::{audit_white_pixels, AffectedPixel, AuditRoi, WhiteAudit};
 pub use scanline::{generate_sketch, SketchOptions};
 pub use directional::generate_directional_sketch;
+pub use placement::{generate_placement_sketch, generate_placement_sketch_with_stats, PlacementStats};
 pub use stroke::{Sketch, Stroke};
 
 #[cfg(test)]

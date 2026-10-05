@@ -59,7 +59,8 @@ The proposed erasure/correction idea is recorded under [Future Experiments](docs
 | [P2-C protocol](docs/P2C_PROTOCOL.md) | Fixed fixture, metrics, comparisons and acceptance gate |
 | [P2-C runbook](docs/P2C_RUN.md) | Native fixture generator and measurement CLI usage |
 | [P3 directional design](docs/P3_DIRECTIONAL_DESIGN.md) | Proposed multiscale geometry-first architecture |
-| [P3-A.0 verification](docs/P3A0_VERIFY.md) | Opt-in direction-aware tonal segment experiment and same-binary A/B |
+| [P3-A.0 verification](docs/P3A0_VERIFY.md) | Rejected rotation-only tonal segment experiment and A/B evidence |
+| [P3-A.1 verification](docs/P3A1_VERIFY.md) | Placement-aware source-driven proposal experiment and comparison runbook |
 | [Future experiments](docs/FUTURE_EXPERIMENTS.md) | Ideas parked until core output is convincing |
 | [Project state](docs/PROJECT_STATE.md) | Single authoritative progress, risks and next phase |
 | [P1 verification](docs/P1_VERIFY.md) | Historical baseline validation |
@@ -94,7 +95,7 @@ cargo run -p scansketch-cli -- --input .\sample.jpg --output .\outputs\p2a-contr
 
 Inputs are local PNG/JPEG. The CLI enforces bounded decoding and a 1024px maximum working-image side. P2-B.1 defaults to optional coherence-ranked contours; `--no-contours` preserves the P2-A tonal stroke output. This is a **research prototype**, not a validated portrait product.
 
-The P2-C documentation branch (`docs/p2c-measurement-and-p3-design`) contains the same renderer plus research plans. An isolated **experimental P3-A.0** branch (`feat/p3a-directional-tonal-prototype`) adds `--directional`, which rotates eligible source-supported tonal marks using coarse/fine tensor directions without changing the default renderer. It has no accepted artistic win yet; see [verification](docs/P3A0_VERIFY.md). The first local Cargo build generated `Cargo.lock` on Windows; it has not yet been checked into the remote repository. Preserve it locally. Do not commit personal samples, `outputs/` or `target/`.
+The P2-C documentation branch (`docs/p2c-measurement-and-p3-design`) contains the same renderer plus research plans. Historical **P3-A.0** (`feat/p3a-directional-tonal-prototype`, `--directional`) is preserved as a rejected rotation-only experiment. The current **P3-A.1** branch (`feat/p3a1-placement-aware-proposals`) adds opt-in `--placement-aware`, which creates new source-driven anchors before assigning direction while keeping frozen P2-B.1 as the default/control. It has no accepted quality win until CI and A/B review; see [verification](docs/P3A1_VERIFY.md). The first local Cargo build generated `Cargo.lock` on Windows; it has not yet been checked into the remote repository. Preserve it locally. Do not commit personal samples, `outputs/` or `target/`.
 
 ## License and ownership
 
