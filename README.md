@@ -70,6 +70,9 @@ The proposed erasure/correction idea is recorded under [Future Experiments](docs
 | [P3-A.2.3 architecture](docs/P3A23_ARCHITECTURE.md) | Deficit-driven proposal coverage with frozen selective controls |
 | [P3-A.2.3 verification](docs/P3A23_VERIFY.md) | Exact-budget deficit-proposal A/B and first promising portrait result |
 | [P3-A.2.3 portrait result](docs/P3A23_FIRST_PORTRAIT_RESULT.md) | Same-count portrait metrics, visual interpretation and decision to generalize |
+| [P3-G1 protocol](docs/P3G1_PROTOCOL.md) | Frozen P3-A.2.3 validation across 3–5 genuine nonportrait photos |
+| [P3-G1 runbook](docs/P3G1_RUN.md) | One-command batch A/B, aggregate metrics and local visual review |
+| [P3-G1 first result](docs/P3G1_FIRST_RESULT.md) | Chair/mug/plant generalization result and pivot to human stroke hierarchy |
 | [Future experiments](docs/FUTURE_EXPERIMENTS.md) | Ideas parked until core output is convincing |
 | [Project state](docs/PROJECT_STATE.md) | Single authoritative progress, risks and next phase |
 | [P1 verification](docs/P1_VERIFY.md) | Historical baseline validation |

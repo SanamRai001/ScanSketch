@@ -143,3 +143,18 @@ CI passed **62/62** tests. On the step fixture, candidate origin changed from to
 ### P3-A.2.3 portrait outcome
 
 At the same 12,671 strokes, P3-A.2.3 improved edge F1 **8.918%** (0.288706→0.314451), kept white RMSE identical, changed path only +0.0601%, and kept tone/dark nearly flat; midtone worsened ~0.936%. The previews remain visually close. This is **promising proposal-origin evidence**, but P3-A.2.1 still has the higher absolute portrait edge F1. Decision: freeze P3-A.2.3 and test genuine nonportrait generalization before more tuning. [Result](P3A23_FIRST_PORTRAIT_RESULT.md).
+
+
+### P3-G1 — nonportrait generalization validation
+
+After the promising P3-A.2.3 portrait result, renderer tuning is paused. P3-G1 adds a local-only 3–5 image validation harness: frozen P2-B.1 vs P3-A.2.3 for multiple permission-cleared nonportrait photos, exact invariant checks, aggregate JSON/CSV and local HTML A/B review. This phase tests generality; it does **not** change sketch generation. [Protocol](P3G1_PROTOCOL.md).
+
+
+### P3-G1 validation infrastructure verified
+
+The multi-photo harness passed CI end-to-end: three local-style cases, per-case frozen invariant checks, aggregate JSON/CSV and side-by-side HTML review. Synthetic smoke results were mixed rather than universally positive, which is desirable for an evidence tool. Real nonportrait photographic evidence remains the actual gate. [Run 37354095490](https://github.com/SanamRai001/ScanSketch/actions/runs/37354095490).
+
+
+### P3-G1 real-pack outcome
+
+The first genuine nonportrait pack (chair, mug, plant) rejected broad P3-A.2.3 promotion: edge wins 1/3 and exploratory mean edge-F1 change -2.137%; tone/midtone means also regress. More importantly, visual review shows the shared P2/P3 primitive language is still dominated by 2–10px horizontal fragments. **Long human gesture/contour strokes do not exist yet.** Decision: end this line of selection-only tuning and move to P4 stroke hierarchy. [Exact result](P3G1_FIRST_RESULT.md).
