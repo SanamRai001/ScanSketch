@@ -108,3 +108,8 @@ Draft PR #10 passed [GitHub Actions run 37334525616](https://github.com/SanamRai
 The first controlled portrait hybrid preserved the exact **12,563-stroke tonal prefix** and **12,671 total strokes**, but replaced **all 108 structural slots** (108 hybrid, 0 contour fallback) from 2,024 candidates. Tone RMSE improved ~0.41%, dark RMSE ~0.54%, white RMSE was identical, while midtone worsened ~1.91% and edge F1 ~0.10%; path length +0.10%. The uploaded previews are extremely similar and do not establish a clear visual win. [Exact result](P3A2_FIRST_PORTRAIT_RESULT.md).
 
 **Decision:** hybrid architecture is promising because it preserves tone, but the replacement policy is too permissive. Next P3-A.2.1 should selectively replace baseline contours only when hybrid utility clearly exceeds baseline structural utility, with a conservative replacement cap. P2-B.1 remains default.
+
+
+## P3-A.2.1 architecture freeze
+
+P3-A.2 preserved tone but replaced all 108 portrait structural slots and produced no clear visual win. P3-A.2.1 therefore scores **baseline contours and hybrid candidates with the same utility**, replaces only when hybrid utility exceeds the weakest baseline contour by `15% + 0.001`, and caps replacements at **40%** of structural budget. Replacement occurs in the exact baseline contour slots, preserving all retained ordering and the tonal prefix. See [P3A21_ARCHITECTURE.md](P3A21_ARCHITECTURE.md).

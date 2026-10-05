@@ -182,3 +182,8 @@ P3-A.2 keeps the P2 tonal prefix untouched. It uses the existing P2-B.1 contour 
 The hybrid architecture avoided P3-A.1's tonal collapse, but the first portrait selected 108/108 hybrid structural strokes and 0 original contour fallback. Because 2,024 valid candidates competed for only 108 slots, the policy effectively guaranteed full replacement. The resulting image was almost indistinguishable from P2-B.1 and did not improve edge F1 or midtone RMSE.
 
 P3-A.2.1 should score the **baseline structural layer itself** under the same residual/structure evidence. A hybrid candidate should replace baseline structure only when it clears a baseline-derived utility threshold by a margin, and the experiment should impose a conservative maximum replacement fraction. This keeps the useful hybrid architecture while making the intervention genuinely selective.
+
+
+## P3-A.2.1 selective replacement rule
+
+Because the first hybrid selected 108/108 new structural strokes, the next test directly scores the baseline structural layer. P3-A.2.1 uses one comparable residual/structure/alignment utility for original P2-B.1 contours and hybrid candidates, replacing only the weakest baseline slots when the hybrid exceeds them by a relative + absolute margin. Replacements are capped at 40% and occur in-place in the structural tail. Full specification: [P3A21_ARCHITECTURE.md](P3A21_ARCHITECTURE.md).

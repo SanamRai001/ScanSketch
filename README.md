@@ -62,7 +62,8 @@ The proposed erasure/correction idea is recorded under [Future Experiments](docs
 | [P3-A.0 verification](docs/P3A0_VERIFY.md) | Rejected rotation-only tonal segment experiment and A/B evidence |
 | [P3-A.1 verification](docs/P3A1_VERIFY.md) | Rejected placement-dominant proposal experiment and evidence |
 | [P3-A.2 architecture](docs/P3A2_ARCHITECTURE.md) | Hybrid residual-aware structural reinforcement at the existing P2-B.1 budget |
-| [P3-A.2 verification](docs/P3A2_VERIFY.md) | Exact-budget hybrid A/B commands and acceptance gate |
+| [P3-A.2 verification](docs/P3A2_VERIFY.md) | Exact-budget full-replacement hybrid evidence |
+| [P3-A.2.1 architecture](docs/P3A21_ARCHITECTURE.md) | Selective baseline-contour vs hybrid utility replacement rule |
 | [Future experiments](docs/FUTURE_EXPERIMENTS.md) | Ideas parked until core output is convincing |
 | [Project state](docs/PROJECT_STATE.md) | Single authoritative progress, risks and next phase |
 | [P1 verification](docs/P1_VERIFY.md) | Historical baseline validation |

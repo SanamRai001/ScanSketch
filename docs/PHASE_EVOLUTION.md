@@ -83,3 +83,8 @@ CI passed **53/53** tests. On the step fixture, P3-A.2 preserved all 173 tonal s
 ### P3-A.2 portrait outcome
 
 P3-A.2 preserved the exact 12,563 tonal prefix and 12,671 total strokes. It nevertheless replaced **all 108** baseline structural strokes (2,024 hybrid candidates, 0 fallback). Metrics changed only slightly: overall tone −0.41% RMSE (better), dark −0.54% (better), midtone +1.91% (worse), edge F1 −0.10% (worse), white unchanged; path +0.10%. The previews are nearly indistinguishable. **Result: promising hybrid architecture, inconclusive replacement policy.** [Exact result](P3A2_FIRST_PORTRAIT_RESULT.md). Next refine to selective contour-vs-hybrid replacement rather than increasing budget.
+
+
+### P3-A.2.1 architecture opened
+
+Selective hybrid replacement is now the next controlled hypothesis. Rather than replace all P2-B.1 contours, score both baseline structural strokes and hybrid candidates under one residual/structure utility; replace only weakest baseline slots when a hybrid clears a 15% + 0.001 margin, capped at 40% of the structural budget. No outcome claimed yet. [Architecture](P3A21_ARCHITECTURE.md).
