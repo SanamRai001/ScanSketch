@@ -91,3 +91,8 @@ P3-A.1 succeeded in changing stroke language but failed reconstruction. With exa
 ## P3-A.2 architecture freeze
 
 Before implementation, P3-A.2 is defined to preserve the **exact P2 tonal prefix** and reuse the **existing P2-B.1 structural stroke budget**. It will rank multiscale structural candidates using **positive tonal residual + source structure confidence**; any unfilled structural slots fall back to original P2-B.1 contours. Total stroke count must therefore equal P2-B.1. See [P3A2_ARCHITECTURE.md](P3A2_ARCHITECTURE.md).
+
+
+### P3-A.2 implementation
+
+The architecture-frozen hybrid is now implemented behind `--hybrid-structural`: exact P2 tonal prefix, exact P2-B.1 total count, residual-aware multiscale structural candidates, and original-contour fallback for any unfilled structural slots. CI and portrait quality evidence remain pending until observed. See [P3A2_VERIFY.md](P3A2_VERIFY.md).

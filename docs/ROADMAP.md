@@ -76,3 +76,6 @@ Natural erasure and faint graphite residue; deliberately generated mistakes; pap
 ### P3-A.2 controlled-budget rule
 
 P3-A.2 must preserve the exact P2 tonal prefix and may spend only the number of structural strokes P2-B.1 already spends. Hybrid structural candidates are ranked by multiscale confidence plus positive tonal residual; missing slots fall back to original P2-B.1 contours. Therefore total accepted stroke count must equal P2-B.1. See [P3-A.2 architecture](P3A2_ARCHITECTURE.md).
+
+
+P3-A.2 implementation is now available as an opt-in branch mode. Its engineering gate requires exact P2 tonal-prefix and total-count parity before any visual comparison. [P3-A.2 verification](P3A2_VERIFY.md).

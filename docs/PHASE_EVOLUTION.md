@@ -68,3 +68,8 @@ The first portrait pair decisively rejects whole-field placement-aware direction
 ### P3-A.2 architecture opened
 
 After P3-A.1 proved that whole-field direction damages tonal mass, the next experiment is deliberately hybrid: preserve P2 tone exactly and spend only the existing P2-B.1 contour budget on smarter residual-aware structural accents, falling back to original contours when needed. Architecture frozen in [P3A2_ARCHITECTURE.md](P3A2_ARCHITECTURE.md); no outcome claimed yet.
+
+
+### P3-A.2 implementation opened
+
+The hybrid architecture is now executable behind `--hybrid-structural`. It preserves the exact tonal prefix and total P2-B.1 stroke count, replacing only qualified structural-budget slots with residual-aware multiscale accents. No quality result claimed until CI and A/B review. [Verification](P3A2_VERIFY.md).
