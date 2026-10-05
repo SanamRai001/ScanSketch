@@ -82,3 +82,8 @@ P3-A.2 implementation is now available as an opt-in branch mode. Its engineering
 
 
 P3-A.2 CI gate passed: 53 tests, exact tonal-prefix parity and exact total-count parity. The synthetic step selected 6 hybrid accents out of a 20-stroke structural budget with 14 P2-B.1 contour fallbacks. Real portrait and nonportrait quality gates remain open.
+
+
+### P3-A.2 first portrait gate
+
+Hybrid preservation worked: exact tonal prefix and exact total stroke count. But the selector replaced all 108 structural slots from 2,024 candidates, producing only small metric changes and no clear visual improvement. Therefore P3-A.2 is not promoted. Next is **P3-A.2.1 selective structural replacement**, comparing hybrid candidate utility against the existing P2-B.1 contour layer and retaining baseline contours unless a replacement earns the slot. [Result](P3A2_FIRST_PORTRAIT_RESULT.md).

@@ -101,3 +101,10 @@ The architecture-frozen hybrid is now implemented behind `--hybrid-structural`: 
 ### P3-A.2 first CI result
 
 Draft PR #10 passed [GitHub Actions run 37334525616](https://github.com/SanamRai001/ScanSketch/actions/runs/37334525616): **53/53 Rust tests**, all earlier P2-C/P3 smoke checks, and the new exact-budget hybrid step test. Step fixture: same 193 total strokes, exact 173-stroke tonal prefix, 20 structural slots, 6 hybrid-selected + 14 original-contour fallback from 55 candidates. Rounded metrics moved tone ~0.32→0.31, dark ~0.45→0.44, edge F1 ~0.79→0.80, white RMSE ~0.00→0.01; this is engineering evidence only, not a visual quality pass.
+
+
+## P3-A.2 first portrait result
+
+The first controlled portrait hybrid preserved the exact **12,563-stroke tonal prefix** and **12,671 total strokes**, but replaced **all 108 structural slots** (108 hybrid, 0 contour fallback) from 2,024 candidates. Tone RMSE improved ~0.41%, dark RMSE ~0.54%, white RMSE was identical, while midtone worsened ~1.91% and edge F1 ~0.10%; path length +0.10%. The uploaded previews are extremely similar and do not establish a clear visual win. [Exact result](P3A2_FIRST_PORTRAIT_RESULT.md).
+
+**Decision:** hybrid architecture is promising because it preserves tone, but the replacement policy is too permissive. Next P3-A.2.1 should selectively replace baseline contours only when hybrid utility clearly exceeds baseline structural utility, with a conservative replacement cap. P2-B.1 remains default.

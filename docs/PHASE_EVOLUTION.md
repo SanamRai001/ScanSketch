@@ -78,3 +78,8 @@ The hybrid architecture is now executable behind `--hybrid-structural`. It prese
 ### P3-A.2 first engineering evidence
 
 CI passed **53/53** tests. On the step fixture, P3-A.2 preserved all 173 tonal strokes and the 193 total-stroke budget, replacing **6 of 20** structural slots with residual-aware accents and falling back to 14 original contours. Rounded step metrics improved slightly in tone/dark/edge F1 but white RMSE also rose slightly. No phase win is claimed until the portrait and genuine nonportrait are reviewed. [Runbook](P3A2_VERIFY.md).
+
+
+### P3-A.2 portrait outcome
+
+P3-A.2 preserved the exact 12,563 tonal prefix and 12,671 total strokes. It nevertheless replaced **all 108** baseline structural strokes (2,024 hybrid candidates, 0 fallback). Metrics changed only slightly: overall tone −0.41% RMSE (better), dark −0.54% (better), midtone +1.91% (worse), edge F1 −0.10% (worse), white unchanged; path +0.10%. The previews are nearly indistinguishable. **Result: promising hybrid architecture, inconclusive replacement policy.** [Exact result](P3A2_FIRST_PORTRAIT_RESULT.md). Next refine to selective contour-vs-hybrid replacement rather than increasing budget.

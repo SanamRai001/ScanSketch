@@ -175,3 +175,10 @@ This architecture isolates the next question cleanly: **can smarter structural a
 ## P3-A.2 architecture freeze: structural accents, not tonal replacement
 
 P3-A.2 keeps the P2 tonal prefix untouched. It uses the existing P2-B.1 contour count as an exact structural budget and attempts to replace those generic contour accents with multiscale source-tangent candidates **only where the rendered tonal base still has positive darkness residual**. Any unused budget falls back to the original P2-B.1 contours. This tests whether smarter structure can improve a proven tonal body at the same total stroke count. Full specification: [P3A2_ARCHITECTURE.md](P3A2_ARCHITECTURE.md).
+
+
+## P3-A.2 portrait consequence: selective replacement
+
+The hybrid architecture avoided P3-A.1's tonal collapse, but the first portrait selected 108/108 hybrid structural strokes and 0 original contour fallback. Because 2,024 valid candidates competed for only 108 slots, the policy effectively guaranteed full replacement. The resulting image was almost indistinguishable from P2-B.1 and did not improve edge F1 or midtone RMSE.
+
+P3-A.2.1 should score the **baseline structural layer itself** under the same residual/structure evidence. A hybrid candidate should replace baseline structure only when it clears a baseline-derived utility threshold by a margin, and the experiment should impose a conservative maximum replacement fraction. This keeps the useful hybrid architecture while making the intervention genuinely selective.

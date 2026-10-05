@@ -96,3 +96,10 @@ On the 64×64 step fixture, the paired runner observed:
 - rounded white RMSE: ~**0.00 → 0.01**
 
 These rounded values are useful only as a smoke observation. The exact portrait comparison is the real gate. The small white-RMSE change is explicitly recorded rather than ignored.
+
+
+## First portrait outcome
+
+The Windows portrait A/B completed after fixing PowerShell stderr capture. Observed structural mix: tone=12563, budget=108, hybrid=108, fallback=0, candidates=2024; identical tonal prefix=12563. Same total 12,671 strokes. Overall tone/dark improved slightly; midtone/edge F1 slightly regressed; white RMSE was identical; previews showed no clear visual win. See [P3-A.2 first portrait result](P3A2_FIRST_PORTRAIT_RESULT.md).
+
+**Do not increase the hybrid budget.** The next experiment should make replacement selective by comparing hybrid evidence to baseline-contour evidence.
