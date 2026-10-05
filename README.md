@@ -60,7 +60,9 @@ The proposed erasure/correction idea is recorded under [Future Experiments](docs
 | [P2-C runbook](docs/P2C_RUN.md) | Native fixture generator and measurement CLI usage |
 | [P3 directional design](docs/P3_DIRECTIONAL_DESIGN.md) | Proposed multiscale geometry-first architecture |
 | [P3-A.0 verification](docs/P3A0_VERIFY.md) | Rejected rotation-only tonal segment experiment and A/B evidence |
-| [P3-A.1 verification](docs/P3A1_VERIFY.md) | Placement-aware source-driven proposal experiment and comparison runbook |
+| [P3-A.1 verification](docs/P3A1_VERIFY.md) | Rejected placement-dominant proposal experiment and evidence |
+| [P3-A.2 architecture](docs/P3A2_ARCHITECTURE.md) | Hybrid residual-aware structural reinforcement at the existing P2-B.1 budget |
+| [P3-A.2 verification](docs/P3A2_VERIFY.md) | Exact-budget hybrid A/B commands and acceptance gate |
 | [Future experiments](docs/FUTURE_EXPERIMENTS.md) | Ideas parked until core output is convincing |
 | [Project state](docs/PROJECT_STATE.md) | Single authoritative progress, risks and next phase |
 | [P1 verification](docs/P1_VERIFY.md) | Historical baseline validation |

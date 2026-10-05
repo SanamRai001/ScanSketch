@@ -89,3 +89,17 @@ jobs:
           if ($base.strokes -ne $new.strokes) { throw "P3-A.1 changed total stroke count" }
           if ($new.strong_nonhorizontal_strokes -le $base.strong_nonhorizontal_strokes) { throw "P3-A.1 did not change drawing direction" }
           Write-Host ("P3-A.1 step smoke: same {0} strokes, strong nonhorizontal {1} -> {2}" -f $base.strokes, $base.strong_nonhorizontal_strokes, $new.strong_nonhorizontal_strokes)
+
+      - name: Smoke-test P3-A.2 hybrid structural budget against frozen P2-B.1
+        shell: pwsh
+        run: |
+          ./scripts/run-p3a2-ab.ps1 -InputImage experiments/local/ci/step.png -OutputDir experiments/local/ci/p3a2-step -MaxSize 64 -Seed 42 -RightsConfirmed
+          if ($LASTEXITCODE -ne 0) { throw "P3-A.2 paired smoke failed" }
+          $s = Get-Content experiments/local/ci/p3a2-step/summary.json -Raw | ConvertFrom-Json
+          $base = $s.fixtures | Where-Object { $_.mode -eq 'p2b1' }
+          $new = $s.fixtures | Where-Object { $_.mode -eq 'p3a2' }
+          if ($base.strokes -ne $new.strokes) { throw "P3-A.2 changed total stroke count" }
+          if ($s.tonal_prefix_identical_strokes -ne $s.hybrid_stats.tone_count) { throw "P3-A.2 tonal prefix mismatch" }
+          if ($s.hybrid_stats.hybrid_selected + $s.hybrid_stats.contour_fallback -ne $s.hybrid_stats.structural_budget) { throw "P3-A.2 budget accounting mismatch" }
+          if ($s.hybrid_stats.structural_budget -gt 0 -and $s.hybrid_stats.hybrid_selected -le 0) { throw "P3-A.2 did not exercise hybrid selection" }
+          Write-Host ("P3-A.2 step smoke: total={0}; tone={1}; budget={2}; hybrid={3}; fallback={4}" -f $base.strokes,$s.hybrid_stats.tone_count,$s.hybrid_stats.structural_budget,$s.hybrid_stats.hybrid_selected,$s.hybrid_stats.contour_fallback)

@@ -63,3 +63,23 @@ P3-A.0 demonstrated that changing direction alone was insufficient. P3-A.1 there
 ### P3-A.1 portrait outcome
 
 The first portrait pair decisively rejects whole-field placement-aware direction as the main tonal carrier. P3-A.1 changed the visual language dramatically (**2367 strongly nonhorizontal strokes vs 97 baseline**) while keeping total count at 12,671, yet overall tone RMSE worsened **33.13%** and dark-region RMSE **34.44%**. The result is more directional but less faithful. [Exact result](P3A1_FIRST_PORTRAIT_RESULT.md). This motivates P3-A.2: preserve P2 tonal mass and use only a small, earned structural reinforcement budget.
+
+
+### P3-A.2 architecture opened
+
+After P3-A.1 proved that whole-field direction damages tonal mass, the next experiment is deliberately hybrid: preserve P2 tone exactly and spend only the existing P2-B.1 contour budget on smarter residual-aware structural accents, falling back to original contours when needed. Architecture frozen in [P3A2_ARCHITECTURE.md](P3A2_ARCHITECTURE.md); no outcome claimed yet.
+
+
+### P3-A.2 implementation opened
+
+The hybrid architecture is now executable behind `--hybrid-structural`. It preserves the exact tonal prefix and total P2-B.1 stroke count, replacing only qualified structural-budget slots with residual-aware multiscale accents. No quality result claimed until CI and A/B review. [Verification](P3A2_VERIFY.md).
+
+
+### P3-A.2 first engineering evidence
+
+CI passed **53/53** tests. On the step fixture, P3-A.2 preserved all 173 tonal strokes and the 193 total-stroke budget, replacing **6 of 20** structural slots with residual-aware accents and falling back to 14 original contours. Rounded step metrics improved slightly in tone/dark/edge F1 but white RMSE also rose slightly. No phase win is claimed until the portrait and genuine nonportrait are reviewed. [Runbook](P3A2_VERIFY.md).
+
+
+### P3-A.2 portrait outcome
+
+P3-A.2 preserved the exact 12,563 tonal prefix and 12,671 total strokes. It nevertheless replaced **all 108** baseline structural strokes (2,024 hybrid candidates, 0 fallback). Metrics changed only slightly: overall tone −0.41% RMSE (better), dark −0.54% (better), midtone +1.91% (worse), edge F1 −0.10% (worse), white unchanged; path +0.10%. The previews are nearly indistinguishable. **Result: promising hybrid architecture, inconclusive replacement policy.** [Exact result](P3A2_FIRST_PORTRAIT_RESULT.md). Next refine to selective contour-vs-hybrid replacement rather than increasing budget.
