@@ -441,7 +441,7 @@ pub fn generate_hybrid_sketch_with_stats(
     }
 
     Ok((
-        Sketch { width, height, seed: options.seed, strokes },
+        Sketch::from_strokes(width, height, options.seed, strokes),
         HybridStats {
             tone_count: tone.strokes.len(),
             structural_budget: budget,
@@ -690,12 +690,7 @@ pub fn generate_selective_hybrid_sketch_with_stats(
     }
 
     Ok((
-        Sketch {
-            width,
-            height,
-            seed: options.seed,
-            strokes,
-        },
+        Sketch::from_strokes(width, height, options.seed, strokes),
         SelectiveHybridStats {
             tone_count: tone.strokes.len(),
             structural_budget: budget,
@@ -976,12 +971,7 @@ pub fn generate_missing_structure_sketch_with_stats(
     }
 
     Ok((
-        Sketch {
-            width,
-            height,
-            seed: options.seed,
-            strokes,
-        },
+        Sketch::from_strokes(width, height, options.seed, strokes),
         MissingStructureStats {
             tone_count: tone.strokes.len(),
             structural_budget: budget,
@@ -1187,12 +1177,7 @@ pub fn generate_deficit_proposal_sketch_with_stats(
     }
 
     Ok((
-        Sketch {
-            width,
-            height,
-            seed: options.seed,
-            strokes,
-        },
+        Sketch::from_strokes(width, height, options.seed, strokes),
         DeficitProposalStats {
             tone_count: tone.strokes.len(),
             structural_budget: budget,

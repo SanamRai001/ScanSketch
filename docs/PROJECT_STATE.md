@@ -196,3 +196,13 @@ Chair/mug/plant validation does **not** support promoting P3-A.2.3: edge wins 1/
 ## P4-A human stroke hierarchy opened
 
 P3-G1 confirms the renderer's dominant bottleneck is now its primitive vocabulary: P2 tonal fragments are only **2.0–10.5px** and P3 structural candidates **2.6–7.2px** at working scale. These are useful hatching marks but are not long human gestures. P4-A therefore redesigns the mark hierarchy around **long structural paths + medium form paths + short residual hatching**, with long curved paths as first-class editable records rather than chains of unrelated segments. See [P4-A architecture](P4A_HUMAN_STROKE_HIERARCHY.md).
+
+
+### P4-A.0 implementation opened
+
+First-class logical path support is being added without changing historical renderers. `Sketch.paths` is backward-compatible/omitted when empty; `PathStroke` stores a deterministic polyline + generic role; tiny-skia renders it continuously; metrics expose path stats plus combined logical-mark counts while preserving legacy `strokes` semantics. No automatic long-stroke tracing yet. See [P4-A.0 verification](P4A0_VERIFY.md).
+
+
+### P4-A.0 CI result
+
+P4-A.0 passed [CI run 37405989296](https://github.com/SanamRai001/ScanSketch/actions/runs/37405989296): **69/69 Rust tests** plus every historical smoke. The seven-point path fixture is stored/measured as **one logical gesture**, length **82.87px**, with legacy `strokes.count=0` and `paths.count=1`. Backward compatibility is therefore proven for the foundation slice. **Next: P4-A.1 source-driven long structural path tracing.**

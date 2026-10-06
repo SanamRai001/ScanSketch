@@ -13,3 +13,6 @@ tiny-skia.workspace = true
 serde.workspace = true
 rand.workspace = true
 rand_chacha.workspace = true
+
+[dev-dependencies]
+serde_json = "1.0"

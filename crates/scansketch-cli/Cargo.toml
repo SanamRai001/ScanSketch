@@ -30,3 +30,7 @@ path = "src/bin/fixtures.rs"
 [[bin]]
 name = "scansketch-white-audit"
 path = "src/bin/white_audit.rs"
+
+[[bin]]
+name = "scansketch-path-fixture"
+path = "src/bin/path_fixture.rs"

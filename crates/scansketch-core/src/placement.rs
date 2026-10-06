@@ -446,7 +446,7 @@ pub fn generate_placement_sketch_with_stats(
     if options.enable_contours {
         crate::contour::append_contours(&darkness, width, height, options, &mut strokes)?;
     }
-    Ok((Sketch { width, height, seed: options.seed, strokes }, stats))
+    Ok((Sketch::from_strokes(width, height, options.seed, strokes), stats))
 }
 
 pub fn generate_placement_sketch(
