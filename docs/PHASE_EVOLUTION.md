@@ -203,3 +203,8 @@ The three-view batch runner is green and correctly preserves neutral/no-path cas
 ### P4-A.1 real-image outcome
 
 Chair, mug and plant all produce meaningful long Gesture paths with ~45-55px mean lengths and up to ~80px maximum. The paths-only review finally shows a new visual vocabulary: continuous structural lines instead of short horizontal fragments. P4-A.1 is accepted as the long-stroke layer. It is intentionally sparse; next add an 8-32px Form layer rather than increasing gesture density. [Result](P4A1_FIRST_REAL_RESULT.md).
+
+
+### P4-A.2 architecture opened
+
+The second human-stroke scale is now defined: exact P4-A.1 long Gestures stay frozen, while 8-32px `Form` paths target missing interior structure. Medium seeds prefer edges with source content on both sides and avoid accepted Gesture corridors, so the new layer should describe form rather than redraw silhouette. [Architecture](P4A2_ARCHITECTURE.md).

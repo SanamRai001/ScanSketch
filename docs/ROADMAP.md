@@ -186,3 +186,8 @@ P4-A.1 pack tooling is fully CI-green, including a valid zero-path gradient case
 ### P4-A.1 real gate passed
 
 3/3 nonportrait classes generated useful long structural gestures. Proceed to **P4-A.2 medium form paths**; keep the long Gesture layer frozen and sparse. Medium paths should target missing interior/form structure at ~8-32px while avoiding long-path duplication.
+
+
+### P4-A.2 — medium form-following paths
+
+Freeze P4-A.1 Gesture geometry exactly. Add 8-32px Form paths with denser edge proposals, interior-support preference and Gesture-corridor suppression. Real gate remains chair/mug/plant paths-only review. P4-A.3 hatching rebalance stays blocked until this layer is useful.

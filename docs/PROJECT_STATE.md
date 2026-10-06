@@ -243,3 +243,8 @@ The three-view multi-image harness now passes [CI run 37477931352](https://githu
 The real chair/mug/plant gate succeeds. All 3/3 sources produce long structural gestures; mean path lengths are **54.76/52.47/45.39px**, max **79.95/56.24/52.66px**. Paths-only previews visibly trace meaningful chair, mug and plant structure and represent the first clear departure from the old 2-10px scan-fragment language. The layer is correctly sparse; missing information is now medium-scale form rather than long contour capability. [Exact result](P4A1_FIRST_REAL_RESULT.md).
 
 **Next:** P4-A.2 medium form-following paths (roughly 8-32px), while preserving the accepted long Gesture layer unchanged.
+
+
+## P4-A.2 architecture frozen
+
+After P4-A.1 succeeded on chair/mug/plant, the next layer is **medium Form paths**, not denser Gesture paths. P4-A.2 freezes the exact P4-A.1 Gesture layer and adds deterministic ~8-32px Form paths from coherent source edges, with an interior-support ranking bonus and explicit Gesture-corridor suppression. [Architecture](P4A2_ARCHITECTURE.md).
