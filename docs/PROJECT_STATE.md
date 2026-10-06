@@ -270,3 +270,8 @@ The hierarchy pack validator passed [CI run 37486009965](https://github.com/Sana
 P4-A.2 passes the chair/mug/plant hierarchy gate. All 3/3 sources add exactly 6 medium Forms while preserving 4/4/5 long Gestures. Gesture mean length remains **45.39–54.76px**, Form mean **12.24–16.06px**, and Form path-length share **25.11–31.46%**. Paths-only edge F1 improves **23.917–31.596%** on all three. The hierarchy is visibly sparse and scale-separated. [Exact result](P4A2_FIRST_REAL_RESULT.md).
 
 The full legacy overlay is explicitly not the final P4 renderer: overlay white RMSE is non-worse on 0/3. **Next: P4-A.3 rebuilds tone as sparse residual Hatch marks after the frozen Gesture+Form hierarchy.**
+
+
+## P4-A.3 architecture frozen
+
+P4-A.3 changes the composition model rather than stacking more ink. Frozen P4-A.1 Gestures and P4-A.2 Forms render first; a compressed residual tonal target then generates sparse role-tagged `Hatch` paths. The final P4-A.3 candidate contains **zero legacy P2-B.1 segments**. P2-B.1 remains control only. Initial design deliberately keeps Hatch geometry short and mostly horizontal so the first experiment isolates **density/composition** from hatch-direction changes. See [P4-A.3 architecture](P4A3_ARCHITECTURE.md).

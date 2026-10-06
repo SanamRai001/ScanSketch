@@ -205,3 +205,8 @@ P4-A.2 validation infrastructure is fully green. Next action is data collection 
 ### P4-A.2 exit gate passed
 
 Chair/mug/plant all gain useful 8–32px Form structure without changing long Gestures. Freeze the two structural layers. **P4-A.3 is now the active direction: Gesture → Form → sparse residual Hatch.** P2-B.1 remains a control, not the P4 tonal foundation.
+
+
+## P4-A.3 — residual hatching rebalance [architecture frozen]
+
+Final P4 composition for this slice: **Gesture → Form → compressed residual Hatch**. Zero legacy P2-B.1 segments. Target a material Hatch-count reduction (initially >=40% vs P2-B.1) while preserving exact structural paths and object readability. Only after density/composition works should hatch direction be reconsidered. [Architecture](P4A3_ARCHITECTURE.md).

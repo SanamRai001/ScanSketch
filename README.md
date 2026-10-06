@@ -82,6 +82,7 @@ The proposed erasure/correction idea is recorded under [Future Experiments](docs
 | [P4-A.2 verification](docs/P4A2_VERIFY.md) | Exact Gesture preservation, medium Form-band checks and real-image gate |
 | [P4-A.2 real-pack runbook](docs/P4A2_RUN.md) | Chair/mug/plant Gesture-vs-Form hierarchy review and aggregate evidence |
 | [P4-A.2 first real result](docs/P4A2_FIRST_REAL_RESULT.md) | Successful chair/mug/plant medium hierarchy and transition to residual hatching |
+| [P4-A.3 architecture](docs/P4A3_ARCHITECTURE.md) | Frozen Gesture+Form hierarchy followed by sparse compressed residual Hatch paths |
 | [Future experiments](docs/FUTURE_EXPERIMENTS.md) | Ideas parked until core output is convincing |
 | [Project state](docs/PROJECT_STATE.md) | Single authoritative progress, risks and next phase |
 | [P1 verification](docs/P1_VERIFY.md) | Historical baseline validation |

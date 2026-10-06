@@ -228,3 +228,8 @@ The multi-image hierarchy harness is CI-green, including no-op sources. Medium F
 ### P4-A.2 first real outcome
 
 Medium Form hierarchy succeeds across chair/mug/plant: six Forms per source, 12–16px mean Form length versus 45–55px Gestures, ~25–31% Form path-length share, and paths-only edge-F1 gains of ~24–32% on all three. The medium layer is visibly subordinate and useful. Freeze Gesture+Form geometry. The remaining visual problem is the old full horizontal tone field, so P4-A.3 moves to sparse residual hatching rather than overlay accumulation. [Result](P4A2_FIRST_REAL_RESULT.md).
+
+
+### P4-A.3 — residual hatching rebalance architecture
+
+After successful Gesture+Form hierarchy, tone is rebuilt instead of inherited. P4-A.3 renders frozen structure first, computes compressed remaining tonal need, suppresses hatching around structural corridors, and adds sparse short `Hatch` paths. No legacy P2-B.1 segments are part of the P4 candidate. The first experiment changes density/composition only; hatch direction remains mostly horizontal to preserve causal clarity. [Architecture](P4A3_ARCHITECTURE.md).
