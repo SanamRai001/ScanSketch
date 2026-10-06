@@ -187,7 +187,7 @@ fn append_hatch_run(
                 .clamp(HATCH_MIN_LENGTH, HATCH_MAX_LENGTH);
         let x1 = (cursor + requested_length).min(right);
         let span = x1 - cursor;
-        if span < 0.14 {
+        if span < HATCH_MIN_LENGTH {
             break;
         }
 
