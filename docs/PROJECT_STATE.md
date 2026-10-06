@@ -206,3 +206,40 @@ First-class logical path support is being added without changing historical rend
 ### P4-A.0 CI result
 
 P4-A.0 passed [CI run 37405989296](https://github.com/SanamRai001/ScanSketch/actions/runs/37405989296): **69/69 Rust tests** plus every historical smoke. The seven-point path fixture is stored/measured as **one logical gesture**, length **82.87px**, with legacy `strokes.count=0` and `paths.count=1`. Backward compatibility is therefore proven for the foundation slice. **Next: P4-A.1 source-driven long structural path tracing.**
+
+
+## P4-A.1 long structural tracing opened
+
+Source-driven long gestures are now implemented as an opt-in P4 experiment. Seeds come from source edge corridors, direction comes from the existing multiscale tensor, forward/backward traces snap to edge support, and accepted paths must be at least ~24px and remain sparse. Two outputs are supported: exact P2-B.1 + paths, and paths-only for direct structural inspection. The old hatch field is deliberately unchanged until P4-A.3. See [P4-A.1 verification](P4A1_VERIFY.md).
+
+
+### P4-A.1 CI result
+
+P4-A.1 passed [CI run 37406856611](https://github.com/SanamRai001/ScanSketch/actions/runs/37406856611): **74/74 Rust tests** plus every inherited smoke. On the vertical step it generated **2** first-class Gesture paths, mean **48.5px**, max **49px**, total **97px**, while preserving all 193 frozen P2-B.1 segments exactly; paths-only has zero legacy fragments. **Next gate is real chair/mug/plant paths-only visual review.**
+
+
+### P4-A.1 real-pack harness
+
+A one-command multi-image harness now reuses the prior 3–5 nonportrait source pack and generates **P2-B.1 / P4-A.1 overlay / P4-A.1 paths-only** views per image, aggregate path-length/count evidence, CSV/JSON, and a local three-column review page. Zero accepted paths is treated as valid evidence rather than a script failure. The existing chair/mug/plant folder can be reused directly. [Runbook](P4A1_RUN.md).
+
+
+### P4-A.1 pack harness CI result
+
+The complete three-view pack harness passed [CI run 37408490425](https://github.com/SanamRai001/ScanSketch/actions/runs/37408490425), including zero-path sources. Synthetic behavior: step 2 paths at 48.5px mean; thin-lines 4 paths at 47px; gradient 0 paths. This verifies that real-image validation can distinguish useful path discovery from legitimate no-op cases without forcing marks. **Real chair/mug/plant review is now the only P4-A.1 gate left.**
+
+
+### P4-A.1 pack-harness gate passed
+
+The 3–5 image three-view validator passed [CI run 37473050878](https://github.com/SanamRai001/ScanSketch/actions/runs/37473050878). Synthetic smoke: step 2 paths at 48.5px mean, thin-lines 4 paths at 47px, gradient correctly no-ops at 0 paths. Paths-only outputs contain no old segments, and zero-path cases are valid evidence rather than errors. **All non-user-dependent P4-A.1 engineering work is now complete; chair/mug/plant visual evidence is the remaining exit gate.**
+
+
+### P4-A.1 pack harness CI result
+
+The three-view multi-image harness now passes [CI run 37477931352](https://github.com/SanamRai001/ScanSketch/actions/runs/37477931352). Synthetic validation: step 2 paths (48.5px mean), thin-lines 4 paths (47px mean), gradient 0 paths. Zero-path cases are now valid first-class evidence. **Ready for the real chair/mug/plant paths-only review.**
+
+
+## P4-A.1 first real result
+
+The real chair/mug/plant gate succeeds. All 3/3 sources produce long structural gestures; mean path lengths are **54.76/52.47/45.39px**, max **79.95/56.24/52.66px**. Paths-only previews visibly trace meaningful chair, mug and plant structure and represent the first clear departure from the old 2-10px scan-fragment language. The layer is correctly sparse; missing information is now medium-scale form rather than long contour capability. [Exact result](P4A1_FIRST_REAL_RESULT.md).
+
+**Next:** P4-A.2 medium form-following paths (roughly 8-32px), while preserving the accepted long Gesture layer unchanged.

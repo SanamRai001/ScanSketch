@@ -161,3 +161,28 @@ Engineering gate: add backward-compatible logical polyline paths, continuous ren
 
 
 P4-A.0 exit gate passed: 69 tests, backward-compatible old JSON/metrics, continuous seven-point gesture path and one-logical-mark measurement. Proceed to **P4-A.1 long structural path tracing**.
+
+
+### P4-A.1 — long structural path tracing
+
+Trace sparse 24–96px Gesture paths from coherent edge/tangent corridors. Engineering gate requires long/curved synthetic paths, exact P2-B.1 segment preservation in overlay mode, and identical paths-only output. Real gate is visual inspection of chair/mug/plant path layers before any medium-stroke work. [Verification](P4A1_VERIFY.md).
+
+
+P4-A.1 engineering gate passed: 74 tests, exact old-segment preservation and 48.5px mean / 49px max gesture paths on the step fixture. Proceed to chair/mug/plant **paths-only** visual gate before P4-A.2.
+
+
+P4-A.1 now has a 3–5 image real-pack harness. Reuse the exact P3-G1 chair/mug/plant sources and inspect **paths-only first**. Do not open P4-A.2 until multiple source classes show useful, source-faithful long gestures.
+
+
+P4-A.1 pack harness is CI-green and accepts legitimate zero-path images. Run the existing chair/mug/plant source folder now. The next branch decision depends on **paths-only visual quality**, not on forcing every source to yield gestures.
+
+
+P4-A.1 validation infrastructure is complete and green. Remaining exit gate: run the frozen chair/mug/plant pack and inspect **paths-only** first. If multiple source classes show coherent long structure, open P4-A.2; otherwise refine P4-A.1 tracing before adding more stroke layers.
+
+
+P4-A.1 pack tooling is fully CI-green, including a valid zero-path gradient case. Next action: run the frozen chair/mug/plant pack and inspect **paths-only first**. No P4-A.2 implementation until that review passes.
+
+
+### P4-A.1 real gate passed
+
+3/3 nonportrait classes generated useful long structural gestures. Proceed to **P4-A.2 medium form paths**; keep the long Gesture layer frozen and sparse. Medium paths should target missing interior/form structure at ~8-32px while avoiding long-path duplication.

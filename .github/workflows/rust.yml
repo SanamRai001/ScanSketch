@@ -13,6 +13,7 @@ on:
       - feat/p3a23-deficit-driven-proposals
       - test/p3g1-nonportrait-generalization
       - feat/p4a0-path-primitive
+      - feat/p4a1-long-structural-paths
 
 jobs:
   cargo:
@@ -55,6 +56,25 @@ jobs:
           assert report['marks']['path_count'] == 1, report['marks']
           print('P4-A.0 path primitive smoke passed:', report['paths'])
           PY
+      - name: Smoke-test P4-A.1 long structural path tracing
+        shell: pwsh
+        run: |
+          ./scripts/run-p4a1-ab.ps1 -InputImage experiments/local/ci/step.png -OutputDir experiments/local/ci/p4a1-step -MaxSize 64 -Seed 42 -RightsConfirmed
+          if ($LASTEXITCODE -ne 0) { throw "P4-A.1 paired smoke failed" }
+          $s = Get-Content experiments/local/ci/p4a1-step/summary.json -Raw | ConvertFrom-Json
+          if (-not $s.baseline_segments_exactly_preserved) { throw "P4-A.1 changed baseline segments" }
+          if (-not $s.overlay_paths_equal_paths_only) { throw "P4-A.1 overlay/path-only mismatch" }
+          if ($s.long_path_stats.accepted -le 0) { throw "P4-A.1 accepted no long paths" }
+          if ($s.long_path_stats.mean_path -lt 24) { throw "P4-A.1 mean path is not human-scale yet" }
+          if ($s.long_path_stats.max_path -lt 40) { throw "P4-A.1 step did not produce a clearly long path" }
+          $base = $s.fixtures | Where-Object { $_.mode -eq 'p2b1' }
+          $overlay = $s.fixtures | Where-Object { $_.mode -eq 'p4a1-overlay' }
+          $paths = $s.fixtures | Where-Object { $_.mode -eq 'p4a1-paths' }
+          if ($base.path_count -ne 0) { throw "Frozen P2-B.1 unexpectedly contains P4 paths" }
+          if ($overlay.segment_count -ne $base.segment_count) { throw "Overlay segment count changed" }
+          if ($paths.segment_count -ne 0) { throw "Paths-only output contains old scan fragments" }
+          if ($overlay.path_count -ne $paths.path_count) { throw "Gesture path counts differ" }
+          Write-Host ("P4-A.1 step: {0} long paths; mean={1}px; max={2}px; baseline segments={3}" -f $s.long_path_stats.accepted,$s.long_path_stats.mean_path,$s.long_path_stats.max_path,$base.segment_count)
       - name: Validate paired synthetic P2-C experiment script
         shell: pwsh
         run: |
@@ -196,3 +216,25 @@ jobs:
             if ($case.replacements -gt $case.max_replacements) { throw "P3-G1 case exceeded replacement cap" }
           }
           Write-Host ("P3-G1 smoke: {0} cases; edge wins {1}/{0}; white non-worse {2}/{0}" -f $s.source_count,$s.wins.edge_f1,$s.wins.white_nonworse)
+
+      - name: Smoke-test P4-A.1 three-view pack harness
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force experiments/local/ci/p4a1-pack-sources | Out-Null
+          Copy-Item experiments/local/ci/step.png experiments/local/ci/p4a1-pack-sources/01-step.png
+          Copy-Item experiments/local/ci/thin-lines.png experiments/local/ci/p4a1-pack-sources/02-thin-lines.png
+          Copy-Item experiments/local/ci/gradient.png experiments/local/ci/p4a1-pack-sources/03-gradient.png
+          ./scripts/run-p4a1-pack.ps1 -InputDir experiments/local/ci/p4a1-pack-sources -OutputDir experiments/local/ci/p4a1-pack -MaxSize 64 -Seed 42 -RightsConfirmed -NonPortraitConfirmed
+          if ($LASTEXITCODE -ne 0) { throw "P4-A.1 pack smoke failed" }
+          $s = Get-Content experiments/local/ci/p4a1-pack/summary.json -Raw | ConvertFrom-Json
+          if ($s.source_count -ne 3) { throw "Expected three P4-A.1 pack cases" }
+          if ($s.cases.Count -ne 3) { throw "Missing P4-A.1 pack case summaries" }
+          if ($s.counts.sources_with_paths -lt 1) { throw "Expected at least one synthetic source with a long path" }
+          if ($s.counts.sources_with_max_path_at_least_40px -lt 1) { throw "Expected at least one >=40px gesture path" }
+          foreach ($case in $s.cases) {
+            if ($case.paths_only_segment_count -ne 0) { throw "Paths-only pack case contains legacy segments" }
+            if ($case.accepted_paths -ne $case.paths_only_logical_marks) { throw "Logical path accounting mismatch" }
+          }
+          if (-not (Test-Path experiments/local/ci/p4a1-pack/summary.csv)) { throw "Missing P4-A.1 pack CSV" }
+          if (-not (Test-Path experiments/local/ci/p4a1-pack/review.html)) { throw "Missing P4-A.1 pack HTML" }
+          Write-Host ("P4-A.1 pack smoke: paths={0}/{1}; >=40px={2}/{1}; edge wins={3}/{1}" -f $s.counts.sources_with_paths,$s.source_count,$s.counts.sources_with_max_path_at_least_40px,$s.counts.overlay_edge_f1_wins)

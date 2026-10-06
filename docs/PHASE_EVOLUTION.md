@@ -173,3 +173,33 @@ Implementation opened for one logical editable curved/polyline stroke. Old strai
 ### P4-A.0 engineering result
 
 First-class path support passed 69 tests and all inherited experiment checks. A seven-point curved gesture rendered as one logical 82.87px mark while old stroke-only reports stayed compatible. The representation bottleneck is cleared; P4-A.1 can now test actual long-path extraction from image structure.
+
+
+### P4-A.1 — long structural path tracing
+
+Opened the first real human-scale mark experiment. P4-A.1 traces edge-supported tangent streamlines into first-class Gesture paths, targeting roughly 24–96px instead of 2–10px fragments. Overlay mode preserves frozen P2-B.1 exactly; paths-only mode exposes the structural layer without scanline noise. No tone rebalance yet. [Verification](P4A1_VERIFY.md).
+
+
+### P4-A.1 first engineering result
+
+Automatic source tracing now produces real human-scale marks: two 48.5px-average gesture paths on the vertical-step smoke, versus the historical 2-10px primitive scale. All 74 tests and inherited experiments remain green. This validates tracing capability only; the next evidence must show whether chair/mug/plant path layers follow meaningful object structure.
+
+
+### P4-A.1 multi-image validation harness verified
+
+The real-pack workflow now handles 0/1/many path cases robustly, generates baseline/overlay/paths-only views, aggregate JSON/CSV and local HTML, and passed the synthetic 3-source smoke. This closes tooling risk; the remaining question is visual quality on chair/mug/plant.
+
+
+### P4-A.1 validation tooling complete
+
+The three-view multi-image harness is now CI-green, including a legitimate zero-path gradient case. Synthetic step/thin-line fixtures produced 47–49px logical gestures while paths-only stayed free of legacy scan fragments. P4-A.1 now waits only on real chair/mug/plant structural review before deciding whether to refine tracing or advance to medium form strokes.
+
+
+### P4-A.1 validation harness verified
+
+The three-view batch runner is green and correctly preserves neutral/no-path cases. On synthetic sources, long gestures appeared on step and thin-lines but not gradient, confirming the tracer can abstain. The next evidence must come from chair/mug/plant path layers, not from more synthetic tuning.
+
+
+### P4-A.1 real-image outcome
+
+Chair, mug and plant all produce meaningful long Gesture paths with ~45-55px mean lengths and up to ~80px maximum. The paths-only review finally shows a new visual vocabulary: continuous structural lines instead of short horizontal fragments. P4-A.1 is accepted as the long-stroke layer. It is intentionally sparse; next add an 8-32px Form layer rather than increasing gesture density. [Result](P4A1_FIRST_REAL_RESULT.md).
