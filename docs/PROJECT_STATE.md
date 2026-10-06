@@ -231,3 +231,8 @@ The complete three-view pack harness passed [CI run 37408490425](https://github.
 ### P4-A.1 pack-harness gate passed
 
 The 3–5 image three-view validator passed [CI run 37473050878](https://github.com/SanamRai001/ScanSketch/actions/runs/37473050878). Synthetic smoke: step 2 paths at 48.5px mean, thin-lines 4 paths at 47px, gradient correctly no-ops at 0 paths. Paths-only outputs contain no old segments, and zero-path cases are valid evidence rather than errors. **All non-user-dependent P4-A.1 engineering work is now complete; chair/mug/plant visual evidence is the remaining exit gate.**
+
+
+### P4-A.1 pack harness CI result
+
+The three-view multi-image harness now passes [CI run 37477931352](https://github.com/SanamRai001/ScanSketch/actions/runs/37477931352). Synthetic validation: step 2 paths (48.5px mean), thin-lines 4 paths (47px mean), gradient 0 paths. Zero-path cases are now valid first-class evidence. **Ready for the real chair/mug/plant paths-only review.**

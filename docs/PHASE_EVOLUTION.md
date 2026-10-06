@@ -193,3 +193,8 @@ The real-pack workflow now handles 0/1/many path cases robustly, generates basel
 ### P4-A.1 validation tooling complete
 
 The three-view multi-image harness is now CI-green, including a legitimate zero-path gradient case. Synthetic step/thin-line fixtures produced 47–49px logical gestures while paths-only stayed free of legacy scan fragments. P4-A.1 now waits only on real chair/mug/plant structural review before deciding whether to refine tracing or advance to medium form strokes.
+
+
+### P4-A.1 validation harness verified
+
+The three-view batch runner is green and correctly preserves neutral/no-path cases. On synthetic sources, long gestures appeared on step and thin-lines but not gradient, confirming the tracer can abstain. The next evidence must come from chair/mug/plant path layers, not from more synthetic tuning.

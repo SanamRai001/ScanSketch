@@ -140,3 +140,8 @@ The full 3-source batch flow is CI-green in [run 37408490425](https://github.com
 ## Harness CI status
 
 The three-view pack runner is now CI-green on both positive and zero-path cases. In particular, a smooth gradient with no supported structural seed completes successfully with `accepted=0` instead of failing the experiment script. [CI run 37473050878](https://github.com/SanamRai001/ScanSketch/actions/runs/37473050878).
+
+
+## CI status
+
+The three-view pack runner is now CI-green on the exact branch implementation. It correctly handles sources with zero accepted long paths. Reuse the prior P3-G1 chair/mug/plant folder for the first real P4-A.1 visual gate.

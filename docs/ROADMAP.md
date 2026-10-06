@@ -178,3 +178,6 @@ P4-A.1 pack harness is CI-green and accepts legitimate zero-path images. Run the
 
 
 P4-A.1 validation infrastructure is complete and green. Remaining exit gate: run the frozen chair/mug/plant pack and inspect **paths-only** first. If multiple source classes show coherent long structure, open P4-A.2; otherwise refine P4-A.1 tracing before adding more stroke layers.
+
+
+P4-A.1 pack tooling is fully CI-green, including a valid zero-path gradient case. Next action: run the frozen chair/mug/plant pack and inspect **paths-only first**. No P4-A.2 implementation until that review passes.
