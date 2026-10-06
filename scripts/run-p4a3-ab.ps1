@@ -145,10 +145,16 @@ $hatchPaths = if ($hatchOnly.PSObject.Properties.Name -contains "paths") { @($ha
 $finalStructure = @($finalPaths | Where-Object { $_.role -ne "hatch" })
 $finalHatches = @($finalPaths | Where-Object { $_.role -eq "hatch" })
 
-if ((JsonCompact $hierarchyPaths) -ne (JsonCompact $finalStructure)) {
+if ($hierarchyPaths.Count -ne $finalStructure.Count) {
+    throw "P4-A.3 changed frozen Gesture/Form hierarchy count"
+}
+if ($hierarchyPaths.Count -gt 0 -and (JsonCompact $hierarchyPaths) -ne (JsonCompact $finalStructure)) {
     throw "P4-A.3 changed frozen Gesture/Form hierarchy"
 }
-if ((JsonCompact $finalHatches) -ne (JsonCompact $hatchPaths)) {
+if ($finalHatches.Count -ne $hatchPaths.Count) {
+    throw "Final and hatch-only modes generated different Hatch counts"
+}
+if ($finalHatches.Count -gt 0 -and (JsonCompact $finalHatches) -ne (JsonCompact $hatchPaths)) {
     throw "Final and hatch-only modes generated different Hatch layers"
 }
 if ($finalHatches.Count -ne $residualStats.hatches) {
