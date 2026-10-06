@@ -221,3 +221,8 @@ P4-A.1 passed [CI run 37406856611](https://github.com/SanamRai001/ScanSketch/act
 ### P4-A.1 real-pack harness
 
 A one-command multi-image harness now reuses the prior 3–5 nonportrait source pack and generates **P2-B.1 / P4-A.1 overlay / P4-A.1 paths-only** views per image, aggregate path-length/count evidence, CSV/JSON, and a local three-column review page. Zero accepted paths is treated as valid evidence rather than a script failure. The existing chair/mug/plant folder can be reused directly. [Runbook](P4A1_RUN.md).
+
+
+### P4-A.1 pack harness CI result
+
+The complete three-view pack harness passed [CI run 37408490425](https://github.com/SanamRai001/ScanSketch/actions/runs/37408490425), including zero-path sources. Synthetic behavior: step 2 paths at 48.5px mean; thin-lines 4 paths at 47px; gradient 0 paths. This verifies that real-image validation can distinguish useful path discovery from legitimate no-op cases without forcing marks. **Real chair/mug/plant review is now the only P4-A.1 gate left.**

@@ -130,3 +130,8 @@ Proceed to P4-A.2 only if multiple real source classes show useful long structur
 If paths are sparse but correct, that is acceptable: P4-A.2 can fill medium structure.
 
 If paths are long but wrong, wandering, or mostly unhelpful silhouette duplicates, improve P4-A.1 tracing before building more hierarchy.
+
+
+## Harness verification
+
+The full 3-source batch flow is CI-green in [run 37408490425](https://github.com/SanamRai001/ScanSketch/actions/runs/37408490425). Importantly, a source with no coherent structural path is accepted as a valid `0 paths` result. You do not need to add or replace sources just to force the algorithm to draw something.

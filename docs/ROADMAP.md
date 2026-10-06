@@ -172,3 +172,6 @@ P4-A.1 engineering gate passed: 74 tests, exact old-segment preservation and 48.
 
 
 P4-A.1 now has a 3–5 image real-pack harness. Reuse the exact P3-G1 chair/mug/plant sources and inspect **paths-only first**. Do not open P4-A.2 until multiple source classes show useful, source-faithful long gestures.
+
+
+P4-A.1 pack harness is CI-green and accepts legitimate zero-path images. Run the existing chair/mug/plant source folder now. The next branch decision depends on **paths-only visual quality**, not on forcing every source to yield gestures.

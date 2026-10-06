@@ -158,3 +158,19 @@ This clears the engineering gate. The generated marks are materially longer than
 `run-p4a1-pack.ps1` now runs 3–5 permission-cleared nonportrait sources through the exact same three-view comparison and produces aggregate JSON/CSV plus a local three-column `review.html`.
 
 The review intentionally emphasizes **paths-only first**. Overlay metrics are secondary because old horizontal hatching remains frozen until P4-A.3. See [P4-A.1 real-pack runbook](P4A1_RUN.md).
+
+
+## Multi-image harness CI result
+
+The three-view pack harness passed [GitHub Actions run 37408490425](https://github.com/SanamRai001/ScanSketch/actions/runs/37408490425) after explicitly hardening zero-path handling under PowerShell strict mode.
+
+Synthetic pack behavior:
+
+- `step`: **2** gesture paths, mean **48.5px**, max **49px**;
+- `thin-lines`: **4** gesture paths, mean/max **47px**;
+- `gradient`: **0** paths, correctly preserved as a valid no-op rather than treated as an error;
+- coverage: paths on **2/3** fixtures;
+- >=40px gesture on **2/3** fixtures;
+- overlay edge-F1 wins on **2/3** synthetic fixtures.
+
+The synthetic pack is only a harness proof. The quality gate remains the real chair/mug/plant paths-only review.

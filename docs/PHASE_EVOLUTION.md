@@ -183,3 +183,8 @@ Opened the first real human-scale mark experiment. P4-A.1 traces edge-supported 
 ### P4-A.1 first engineering result
 
 Automatic source tracing now produces real human-scale marks: two 48.5px-average gesture paths on the vertical-step smoke, versus the historical 2-10px primitive scale. All 74 tests and inherited experiments remain green. This validates tracing capability only; the next evidence must show whether chair/mug/plant path layers follow meaningful object structure.
+
+
+### P4-A.1 multi-image validation harness verified
+
+The real-pack workflow now handles 0/1/many path cases robustly, generates baseline/overlay/paths-only views, aggregate JSON/CSV and local HTML, and passed the synthetic 3-source smoke. This closes tooling risk; the remaining question is visual quality on chair/mug/plant.
