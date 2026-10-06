@@ -201,3 +201,8 @@ P3-G1 confirms the renderer's dominant bottleneck is now its primitive vocabular
 ### P4-A.0 implementation opened
 
 First-class logical path support is being added without changing historical renderers. `Sketch.paths` is backward-compatible/omitted when empty; `PathStroke` stores a deterministic polyline + generic role; tiny-skia renders it continuously; metrics expose path stats plus combined logical-mark counts while preserving legacy `strokes` semantics. No automatic long-stroke tracing yet. See [P4-A.0 verification](P4A0_VERIFY.md).
+
+
+### P4-A.0 CI result
+
+P4-A.0 passed [CI run 37405989296](https://github.com/SanamRai001/ScanSketch/actions/runs/37405989296): **69/69 Rust tests** plus every historical smoke. The seven-point path fixture is stored/measured as **one logical gesture**, length **82.87px**, with legacy `strokes.count=0` and `paths.count=1`. Backward compatibility is therefore proven for the foundation slice. **Next: P4-A.1 source-driven long structural path tracing.**

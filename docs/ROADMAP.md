@@ -158,3 +158,6 @@ P3 selection-only tuning is paused. Implement in gated slices: **P4-A.0 path pri
 ### P4-A.0 — first-class path primitive
 
 Engineering gate: add backward-compatible logical polyline paths, continuous rendering, serialization and mark/path metrics while leaving every historical generator straight-segment-only. Exit to P4-A.1 only after full CI and deterministic path fixture verification. [Verification](P4A0_VERIFY.md).
+
+
+P4-A.0 exit gate passed: 69 tests, backward-compatible old JSON/metrics, continuous seven-point gesture path and one-logical-mark measurement. Proceed to **P4-A.1 long structural path tracing**.

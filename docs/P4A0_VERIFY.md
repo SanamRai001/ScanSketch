@@ -1,6 +1,6 @@
 # P4-A.0 — First-Class Path Primitive Verification
 
-**Status:** implementation branch `feat/p4a0-path-primitive`. This phase is engineering-only: it adds a logical editable path representation but does not yet trace long strokes from photographs.
+**Status:** implementation passed GitHub Actions: **69/69 Rust tests**, all historical P2/P3/P3-G1 checks and the dedicated logical-path smoke. This phase is engineering-only: automatic source tracing begins in P4-A.1. [CI run 37405989296](https://github.com/SanamRai001/ScanSketch/actions/runs/37405989296).
 
 ## Purpose
 
@@ -107,3 +107,19 @@ P4-A.0 can close when:
 3. no P1–P3 experiment output behavior changes.
 
 Then begin **P4-A.1 long structural path tracing** from source edge/tangent fields.
+
+
+## First CI result
+
+The deterministic path fixture produced:
+
+- logical marks: **1**;
+- legacy straight strokes: **0**;
+- logical paths: **1**;
+- path role: **gesture**;
+- control/sample points: **7**;
+- measured path length: **82.868557 px**;
+- mean width: **1.5 px**;
+- mean opacity: **0.82**.
+
+Old P2/P3/G1 workflows remained green. This satisfies the P4-A.0 exit gate: a long curved mark can now exist, serialize, render and measure as one editable logical record without changing legacy straight-stroke semantics.
