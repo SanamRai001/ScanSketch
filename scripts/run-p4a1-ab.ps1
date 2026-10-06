@@ -22,7 +22,7 @@ function Read-IntStat([string]$text, [string]$name) {
     return [int]$m.Groups[1].Value
 }
 function Read-FloatStat([string]$text, [string]$name) {
-    $m = [regex]::Match($text, '(?:^|:|\|)\s*' + [regex]::Escape($name) + '=([0-9]+(?:\.[0-9]+)?)')
+    $m = [regex]::Match($text, '(?:^|:|\|)\s*' + [regex]::Escape($name) + '=([-+]?[0-9]+(?:\.[0-9]+)?)')
     if (-not $m.Success) { throw "Unable to parse '$name' from: $text" }
     return [double]$m.Groups[1].Value
 }
