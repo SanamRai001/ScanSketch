@@ -114,16 +114,20 @@ $base = Get-Content -LiteralPath (Join-Path $destination "p2b1.json") -Raw | Con
 $overlay = Get-Content -LiteralPath (Join-Path $destination "p4a1-overlay.json") -Raw | ConvertFrom-Json
 $pathsOnly = Get-Content -LiteralPath (Join-Path $destination "p4a1-paths.json") -Raw | ConvertFrom-Json
 
-if ($base.strokes.Count -ne $overlay.strokes.Count) {
+$baseStrokes = if ($base.PSObject.Properties.Name -contains "strokes") { @($base.strokes) } else { @() }
+$overlayStrokes = if ($overlay.PSObject.Properties.Name -contains "strokes") { @($overlay.strokes) } else { @() }
+$onlyStrokes = if ($pathsOnly.PSObject.Properties.Name -contains "strokes") { @($pathsOnly.strokes) } else { @() }
+
+if ($baseStrokes.Count -ne $overlayStrokes.Count) {
     throw "P4-A.1 overlay changed frozen baseline segment count"
 }
-for ($i=0; $i -lt $base.strokes.Count; $i++) {
-    $a=$base.strokes[$i]; $b=$overlay.strokes[$i]
+for ($i=0; $i -lt $baseStrokes.Count; $i++) {
+    $a=$baseStrokes[$i]; $b=$overlayStrokes[$i]
     if ($a.x0 -ne $b.x0 -or $a.y0 -ne $b.y0 -or $a.x1 -ne $b.x1 -or $a.y1 -ne $b.y1 -or $a.width -ne $b.width -or $a.opacity -ne $b.opacity) {
         throw "P4-A.1 overlay changed frozen baseline segment at index $i"
     }
 }
-if ($pathsOnly.strokes.Count -ne 0) {
+if ($onlyStrokes.Count -ne 0) {
     throw "P4-A.1 paths-only output unexpectedly contains legacy segments"
 }
 
