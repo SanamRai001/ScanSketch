@@ -219,3 +219,6 @@ P4-A.3 engineering gate passed: 85 tests, exact frozen structure, zero legacy se
 
 
 P4-A.3 now has a four-view real-pack harness. Reuse chair/mug/plant and choose between only two exits: **P4-G** if Gesture -> Form -> Hatch already reads naturally, or a small **P4-A.3.x Hatch-orientation** experiment if density is right but horizontal direction still looks mechanical. Do not retune Gesture/Form geometry.
+
+
+P4-A.3 validation infrastructure is complete and green. Next action: run the frozen chair/mug/plant pack through `run-p4a3-pack.ps1`. If the final images read naturally, proceed to **P4-G**; if density is good but horizontal Hatch direction still dominates, open only a small **P4-A.3.x orientation** experiment.

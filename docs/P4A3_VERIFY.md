@@ -165,3 +165,14 @@ This clears the engineering gate by a wide margin. The important next question i
 ## Multi-image real-pack harness
 
 `run-p4a3-pack.ps1` runs 3-5 permission-cleared nonportrait sources through four views: P2-B.1 control, frozen P4-A.2 Gesture+Form, P4-A.3 final, and exact Hatch-only diagnostics. It aggregates Hatch-count reduction, structure/Hatch path-length share, white behavior and secondary reconstruction metrics into JSON/CSV and a local HTML review. The final panel is visually primary; tone RMSE remains secondary. CI uses rights-clear synthetic sources only to verify the harness.
+
+
+## Four-view pack harness CI result
+
+The complete 3-source pack harness passed [GitHub Actions run 37499063691](https://github.com/SanamRai001/ScanSketch/actions/runs/37499063691) after zero-structure/empty-array validation fixes. Synthetic smoke:
+
+- form-detail: 161 control segments -> **42 Hatches** (**73.91% reduction**), 4 Gesture + 1 Form;
+- step: 193 -> **45 Hatches** (**76.68% reduction**), 2 Gesture + 0 Form;
+- gradient: 290 -> **83 Hatches** (**71.38% reduction**), 0 Gesture + 0 Form.
+
+All 3/3 synthetic sources exceed 60% Hatch-count reduction. The harness also preserves legitimate zero-structure cases and emits aggregate JSON/CSV plus local four-view HTML. Structure path-length majority was 0/3 on these synthetic cases, so the real chair/mug/plant visual review remains decisive for whether Hatch density/orientation is perceptually subordinate enough.

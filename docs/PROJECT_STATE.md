@@ -290,3 +290,8 @@ P4-A.3 passed [CI run 37495188329](https://github.com/SanamRai001/ScanSketch/act
 ### P4-A.3 real-pack harness
 
 A one-command four-view validator now compares P2-B.1, frozen P4-A.2 hierarchy, P4-A.3 final composition and Hatch-only diagnostics across 3-5 local nonportrait sources. It records Hatch-count reduction, structure/Hatch path-length share, white behavior and secondary reconstruction metrics, then generates JSON/CSV/HTML review. This is the final real-image gate before either P4-G human-likeness validation or a narrowly scoped Hatch-direction refinement.
+
+
+### P4-A.3 pack-harness CI result
+
+The four-view multi-image validator passed [CI run 37499063691](https://github.com/SanamRai001/ScanSketch/actions/runs/37499063691). Synthetic Hatch-count reductions were **73.91% / 76.68% / 71.38%** on form-detail/step/gradient, with zero-structure cases handled correctly. Aggregate JSON/CSV/HTML generation is green. **Repository-side P4-A.3 work is complete; the real chair/mug/plant final-composition review is now the only open gate.**

@@ -248,3 +248,8 @@ The first full P4 composition is operational: 4 Gesture + 1 Form + 42 Hatch mark
 ### P4-A.3 multi-image validation harness
 
 The first full P4-only tonal composition now has a 3-5 image batch gate. The harness emphasizes mark hierarchy and Hatch-count reduction rather than RMSE and provides a four-view review so density/composition problems can be separated from remaining mechanical Hatch orientation.
+
+
+### P4-A.3 validation tooling complete
+
+The four-view batch gate is CI-green, including zero-structure and empty-hierarchy cases. Synthetic sources all cut Hatch count by >70% while preserving frozen structure. This closes tooling risk; the next evidence must decide whether the real P4 final composition visually reads as Gesture -> Form -> supporting Hatch, or whether Hatch orientation still looks mechanical.
