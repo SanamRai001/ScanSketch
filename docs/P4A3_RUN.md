@@ -73,3 +73,41 @@ Gesture → Form → supporting Hatch tone
 ```
 
 If P4-A.3 still reads primarily as horizontal bands despite the large count reduction, do not increase or decrease density blindly. The next controlled variable would be Hatch orientation.
+
+
+## Run the full chair / mug / plant pack
+
+Reuse the exact source folder from P3-G1 / P4-A.1 / P4-A.2:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File ".\scripts\run-p4a3-pack.ps1" `
+  -InputDir ".\experiments\local\p3g1\sources" `
+  -OutputDir ".\experiments\local\p4a3\run-a" `
+  -MaxSize 512 `
+  -Seed 42 `
+  -RightsConfirmed `
+  -NonPortraitConfirmed
+```
+
+Open the local review:
+
+```powershell
+Start-Process ".\experiments\local\p4a3\run-a\review.html"
+```
+
+Print aggregate evidence:
+
+```powershell
+$s = Get-Content ".\experiments\local\p4a3\run-a\summary.json" -Raw | ConvertFrom-Json
+
+$s.counts
+$s.means
+
+$s.cases |
+  Select-Object source_name,control_segments,gesture_count,form_count,hatch_count,hatch_reduction_pct,hatch_mean_px,structure_share_pct,hatch_share_pct,final_edge_f1_improvement_vs_p2b1_pct,final_tone_improvement_vs_p2b1_pct |
+  Format-Table -AutoSize
+```
+
+Judge the P4-A.3 FINAL panel first in each case. The key decision is whether the image now reads as purposeful structure with supporting tone rather than as a raster field.
+
+If density is clearly improved but Hatch direction still feels mechanical, keep density/count frozen and test orientation separately in a small follow-up.

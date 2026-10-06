@@ -285,3 +285,8 @@ Residual hatching is now being implemented as a separate P4 composition. The fin
 ### P4-A.3 engineering result
 
 P4-A.3 passed [CI run 37495188329](https://github.com/SanamRai001/ScanSketch/actions/runs/37495188329): **85/85 Rust tests** and all inherited smoke checks. On `form-detail`, the exact 4 Gesture + 1 Form hierarchy is preserved, then **42** Hatch paths replace a **161-segment** P2-B.1 control field (**73.9% count reduction**). Mean Hatch length is **4.57px**, structure carries **49.3%** of path length, and the final candidate contains **zero legacy straight segments**. Real chair/mug/plant visual review is now the gate.
+
+
+### P4-A.3 real-pack harness
+
+A one-command four-view validator now compares P2-B.1, frozen P4-A.2 hierarchy, P4-A.3 final composition and Hatch-only diagnostics across 3-5 local nonportrait sources. It records Hatch-count reduction, structure/Hatch path-length share, white behavior and secondary reconstruction metrics, then generates JSON/CSV/HTML review. This is the final real-image gate before either P4-G human-likeness validation or a narrowly scoped Hatch-direction refinement.

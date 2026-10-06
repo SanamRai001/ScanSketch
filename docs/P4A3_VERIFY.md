@@ -160,3 +160,8 @@ On the rights-clear 64×64 `form-detail` fixture:
 - final Hatch list exactly equals Hatch-only mode.
 
 This clears the engineering gate by a wide margin. The important next question is visual: does the same composition look more human and less scanline-dominated on chair, mug and plant?
+
+
+## Multi-image real-pack harness
+
+`run-p4a3-pack.ps1` runs 3-5 permission-cleared nonportrait sources through four views: P2-B.1 control, frozen P4-A.2 Gesture+Form, P4-A.3 final, and exact Hatch-only diagnostics. It aggregates Hatch-count reduction, structure/Hatch path-length share, white behavior and secondary reconstruction metrics into JSON/CSV and a local HTML review. The final panel is visually primary; tone RMSE remains secondary. CI uses rights-clear synthetic sources only to verify the harness.

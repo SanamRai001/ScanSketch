@@ -216,3 +216,6 @@ P4-A.3 implementation now targets a true P4-only composition: zero legacy segmen
 
 
 P4-A.3 engineering gate passed: 85 tests, exact frozen structure, zero legacy segments, and **73.9% Hatch-count reduction** on form-detail. Proceed to the real chair/mug/plant composition review; do not tune Hatch direction or density again until that visual evidence exists.
+
+
+P4-A.3 now has a four-view real-pack harness. Reuse chair/mug/plant and choose between only two exits: **P4-G** if Gesture -> Form -> Hatch already reads naturally, or a small **P4-A.3.x Hatch-orientation** experiment if density is right but horizontal direction still looks mechanical. Do not retune Gesture/Form geometry.

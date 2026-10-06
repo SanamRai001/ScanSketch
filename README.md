@@ -84,7 +84,7 @@ The proposed erasure/correction idea is recorded under [Future Experiments](docs
 | [P4-A.2 first real result](docs/P4A2_FIRST_REAL_RESULT.md) | Successful chair/mug/plant medium hierarchy and transition to residual hatching |
 | [P4-A.3 architecture](docs/P4A3_ARCHITECTURE.md) | Frozen Gesture+Form hierarchy followed by sparse compressed residual Hatch paths |
 | [P4-A.3 verification](docs/P4A3_VERIFY.md) | Zero-legacy-segment residual Hatch composition and sparse-density gate |
-| [P4-A.3 runbook](docs/P4A3_RUN.md) | Four-view real-image comparison for the first P4-only tonal composition |
+| [P4-A.3 runbook](docs/P4A3_RUN.md) | Four-view comparison plus one-command chair/mug/plant pack for the first P4-only tonal composition |
 | [Future experiments](docs/FUTURE_EXPERIMENTS.md) | Ideas parked until core output is convincing |
 | [Project state](docs/PROJECT_STATE.md) | Single authoritative progress, risks and next phase |
 | [P1 verification](docs/P1_VERIFY.md) | Historical baseline validation |
