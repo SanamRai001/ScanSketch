@@ -114,9 +114,12 @@ $base = Get-Content -LiteralPath (Join-Path $destination "p2b1.json") -Raw | Con
 $overlay = Get-Content -LiteralPath (Join-Path $destination "p4a1-overlay.json") -Raw | ConvertFrom-Json
 $pathsOnly = Get-Content -LiteralPath (Join-Path $destination "p4a1-paths.json") -Raw | ConvertFrom-Json
 
-$baseStrokes = if ($base.PSObject.Properties.Name -contains "strokes") { @($base.strokes) } else { @() }
-$overlayStrokes = if ($overlay.PSObject.Properties.Name -contains "strokes") { @($overlay.strokes) } else { @() }
-$onlyStrokes = if ($pathsOnly.PSObject.Properties.Name -contains "strokes") { @($pathsOnly.strokes) } else { @() }
+$baseStrokes = @()
+$overlayStrokes = @()
+$onlyStrokes = @()
+if ($base.PSObject.Properties.Name -contains "strokes") { $baseStrokes = @($base.strokes) }
+if ($overlay.PSObject.Properties.Name -contains "strokes") { $overlayStrokes = @($overlay.strokes) }
+if ($pathsOnly.PSObject.Properties.Name -contains "strokes") { $onlyStrokes = @($pathsOnly.strokes) }
 
 if ($baseStrokes.Count -ne $overlayStrokes.Count) {
     throw "P4-A.1 overlay changed frozen baseline segment count"
@@ -131,8 +134,10 @@ if ($onlyStrokes.Count -ne 0) {
     throw "P4-A.1 paths-only output unexpectedly contains legacy segments"
 }
 
-$overlayPaths = if ($overlay.PSObject.Properties.Name -contains "paths") { @($overlay.paths) } else { @() }
-$onlyPaths = if ($pathsOnly.PSObject.Properties.Name -contains "paths") { @($pathsOnly.paths) } else { @() }
+$overlayPaths = @()
+$onlyPaths = @()
+if ($overlay.PSObject.Properties.Name -contains "paths") { $overlayPaths = @($overlay.paths) }
+if ($pathsOnly.PSObject.Properties.Name -contains "paths") { $onlyPaths = @($pathsOnly.paths) }
 if ($overlayPaths.Count -ne $onlyPaths.Count) {
     throw "Overlay/path-only gesture counts differ"
 }
