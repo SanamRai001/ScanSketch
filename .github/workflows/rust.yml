@@ -12,6 +12,7 @@ on:
       - feat/p3a22-missing-structure-residual
       - feat/p3a23-deficit-driven-proposals
       - test/p3g1-nonportrait-generalization
+      - feat/p4a0-path-primitive
 
 jobs:
   cargo:
@@ -32,6 +33,28 @@ jobs:
           cargo run -p scansketch-cli --bin scansketch -- --input experiments/local/ci/white.png --output experiments/local/ci/white-output.png --strokes experiments/local/ci/white-strokes.json --max-size 64
           cargo run -p scansketch-cli --bin scansketch-measure -- --source experiments/local/ci/white.png --preview experiments/local/ci/white-output.png --strokes experiments/local/ci/white-strokes.json --max-size 64 --report experiments/local/ci/white-report.json
           python3 -c "import json; r=json.load(open('experiments/local/ci/white-report.json')); assert r['tone_rmse']==0 and r['unwanted_highlight_ink_fraction']==0 and r['strokes']['count']==0, r"
+      - name: Smoke-test P4-A.0 first-class logical path primitive
+        shell: bash
+        run: |
+          cargo run -p scansketch-cli --bin scansketch-path-fixture -- --output experiments/local/ci/p4a0-path.png --strokes experiments/local/ci/p4a0-path.json
+          cargo run -p scansketch-cli --bin scansketch-measure -- --source experiments/local/ci/white.png --preview experiments/local/ci/p4a0-path.png --strokes experiments/local/ci/p4a0-path.json --max-size 64 --report experiments/local/ci/p4a0-path-report.json
+          python3 - <<'PY'
+          import json
+          sketch=json.load(open('experiments/local/ci/p4a0-path.json'))
+          report=json.load(open('experiments/local/ci/p4a0-path-report.json'))
+          assert sketch['strokes'] == [], sketch
+          assert len(sketch['paths']) == 1, sketch
+          assert len(sketch['paths'][0]['points']) == 7, sketch
+          assert sketch['paths'][0]['role'] == 'gesture', sketch
+          assert report['strokes']['count'] == 0, report['strokes']
+          assert report['paths']['count'] == 1, report['paths']
+          assert report['paths']['gesture_count'] == 1, report['paths']
+          assert report['paths']['total_path_length_px'] > 55, report['paths']
+          assert report['marks']['logical_count'] == 1, report['marks']
+          assert report['marks']['segment_count'] == 0, report['marks']
+          assert report['marks']['path_count'] == 1, report['marks']
+          print('P4-A.0 path primitive smoke passed:', report['paths'])
+          PY
       - name: Validate paired synthetic P2-C experiment script
         shell: pwsh
         run: |

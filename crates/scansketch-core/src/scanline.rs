@@ -223,10 +223,5 @@ pub fn generate_sketch(source: &RgbaImage, options: &SketchOptions) -> Result<Sk
         )?;
     }
 
-    Ok(Sketch {
-        width,
-        height,
-        seed: options.seed,
-        strokes,
-    })
+    Ok(Sketch::from_strokes(width, height, options.seed, strokes))
 }

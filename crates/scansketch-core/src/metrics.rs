@@ -6,7 +6,7 @@ use image::RgbaImage;
 use serde::Serialize;
 
 use crate::analysis::darkness_map;
-use crate::stroke::Sketch;
+use crate::stroke::{Sketch, StrokeRole};
 
 pub(crate) const WHITE_LIMIT: f32 = 0.04;
 const DARK_START: f32 = 0.65;
@@ -43,6 +43,31 @@ pub struct StrokeMetric {
 }
 
 #[derive(Clone, Debug, Serialize)]
+pub struct PathMetric {
+    pub count: usize,
+    pub total_path_length_px: f64,
+    pub mean_path_length_px: Option<f64>,
+    pub mean_points_per_path: Option<f64>,
+    pub mean_width_px: Option<f64>,
+    pub median_width_px: Option<f64>,
+    pub mean_opacity: Option<f64>,
+    pub median_opacity: Option<f64>,
+    pub gesture_count: usize,
+    pub form_count: usize,
+    pub hatch_count: usize,
+    pub accent_count: usize,
+}
+
+#[derive(Clone, Debug, Serialize)]
+pub struct MarkMetric {
+    /// Straight segments + logical paths. One polyline path counts as one mark.
+    pub logical_count: usize,
+    pub segment_count: usize,
+    pub path_count: usize,
+    pub total_path_length_px: f64,
+}
+
+#[derive(Clone, Debug, Serialize)]
 pub struct Measurement {
     pub protocol_revision: &'static str,
     pub width: u32,
@@ -58,7 +83,12 @@ pub struct Measurement {
     /// Mean positive (preview_darkness - target_darkness) on SOURCE white.
     pub mean_extra_highlight_darkness: Option<f64>,
     pub edges: EdgeMetric,
+    /// Legacy straight-segment metrics retained for every P1-P3 report.
     pub strokes: StrokeMetric,
+    /// P4 logical path metrics. Empty for all historical renderers.
+    pub paths: PathMetric,
+    /// Combined logical mark summary: segment records + path records.
+    pub marks: MarkMetric,
 }
 
 #[derive(Default)]
@@ -222,8 +252,8 @@ pub fn measure_sketch(
     if preview.dimensions() != (width, height) || (sketch.width, sketch.height) != (width, height) {
         return Err("source, preview and stroke JSON must have identical working dimensions".into());
     }
-    if sketch.strokes.len() > 500_000 {
-        return Err("stroke JSON exceeds maximum supported stroke count".into());
+    if sketch.logical_mark_count() > 500_000 || sketch.paths.len() > 100_000 {
+        return Err("stroke JSON exceeds maximum supported logical mark count".into());
     }
 
     let mut total_path_length_px = 0.0_f64;
@@ -253,6 +283,34 @@ pub fn measure_sketch(
         opacities.push(mark.opacity);
     }
 
+    let mut path_total_length_px = 0.0_f64;
+    let mut path_width_sum = 0.0_f64;
+    let mut path_opacity_sum = 0.0_f64;
+    let mut path_point_count = 0_usize;
+    let mut path_widths = Vec::with_capacity(sketch.paths.len());
+    let mut path_opacities = Vec::with_capacity(sketch.paths.len());
+    let mut gesture_count = 0_usize;
+    let mut form_count = 0_usize;
+    let mut hatch_count = 0_usize;
+    let mut accent_count = 0_usize;
+    for path in &sketch.paths {
+        if !path.valid_for_canvas(width, height) {
+            return Err("invalid logical path geometry, width or opacity in JSON".into());
+        }
+        path_total_length_px += path.path_length_px();
+        path_width_sum += path.width as f64;
+        path_opacity_sum += path.opacity as f64;
+        path_point_count += path.points.len();
+        path_widths.push(path.width);
+        path_opacities.push(path.opacity);
+        match path.role {
+            StrokeRole::Gesture => gesture_count += 1,
+            StrokeRole::Form => form_count += 1,
+            StrokeRole::Hatch => hatch_count += 1,
+            StrokeRole::Accent => accent_count += 1,
+        }
+    }
+
     let target = darkness_map(source);
     let output = darkness_map(preview);
     let mut all = Accumulator::default();
@@ -278,6 +336,8 @@ pub fn measure_sketch(
         }
     }
     let n = sketch.strokes.len();
+    let path_n = sketch.paths.len();
+    let logical_n = sketch.logical_mark_count();
     let pixels = all.count;
     let edges = edge_metric(&target, &output, width as usize, height as usize);
     Ok(Measurement {
@@ -304,17 +364,41 @@ pub fn measure_sketch(
             mean_opacity: (n > 0).then(|| opacity_sum / n as f64),
             median_opacity: median(opacities),
         },
+        paths: PathMetric {
+            count: path_n,
+            total_path_length_px: path_total_length_px,
+            mean_path_length_px: (path_n > 0)
+                .then(|| path_total_length_px / path_n as f64),
+            mean_points_per_path: (path_n > 0)
+                .then(|| path_point_count as f64 / path_n as f64),
+            mean_width_px: (path_n > 0)
+                .then(|| path_width_sum / path_n as f64),
+            median_width_px: median(path_widths),
+            mean_opacity: (path_n > 0)
+                .then(|| path_opacity_sum / path_n as f64),
+            median_opacity: median(path_opacities),
+            gesture_count,
+            form_count,
+            hatch_count,
+            accent_count,
+        },
+        marks: MarkMetric {
+            logical_count: logical_n,
+            segment_count: n,
+            path_count: path_n,
+            total_path_length_px: total_path_length_px + path_total_length_px,
+        },
     })
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::stroke::Stroke;
+    use crate::stroke::{PathPoint, PathStroke, Stroke};
     use image::{Rgba, RgbaImage};
 
     fn empty(w: u32, h: u32) -> Sketch {
-        Sketch { width: w, height: h, seed: 42, strokes: Vec::new() }
+        Sketch::from_strokes(w, h, 42, Vec::new())
     }
     fn white(w: u32, h: u32) -> RgbaImage {
         RgbaImage::from_pixel(w, h, Rgba([255, 255, 255, 255]))
@@ -397,14 +481,14 @@ mod tests {
     #[test]
     fn stroke_path_length_and_ink_stats_are_from_json() {
         let image = white(32, 32);
-        let sketch = Sketch {
-            width: 32,
-            height: 32,
-            seed: 7,
-            strokes: vec![Stroke {
+        let sketch = Sketch::from_strokes(
+            32,
+            32,
+            7,
+            vec![Stroke {
                 x0: 1.0, y0: 2.0, x1: 4.0, y1: 6.0, width: 0.8, opacity: 0.5
             }],
-        };
+        );
         let metrics = measure_sketch(&image, &image, &sketch).unwrap();
         assert_eq!(metrics.seed, 7);
         assert_eq!(metrics.strokes.count, 1);
@@ -416,12 +500,53 @@ mod tests {
     #[test]
     fn invalid_json_stroke_geometry_is_rejected_not_silently_scored() {
         let image = white(32, 32);
-        let sketch = Sketch {
-            width: 32, height: 32, seed: 42,
-            strokes: vec![Stroke {
+        let sketch = Sketch::from_strokes(
+            32,
+            32,
+            42,
+            vec![Stroke {
                 x0: 1.0, y0: 2.0, x1: 99.0, y1: 6.0, width: 0.8, opacity: 0.5
             }],
-        };
+        );
         assert!(measure_sketch(&image, &image, &sketch).is_err());
     }
-}
+
+
+    #[test]
+    fn logical_path_counts_as_one_mark_and_reports_polyline_length() {
+        let image = white(32, 32);
+        let mut sketch = Sketch::from_strokes(32, 32, 9, Vec::new());
+        sketch.paths.push(PathStroke {
+            points: vec![
+                PathPoint { x: 1.0, y: 1.0 },
+                PathPoint { x: 4.0, y: 5.0 },
+                PathPoint { x: 7.0, y: 9.0 },
+            ],
+            width: 1.2,
+            opacity: 0.6,
+            role: StrokeRole::Gesture,
+        });
+
+        let metrics = measure_sketch(&image, &image, &sketch).unwrap();
+        assert_eq!(metrics.strokes.count, 0);
+        assert_eq!(metrics.paths.count, 1);
+        assert_eq!(metrics.paths.gesture_count, 1);
+        assert!((metrics.paths.total_path_length_px - 10.0).abs() < 1e-8);
+        assert_eq!(metrics.marks.logical_count, 1);
+        assert_eq!(metrics.marks.segment_count, 0);
+        assert_eq!(metrics.marks.path_count, 1);
+        assert!((metrics.marks.total_path_length_px - 10.0).abs() < 1e-8);
+    }
+
+    #[test]
+    fn invalid_logical_path_is_rejected_not_silently_scored() {
+        let image = white(32, 32);
+        let mut sketch = Sketch::from_strokes(32, 32, 42, Vec::new());
+        sketch.paths.push(PathStroke {
+            points: vec![PathPoint { x: 4.0, y: 4.0 }],
+            width: 1.0,
+            opacity: 0.5,
+            role: StrokeRole::Gesture,
+        });
+        assert!(measure_sketch(&image, &image, &sketch).is_err());
+    }}

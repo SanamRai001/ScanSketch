@@ -163,3 +163,8 @@ The first genuine nonportrait pack (chair, mug, plant) rejected broad P3-A.2.3 p
 ### P4-A — human stroke hierarchy architecture
 
 Opened after P3-G1. The project now explicitly separates three mark scales: long structural/gestural paths, medium form-following paths and short hatch/texture marks. Current 2–10px scan fragments remain useful only as the shortest layer. P4 begins with a first-class editable path primitive, then long tracing, medium form strokes and residual hatching. [Architecture](P4A_HUMAN_STROKE_HIERARCHY.md).
+
+
+### P4-A.0 — path primitive foundation
+
+Implementation opened for one logical editable curved/polyline stroke. Old straight-only JSON remains readable and empty path collections are omitted, so historical P1–P3 outputs/scripts remain compatible. Rendering and metrics gain path awareness; automatic source tracing remains deferred to P4-A.1. [Verification](P4A0_VERIFY.md).

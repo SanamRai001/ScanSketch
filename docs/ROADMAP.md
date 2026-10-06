@@ -153,3 +153,8 @@ First real pack: chair, mug, plant. P3-A.2.3 does not generalize sufficiently (e
 ## P4-A — human stroke hierarchy [architecture opened]
 
 P3 selection-only tuning is paused. Implement in gated slices: **P4-A.0 path primitive foundation → P4-A.1 long structural tracing → P4-A.2 medium form strokes → P4-A.3 residual hatching rebalance → P4-G human-likeness validation**. Do not add decorative realism before the hierarchy works. [Architecture](P4A_HUMAN_STROKE_HIERARCHY.md).
+
+
+### P4-A.0 — first-class path primitive
+
+Engineering gate: add backward-compatible logical polyline paths, continuous rendering, serialization and mark/path metrics while leaving every historical generator straight-segment-only. Exit to P4-A.1 only after full CI and deterministic path fixture verification. [Verification](P4A0_VERIFY.md).
