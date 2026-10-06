@@ -36,7 +36,7 @@ function Read-FloatStat([string]$text, [string]$name) {
     return $value
 }
 function JsonCompact($value) {
-    return ($value | ConvertTo-Json -Depth 30 -Compress)
+    return (ConvertTo-Json -InputObject @($value) -Depth 30 -Compress)
 }
 
 if ($Seed -lt 0) { throw "-Seed must be nonnegative." }
