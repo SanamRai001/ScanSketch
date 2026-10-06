@@ -128,3 +128,8 @@ Reject if:
 P4-A.2 still leaves the old P2-B.1 hatch field untouched in overlay mode.
 
 If Gesture + Form paths are useful, proceed to **P4-A.3 residual hatching rebalance**, where the old full-field horizontal tone is finally reduced and regenerated only where structural paths do not already carry the drawing.
+
+
+## Multi-image real-pack harness
+
+`run-p4a2-pack.ps1` now reuses 3-5 nonportrait sources and creates a focused three-column review: P4-A.1 Gestures, P4-A.2 Gestures+Forms, and P4-A.2 overlay. It aggregates role counts, Form length/share, and paths-only edge change. See [P4-A.2 runbook](P4A2_RUN.md).

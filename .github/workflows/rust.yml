@@ -257,3 +257,26 @@ jobs:
           if (-not (Test-Path experiments/local/ci/p4a1-pack/summary.csv)) { throw "Missing P4-A.1 pack CSV" }
           if (-not (Test-Path experiments/local/ci/p4a1-pack/review.html)) { throw "Missing P4-A.1 pack HTML" }
           Write-Host ("P4-A.1 pack smoke: paths={0}/{1}; >=40px={2}/{1}; edge wins={3}/{1}" -f $s.counts.sources_with_paths,$s.source_count,$s.counts.sources_with_max_path_at_least_40px,$s.counts.overlay_edge_f1_wins)
+
+      - name: Smoke-test P4-A.2 hierarchy pack harness
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force experiments/local/ci/p4a2-pack-sources | Out-Null
+          Copy-Item experiments/local/ci/form-detail.png experiments/local/ci/p4a2-pack-sources/01-form-detail.png
+          Copy-Item experiments/local/ci/step.png experiments/local/ci/p4a2-pack-sources/02-step.png
+          Copy-Item experiments/local/ci/gradient.png experiments/local/ci/p4a2-pack-sources/03-gradient.png
+          ./scripts/run-p4a2-pack.ps1 -InputDir experiments/local/ci/p4a2-pack-sources -OutputDir experiments/local/ci/p4a2-pack -MaxSize 64 -Seed 42 -RightsConfirmed -NonPortraitConfirmed
+          if ($LASTEXITCODE -ne 0) { throw "P4-A.2 pack smoke failed" }
+          $s = Get-Content experiments/local/ci/p4a2-pack/summary.json -Raw | ConvertFrom-Json
+          if ($s.source_count -ne 3) { throw "Expected three P4-A.2 pack cases" }
+          if ($s.cases.Count -ne 3) { throw "Missing P4-A.2 pack case summaries" }
+          if ($s.counts.sources_with_forms -lt 1) { throw "Expected at least one source with Form paths" }
+          foreach ($case in $s.cases) {
+            if ($case.form_count -gt 0) {
+              if ($case.form_mean_px -lt 8 -or $case.form_mean_px -gt 32) { throw "Pack Form mean escaped target band" }
+              if ($case.form_max_px -gt 32.01) { throw "Pack Form max escaped target band" }
+            }
+          }
+          if (-not (Test-Path experiments/local/ci/p4a2-pack/summary.csv)) { throw "Missing P4-A.2 pack CSV" }
+          if (-not (Test-Path experiments/local/ci/p4a2-pack/review.html)) { throw "Missing P4-A.2 pack HTML" }
+          Write-Host ("P4-A.2 pack smoke: forms={0}/{1}; >=2 forms={2}/{1}; hierarchy edge wins={3}/{1}" -f $s.counts.sources_with_forms,$s.source_count,$s.counts.sources_with_at_least_two_forms,$s.counts.hierarchy_paths_edge_f1_wins_vs_p4a1)

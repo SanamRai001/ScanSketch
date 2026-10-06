@@ -194,3 +194,6 @@ Freeze P4-A.1 Gesture geometry exactly. Add 8-32px Form paths with denser edge p
 
 
 P4-A.2 implementation is now behind `--stroke-hierarchy` / `--stroke-hierarchy-only`. Engineering gate requires exact Gesture preservation and nonzero 8-32px Form paths on the dedicated form-detail fixture before chair/mug/plant review.
+
+
+P4-A.2 now has a multi-image hierarchy review harness. Reuse chair/mug/plant and compare P4-A.1 Gestures-only directly against P4-A.2 Gesture+Form paths-only. P4-A.3 remains blocked until medium marks add useful internal structure on multiple classes.

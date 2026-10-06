@@ -253,3 +253,8 @@ After P4-A.1 succeeded on chair/mug/plant, the next layer is **medium Form paths
 ### P4-A.2 implementation opened
 
 Medium Form tracing is now implemented as a separate hierarchy experiment. The exact P4-A.1 Gesture list is generated first and frozen; denser 8-32px Form proposals then use interior-support ranking and Gesture-corridor suppression. New CLI modes provide hierarchy overlay and paths-only output. A dedicated `form-detail.png` fixture exercises short internal structure without changing any historical P2-C fixture set. [Verification](P4A2_VERIFY.md).
+
+
+### P4-A.2 real-pack harness
+
+The P4-A.2 batch validator now compares frozen P4-A.1 Gestures against Gesture+Form hierarchy across the same 3-5 real sources, with aggregate JSON/CSV and an ASCII-only local HTML review. The center paths-only column is the primary visual gate. [Runbook](P4A2_RUN.md).

@@ -213,3 +213,8 @@ The second human-stroke scale is now defined: exact P4-A.1 long Gestures stay fr
 ### P4-A.2 implementation opened
 
 The second stroke scale is now executable: P4-A.1 Gestures are preserved exactly, then 8-32px Form paths are added from denser edge proposals with interior preference and Gesture suppression. The key visual comparison is P4-A.1 paths-only versus P4-A.2 paths-only; old hatching remains untouched until P4-A.3. [Verification](P4A2_VERIFY.md).
+
+
+### P4-A.2 first engineering result
+
+The medium layer clears its engineering gate: 79 tests green, exact P4-A.1 Gesture preservation, and a 15px Form path added to the short internal feature while Gestures retain ~92% of structural path length. The hierarchy is behaving as intended; real-object visual review is next.
