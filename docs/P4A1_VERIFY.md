@@ -151,3 +151,10 @@ On the deterministic 64x64 vertical step fixture:
 - overlay and paths-only logical path lists: exact match
 
 This clears the engineering gate. The generated marks are materially longer than P2's 2-10.5px hatch vocabulary. It does not yet prove that real-object paths are useful; chair/mug/plant path-layer inspection is next.
+
+
+## Multi-image real-pack harness
+
+`run-p4a1-pack.ps1` now runs 3–5 permission-cleared nonportrait sources through the exact same three-view comparison and produces aggregate JSON/CSV plus a local three-column `review.html`.
+
+The review intentionally emphasizes **paths-only first**. Overlay metrics are secondary because old horizontal hatching remains frozen until P4-A.3. See [P4-A.1 real-pack runbook](P4A1_RUN.md).

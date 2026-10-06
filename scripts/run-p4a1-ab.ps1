@@ -127,8 +127,8 @@ if ($pathsOnly.strokes.Count -ne 0) {
     throw "P4-A.1 paths-only output unexpectedly contains legacy segments"
 }
 
-$overlayPaths = @($overlay.paths)
-$onlyPaths = @($pathsOnly.paths)
+$overlayPaths = if ($overlay.PSObject.Properties.Name -contains "paths") { @($overlay.paths) } else { @() }
+$onlyPaths = if ($pathsOnly.PSObject.Properties.Name -contains "paths") { @($pathsOnly.paths) } else { @() }
 if ($overlayPaths.Count -ne $onlyPaths.Count) {
     throw "Overlay/path-only gesture counts differ"
 }

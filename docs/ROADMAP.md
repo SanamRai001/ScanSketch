@@ -169,3 +169,6 @@ Trace sparse 24–96px Gesture paths from coherent edge/tangent corridors. Engin
 
 
 P4-A.1 engineering gate passed: 74 tests, exact old-segment preservation and 48.5px mean / 49px max gesture paths on the step fixture. Proceed to chair/mug/plant **paths-only** visual gate before P4-A.2.
+
+
+P4-A.1 now has a 3–5 image real-pack harness. Reuse the exact P3-G1 chair/mug/plant sources and inspect **paths-only first**. Do not open P4-A.2 until multiple source classes show useful, source-faithful long gestures.

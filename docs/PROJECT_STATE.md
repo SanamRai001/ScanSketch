@@ -216,3 +216,8 @@ Source-driven long gestures are now implemented as an opt-in P4 experiment. Seed
 ### P4-A.1 CI result
 
 P4-A.1 passed [CI run 37406856611](https://github.com/SanamRai001/ScanSketch/actions/runs/37406856611): **74/74 Rust tests** plus every inherited smoke. On the vertical step it generated **2** first-class Gesture paths, mean **48.5px**, max **49px**, total **97px**, while preserving all 193 frozen P2-B.1 segments exactly; paths-only has zero legacy fragments. **Next gate is real chair/mug/plant paths-only visual review.**
+
+
+### P4-A.1 real-pack harness
+
+A one-command multi-image harness now reuses the prior 3–5 nonportrait source pack and generates **P2-B.1 / P4-A.1 overlay / P4-A.1 paths-only** views per image, aggregate path-length/count evidence, CSV/JSON, and a local three-column review page. Zero accepted paths is treated as valid evidence rather than a script failure. The existing chair/mug/plant folder can be reused directly. [Runbook](P4A1_RUN.md).

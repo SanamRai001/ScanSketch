@@ -216,3 +216,25 @@ jobs:
             if ($case.replacements -gt $case.max_replacements) { throw "P3-G1 case exceeded replacement cap" }
           }
           Write-Host ("P3-G1 smoke: {0} cases; edge wins {1}/{0}; white non-worse {2}/{0}" -f $s.source_count,$s.wins.edge_f1,$s.wins.white_nonworse)
+
+      - name: Smoke-test P4-A.1 three-view pack harness
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force experiments/local/ci/p4a1-pack-sources | Out-Null
+          Copy-Item experiments/local/ci/step.png experiments/local/ci/p4a1-pack-sources/01-step.png
+          Copy-Item experiments/local/ci/thin-lines.png experiments/local/ci/p4a1-pack-sources/02-thin-lines.png
+          Copy-Item experiments/local/ci/gradient.png experiments/local/ci/p4a1-pack-sources/03-gradient.png
+          ./scripts/run-p4a1-pack.ps1 -InputDir experiments/local/ci/p4a1-pack-sources -OutputDir experiments/local/ci/p4a1-pack -MaxSize 64 -Seed 42 -RightsConfirmed -NonPortraitConfirmed
+          if ($LASTEXITCODE -ne 0) { throw "P4-A.1 pack smoke failed" }
+          $s = Get-Content experiments/local/ci/p4a1-pack/summary.json -Raw | ConvertFrom-Json
+          if ($s.source_count -ne 3) { throw "Expected three P4-A.1 pack cases" }
+          if ($s.cases.Count -ne 3) { throw "Missing P4-A.1 pack case summaries" }
+          if ($s.counts.sources_with_paths -lt 1) { throw "Expected at least one synthetic source with a long path" }
+          if ($s.counts.sources_with_max_path_at_least_40px -lt 1) { throw "Expected at least one >=40px gesture path" }
+          foreach ($case in $s.cases) {
+            if ($case.paths_only_segment_count -ne 0) { throw "Paths-only pack case contains legacy segments" }
+            if ($case.accepted_paths -ne $case.paths_only_logical_marks) { throw "Logical path accounting mismatch" }
+          }
+          if (-not (Test-Path experiments/local/ci/p4a1-pack/summary.csv)) { throw "Missing P4-A.1 pack CSV" }
+          if (-not (Test-Path experiments/local/ci/p4a1-pack/review.html)) { throw "Missing P4-A.1 pack HTML" }
+          Write-Host ("P4-A.1 pack smoke: paths={0}/{1}; >=40px={2}/{1}; edge wins={3}/{1}" -f $s.counts.sources_with_paths,$s.source_count,$s.counts.sources_with_max_path_at_least_40px,$s.counts.overlay_edge_f1_wins)
