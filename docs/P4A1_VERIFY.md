@@ -1,6 +1,6 @@
 # P4-A.1 — Long Structural Path Tracing Verification
 
-**Status:** implementation branch `feat/p4a1-long-structural-paths`. P4-A.0 path records are now used for source-driven structural gestures. This phase does not yet rebalance/remove the old hatch field.
+**Status:** implementation passed GitHub Actions: **74/74 Rust tests**, every historical P2/P3/P3-G1 check, and the dedicated long-path smoke. Real chair/mug/plant path-layer review remains the quality gate. [CI run 37406856611](https://github.com/SanamRai001/ScanSketch/actions/runs/37406856611).
 
 ## Hypothesis
 
@@ -135,3 +135,19 @@ Those belong to later P4 slices.
 If paths-only previews look structurally meaningful and CI invariants hold, proceed to **P4-A.2 medium form paths**.
 
 If path tracing itself is poor, improve tracing/support before touching tonal hatching.
+
+
+## First CI result
+
+On the deterministic 64x64 vertical step fixture:
+
+- seed candidates: **22**
+- accepted logical gesture paths: **2**
+- frozen baseline segments: **193**
+- total gesture-path length: **97.00px**
+- mean gesture-path length: **48.50px**
+- max gesture-path length: **49.00px**
+- paths-only legacy segments: **0**
+- overlay and paths-only logical path lists: exact match
+
+This clears the engineering gate. The generated marks are materially longer than P2's 2-10.5px hatch vocabulary. It does not yet prove that real-object paths are useful; chair/mug/plant path-layer inspection is next.

@@ -166,3 +166,6 @@ P4-A.0 exit gate passed: 69 tests, backward-compatible old JSON/metrics, continu
 ### P4-A.1 — long structural path tracing
 
 Trace sparse 24–96px Gesture paths from coherent edge/tangent corridors. Engineering gate requires long/curved synthetic paths, exact P2-B.1 segment preservation in overlay mode, and identical paths-only output. Real gate is visual inspection of chair/mug/plant path layers before any medium-stroke work. [Verification](P4A1_VERIFY.md).
+
+
+P4-A.1 engineering gate passed: 74 tests, exact old-segment preservation and 48.5px mean / 49px max gesture paths on the step fixture. Proceed to chair/mug/plant **paths-only** visual gate before P4-A.2.

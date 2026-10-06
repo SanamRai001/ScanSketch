@@ -211,3 +211,8 @@ P4-A.0 passed [CI run 37405989296](https://github.com/SanamRai001/ScanSketch/act
 ## P4-A.1 long structural tracing opened
 
 Source-driven long gestures are now implemented as an opt-in P4 experiment. Seeds come from source edge corridors, direction comes from the existing multiscale tensor, forward/backward traces snap to edge support, and accepted paths must be at least ~24px and remain sparse. Two outputs are supported: exact P2-B.1 + paths, and paths-only for direct structural inspection. The old hatch field is deliberately unchanged until P4-A.3. See [P4-A.1 verification](P4A1_VERIFY.md).
+
+
+### P4-A.1 CI result
+
+P4-A.1 passed [CI run 37406856611](https://github.com/SanamRai001/ScanSketch/actions/runs/37406856611): **74/74 Rust tests** plus every inherited smoke. On the vertical step it generated **2** first-class Gesture paths, mean **48.5px**, max **49px**, total **97px**, while preserving all 193 frozen P2-B.1 segments exactly; paths-only has zero legacy fragments. **Next gate is real chair/mug/plant paths-only visual review.**

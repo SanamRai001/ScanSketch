@@ -178,3 +178,8 @@ First-class path support passed 69 tests and all inherited experiment checks. A 
 ### P4-A.1 — long structural path tracing
 
 Opened the first real human-scale mark experiment. P4-A.1 traces edge-supported tangent streamlines into first-class Gesture paths, targeting roughly 24–96px instead of 2–10px fragments. Overlay mode preserves frozen P2-B.1 exactly; paths-only mode exposes the structural layer without scanline noise. No tone rebalance yet. [Verification](P4A1_VERIFY.md).
+
+
+### P4-A.1 first engineering result
+
+Automatic source tracing now produces real human-scale marks: two 48.5px-average gesture paths on the vertical-step smoke, versus the historical 2-10px primitive scale. All 74 tests and inherited experiments remain green. This validates tracing capability only; the next evidence must show whether chair/mug/plant path layers follow meaningful object structure.
