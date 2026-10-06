@@ -181,3 +181,8 @@ P4-A.1 validation infrastructure is complete and green. Remaining exit gate: run
 
 
 P4-A.1 pack tooling is fully CI-green, including a valid zero-path gradient case. Next action: run the frozen chair/mug/plant pack and inspect **paths-only first**. No P4-A.2 implementation until that review passes.
+
+
+### P4-A.1 real gate passed
+
+3/3 nonportrait classes generated useful long structural gestures. Proceed to **P4-A.2 medium form paths**; keep the long Gesture layer frozen and sparse. Medium paths should target missing interior/form structure at ~8-32px while avoiding long-path duplication.

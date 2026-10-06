@@ -198,3 +198,8 @@ The three-view multi-image harness is now CI-green, including a legitimate zero-
 ### P4-A.1 validation harness verified
 
 The three-view batch runner is green and correctly preserves neutral/no-path cases. On synthetic sources, long gestures appeared on step and thin-lines but not gradient, confirming the tracer can abstain. The next evidence must come from chair/mug/plant path layers, not from more synthetic tuning.
+
+
+### P4-A.1 real-image outcome
+
+Chair, mug and plant all produce meaningful long Gesture paths with ~45-55px mean lengths and up to ~80px maximum. The paths-only review finally shows a new visual vocabulary: continuous structural lines instead of short horizontal fragments. P4-A.1 is accepted as the long-stroke layer. It is intentionally sparse; next add an 8-32px Form layer rather than increasing gesture density. [Result](P4A1_FIRST_REAL_RESULT.md).

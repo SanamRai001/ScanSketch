@@ -236,3 +236,10 @@ The 3–5 image three-view validator passed [CI run 37473050878](https://github.
 ### P4-A.1 pack harness CI result
 
 The three-view multi-image harness now passes [CI run 37477931352](https://github.com/SanamRai001/ScanSketch/actions/runs/37477931352). Synthetic validation: step 2 paths (48.5px mean), thin-lines 4 paths (47px mean), gradient 0 paths. Zero-path cases are now valid first-class evidence. **Ready for the real chair/mug/plant paths-only review.**
+
+
+## P4-A.1 first real result
+
+The real chair/mug/plant gate succeeds. All 3/3 sources produce long structural gestures; mean path lengths are **54.76/52.47/45.39px**, max **79.95/56.24/52.66px**. Paths-only previews visibly trace meaningful chair, mug and plant structure and represent the first clear departure from the old 2-10px scan-fragment language. The layer is correctly sparse; missing information is now medium-scale form rather than long contour capability. [Exact result](P4A1_FIRST_REAL_RESULT.md).
+
+**Next:** P4-A.2 medium form-following paths (roughly 8-32px), while preserving the accepted long Gesture layer unchanged.

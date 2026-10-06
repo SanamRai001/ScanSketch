@@ -207,3 +207,10 @@ Synthetic pack outcome:
 - overlay edge-F1 wins: **2/3**.
 
 The important harness property is that a source with no valid long structural corridor now yields a clean **zero-path result** rather than a parser failure or forced gesture.
+
+
+## First real-image outcome
+
+Chair/mug/plant all generated meaningful human-scale Gesture paths. Mean lengths were **54.76px**, **52.47px**, and **45.39px** respectively; maximums **79.95px**, **56.24px**, **52.66px**. Visual paths-only review confirms the marks follow real structure and no longer read as stitched scanline fragments. The layer is intentionally sparse and misses medium interior form. See [P4-A.1 first real result](P4A1_FIRST_REAL_RESULT.md).
+
+**Decision:** accept P4-A.1 and move to P4-A.2 medium form paths rather than increasing long-path density.
