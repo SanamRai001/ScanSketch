@@ -1,6 +1,6 @@
 use clap::Parser;
 use image::{imageops::FilterType, ImageFormat, ImageReader, Limits};
-use scansketch_core::{generate_deficit_proposal_sketch_with_stats, generate_directional_sketch, generate_hybrid_sketch_with_stats, generate_long_structural_sketch_with_stats, generate_missing_structure_sketch_with_stats, generate_placement_sketch_with_stats, generate_selective_hybrid_sketch_with_stats, generate_sketch, render_sketch, SketchOptions};
+use scansketch_core::{generate_deficit_proposal_sketch_with_stats, generate_directional_sketch, generate_hierarchical_path_sketch_with_stats, generate_hybrid_sketch_with_stats, generate_long_structural_sketch_with_stats, generate_missing_structure_sketch_with_stats, generate_placement_sketch_with_stats, generate_selective_hybrid_sketch_with_stats, generate_sketch, render_sketch, SketchOptions};
 use std::{error::Error, fs, io, path::PathBuf};
 
 /// Native tonal + optionally coherence-ranked contour sketch (P2-B.1).
@@ -70,6 +70,12 @@ struct Args {
     /// P4-A.1 inspection mode: render only the exact same long gesture paths.
     #[arg(long, default_value_t = false)]
     long_structural_only: bool,
+    /// P4-A.2: append frozen Gesture paths plus medium Form paths to P2-B.1.
+    #[arg(long, default_value_t = false)]
+    stroke_hierarchy: bool,
+    /// P4-A.2 inspection mode: render only Gesture + Form logical paths.
+    #[arg(long, default_value_t = false)]
+    stroke_hierarchy_only: bool,
 }
 
 fn run() -> Result<(), Box<dyn Error>> {
@@ -85,9 +91,11 @@ fn run() -> Result<(), Box<dyn Error>> {
         + args.hybrid_missing_structure as u8
         + args.hybrid_deficit_proposals as u8
         + args.long_structural as u8
-        + args.long_structural_only as u8;
+        + args.long_structural_only as u8
+        + args.stroke_hierarchy as u8
+        + args.stroke_hierarchy_only as u8;
     if experiment_count > 1 {
-        return Err("--directional, --placement-aware, --hybrid-structural, --hybrid-selective, --hybrid-missing-structure, --hybrid-deficit-proposals, --long-structural and --long-structural-only are separate experiments; choose only one".into());
+        return Err("--directional, --placement-aware, --hybrid-structural, --hybrid-selective, --hybrid-missing-structure, --hybrid-deficit-proposals, --long-structural, --long-structural-only, --stroke-hierarchy and --stroke-hierarchy-only are separate experiments; choose only one".into());
     }
     if !args.output.extension().and_then(|ext| ext.to_str()).is_some_and(|ext| ext.eq_ignore_ascii_case("png")) {
         return Err("--output must point to a .png file".into());
@@ -137,8 +145,19 @@ fn run() -> Result<(), Box<dyn Error>> {
     };
     let working_rgba = working.to_rgba8();
     let mut long_path_stats = None;
+    let mut hierarchy_stats = None;
     let (sketch, placement_stats, hybrid_stats, selective_stats, missing_stats, deficit_stats) =
-        if args.long_structural || args.long_structural_only {
+        if args.stroke_hierarchy || args.stroke_hierarchy_only {
+            let (sketch, stats) =
+                generate_hierarchical_path_sketch_with_stats(
+                    &working_rgba,
+                    &options,
+                    args.stroke_hierarchy,
+                )
+                .map_err(io::Error::other)?;
+            hierarchy_stats = Some(stats);
+            (sketch, None, None, None, None, None)
+        } else if args.long_structural || args.long_structural_only {
             let (sketch, stats) =
                 generate_long_structural_sketch_with_stats(
                     &working_rgba,
@@ -200,7 +219,11 @@ fn run() -> Result<(), Box<dyn Error>> {
     }
     println!(
         "ScanSketch {}: {}x{} | {} strokes | seed {} | saved {}",
-        if args.long_structural_only {
+        if args.stroke_hierarchy_only {
+            "P4-A.2 Gesture + Form paths only"
+        } else if args.stroke_hierarchy {
+            "P4-A.2 stroke hierarchy overlay"
+        } else if args.long_structural_only {
             "P4-A.1 long structural paths only"
         } else if args.long_structural {
             "P4-A.1 long structural overlay"
@@ -221,6 +244,21 @@ fn run() -> Result<(), Box<dyn Error>> {
         },
         sketch.width, sketch.height, sketch.strokes.len(), sketch.seed, args.output.display()
     );
+    if let Some(stats) = hierarchy_stats {
+        println!(
+            "P4-A.2 hierarchy: gestures={} | forms={} | form-seeds={} | form-overlap-rejected={} | baseline-segments={} | gesture-mean={:.2} | form-mean={:.2} | form-max={:.2} | gesture-share={:.4} | form-share={:.4}",
+            stats.gesture.accepted_paths,
+            stats.form.accepted_paths,
+            stats.form.seed_candidates,
+            stats.form.rejected_gesture_overlap,
+            stats.baseline_segment_count,
+            stats.gesture.mean_path_length_px,
+            stats.form.mean_path_length_px,
+            stats.form.max_path_length_px,
+            stats.gesture_length_share,
+            stats.form_length_share,
+        );
+    }
     if let Some(stats) = long_path_stats {
         println!(
             "P4-A.1 long paths: seeds={} | accepted={} | baseline-segments={} | total-path={:.2} | mean-path={:.2} | max-path={:.2}",

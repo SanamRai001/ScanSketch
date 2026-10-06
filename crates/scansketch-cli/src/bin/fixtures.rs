@@ -66,11 +66,28 @@ fn run() -> Result<(), Box<dyn Error>> {
     }
     save("thin-lines.png", &thin)?;
 
+    // P4-A.2: a large mid-gray object boundary plus a deliberately short
+    // darker internal contrast feature. The outer boundary belongs to the
+    // long Gesture scale; the internal feature is shorter than the P4-A.1
+    // minimum and should exercise the medium Form layer.
+    let mut form_detail = RgbaImage::from_pixel(W, H, white);
+    for y in 8..56 {
+        for x in 8..56 {
+            form_detail.put_pixel(x, y, Rgba([150, 150, 150, 255]));
+        }
+    }
+    for y in 24..40 {
+        for x in 31..34 {
+            form_detail.put_pixel(x, y, Rgba([20, 20, 20, 255]));
+        }
+    }
+    save("form-detail.png", &form_detail)?;
+
     let manifest = args.output_dir.join("README.txt");
     if manifest.exists() {
         return Err("fixture README already exists; refusing overwrite".into());
     }
-    fs::write(manifest, "ScanSketch synthetic P2-C v1 fixtures. Generated programmatically; no third-party input images. 64x64 RGBA PNG. white=blank; transparent-black=white-matted blank; step=hard half-plane; square-white-channel=black square with internal white gap; gradient=horizontal grayscale; thin-lines=separated one-pixel dark strokes. Use identical source bytes across branches.\n")?;
+    fs::write(manifest, "ScanSketch synthetic P2-C v1 fixtures. Generated programmatically; no third-party input images. 64x64 RGBA PNG. white=blank; transparent-black=white-matted blank; step=hard half-plane; square-white-channel=black square with internal white gap; gradient=horizontal grayscale; thin-lines=separated one-pixel dark strokes; form-detail=mid-gray object with short internal darker feature for P4-A.2 medium Form paths. Use identical source bytes across branches.\n")?;
     Ok(())
 }
 

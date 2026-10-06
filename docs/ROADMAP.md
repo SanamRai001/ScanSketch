@@ -191,3 +191,6 @@ P4-A.1 pack tooling is fully CI-green, including a valid zero-path gradient case
 ### P4-A.2 — medium form-following paths
 
 Freeze P4-A.1 Gesture geometry exactly. Add 8-32px Form paths with denser edge proposals, interior-support preference and Gesture-corridor suppression. Real gate remains chair/mug/plant paths-only review. P4-A.3 hatching rebalance stays blocked until this layer is useful.
+
+
+P4-A.2 implementation is now behind `--stroke-hierarchy` / `--stroke-hierarchy-only`. Engineering gate requires exact Gesture preservation and nonzero 8-32px Form paths on the dedicated form-detail fixture before chair/mug/plant review.

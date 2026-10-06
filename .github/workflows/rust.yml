@@ -14,6 +14,7 @@ on:
       - test/p3g1-nonportrait-generalization
       - feat/p4a0-path-primitive
       - feat/p4a1-long-structural-paths
+      - feat/p4a2-medium-form-paths
 
 jobs:
   cargo:
@@ -75,6 +76,24 @@ jobs:
           if ($paths.segment_count -ne 0) { throw "Paths-only output contains old scan fragments" }
           if ($overlay.path_count -ne $paths.path_count) { throw "Gesture path counts differ" }
           Write-Host ("P4-A.1 step: {0} long paths; mean={1}px; max={2}px; baseline segments={3}" -f $s.long_path_stats.accepted,$s.long_path_stats.mean_path,$s.long_path_stats.max_path,$base.segment_count)
+      - name: Smoke-test P4-A.2 medium Form hierarchy
+        shell: pwsh
+        run: |
+          ./scripts/run-p4a2-ab.ps1 -InputImage experiments/local/ci/form-detail.png -OutputDir experiments/local/ci/p4a2-form-detail -MaxSize 64 -Seed 42 -RightsConfirmed
+          if ($LASTEXITCODE -ne 0) { throw "P4-A.2 paired smoke failed" }
+          $s = Get-Content experiments/local/ci/p4a2-form-detail/summary.json -Raw | ConvertFrom-Json
+          if (-not $s.baseline_segments_exactly_preserved) { throw "P4-A.2 changed frozen baseline segments" }
+          if (-not $s.p4a1_gestures_exactly_preserved) { throw "P4-A.2 changed P4-A.1 Gestures" }
+          if (-not $s.overlay_paths_equal_paths_only) { throw "P4-A.2 overlay/path-only mismatch" }
+          if ($s.hierarchy_stats.forms -le 0) { throw "P4-A.2 generated no Form paths" }
+          if ($s.hierarchy_stats.form_mean -lt 8 -or $s.hierarchy_stats.form_mean -gt 32) { throw "P4-A.2 Form mean outside 8-32px band" }
+          if ($s.hierarchy_stats.form_max -lt 8 -or $s.hierarchy_stats.form_max -gt 32.01) { throw "P4-A.2 Form max outside band" }
+          $p4a1 = $s.fixtures | Where-Object { $_.mode -eq 'p4a1-paths' }
+          $p4a2 = $s.fixtures | Where-Object { $_.mode -eq 'p4a2-paths' }
+          if ($p4a1.segment_count -ne 0 -or $p4a2.segment_count -ne 0) { throw "P4 paths-only mode contains legacy segments" }
+          if ($p4a2.gesture_count -ne $s.hierarchy_stats.gestures) { throw "Gesture accounting mismatch" }
+          if ($p4a2.form_count -ne $s.hierarchy_stats.forms) { throw "Form accounting mismatch" }
+          Write-Host ("P4-A.2 form detail: gestures={0}; forms={1}; gesture mean={2}px; form mean={3}px; form max={4}px" -f $s.hierarchy_stats.gestures,$s.hierarchy_stats.forms,$s.hierarchy_stats.gesture_mean,$s.hierarchy_stats.form_mean,$s.hierarchy_stats.form_max)
       - name: Validate paired synthetic P2-C experiment script
         shell: pwsh
         run: |

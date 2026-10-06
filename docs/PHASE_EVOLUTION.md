@@ -208,3 +208,8 @@ Chair, mug and plant all produce meaningful long Gesture paths with ~45-55px mea
 ### P4-A.2 architecture opened
 
 The second human-stroke scale is now defined: exact P4-A.1 long Gestures stay frozen, while 8-32px `Form` paths target missing interior structure. Medium seeds prefer edges with source content on both sides and avoid accepted Gesture corridors, so the new layer should describe form rather than redraw silhouette. [Architecture](P4A2_ARCHITECTURE.md).
+
+
+### P4-A.2 implementation opened
+
+The second stroke scale is now executable: P4-A.1 Gestures are preserved exactly, then 8-32px Form paths are added from denser edge proposals with interior preference and Gesture suppression. The key visual comparison is P4-A.1 paths-only versus P4-A.2 paths-only; old hatching remains untouched until P4-A.3. [Verification](P4A2_VERIFY.md).

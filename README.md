@@ -79,6 +79,7 @@ The proposed erasure/correction idea is recorded under [Future Experiments](docs
 | [P4-A.1 real-pack runbook](docs/P4A1_RUN.md) | Three-view chair/mug/plant validation: baseline, overlay and long paths only |
 | [P4-A.1 first real result](docs/P4A1_FIRST_REAL_RESULT.md) | Chair/mug/plant long-gesture success and decision to add medium form paths |
 | [P4-A.2 architecture](docs/P4A2_ARCHITECTURE.md) | Frozen Gestures + 8-32px interior-biased Form paths with corridor suppression |
+| [P4-A.2 verification](docs/P4A2_VERIFY.md) | Exact Gesture preservation, medium Form-band checks and real-image gate |
 | [Future experiments](docs/FUTURE_EXPERIMENTS.md) | Ideas parked until core output is convincing |
 | [Project state](docs/PROJECT_STATE.md) | Single authoritative progress, risks and next phase |
 | [P1 verification](docs/P1_VERIFY.md) | Historical baseline validation |

@@ -248,3 +248,8 @@ The real chair/mug/plant gate succeeds. All 3/3 sources produce long structural 
 ## P4-A.2 architecture frozen
 
 After P4-A.1 succeeded on chair/mug/plant, the next layer is **medium Form paths**, not denser Gesture paths. P4-A.2 freezes the exact P4-A.1 Gesture layer and adds deterministic ~8-32px Form paths from coherent source edges, with an interior-support ranking bonus and explicit Gesture-corridor suppression. [Architecture](P4A2_ARCHITECTURE.md).
+
+
+### P4-A.2 implementation opened
+
+Medium Form tracing is now implemented as a separate hierarchy experiment. The exact P4-A.1 Gesture list is generated first and frozen; denser 8-32px Form proposals then use interior-support ranking and Gesture-corridor suppression. New CLI modes provide hierarchy overlay and paths-only output. A dedicated `form-detail.png` fixture exercises short internal structure without changing any historical P2-C fixture set. [Verification](P4A2_VERIFY.md).
