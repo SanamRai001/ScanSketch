@@ -175,3 +175,6 @@ P4-A.1 now has a 3–5 image real-pack harness. Reuse the exact P3-G1 chair/mug/
 
 
 P4-A.1 pack harness is CI-green and accepts legitimate zero-path images. Run the existing chair/mug/plant source folder now. The next branch decision depends on **paths-only visual quality**, not on forcing every source to yield gestures.
+
+
+P4-A.1 validation infrastructure is complete and green. Remaining exit gate: run the frozen chair/mug/plant pack and inspect **paths-only** first. If multiple source classes show coherent long structure, open P4-A.2; otherwise refine P4-A.1 tracing before adding more stroke layers.

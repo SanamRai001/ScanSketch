@@ -135,3 +135,8 @@ If paths are long but wrong, wandering, or mostly unhelpful silhouette duplicate
 ## Harness verification
 
 The full 3-source batch flow is CI-green in [run 37408490425](https://github.com/SanamRai001/ScanSketch/actions/runs/37408490425). Importantly, a source with no coherent structural path is accepted as a valid `0 paths` result. You do not need to add or replace sources just to force the algorithm to draw something.
+
+
+## Harness CI status
+
+The three-view pack runner is now CI-green on both positive and zero-path cases. In particular, a smooth gradient with no supported structural seed completes successfully with `accepted=0` instead of failing the experiment script. [CI run 37473050878](https://github.com/SanamRai001/ScanSketch/actions/runs/37473050878).

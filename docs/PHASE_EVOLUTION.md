@@ -188,3 +188,8 @@ Automatic source tracing now produces real human-scale marks: two 48.5px-average
 ### P4-A.1 multi-image validation harness verified
 
 The real-pack workflow now handles 0/1/many path cases robustly, generates baseline/overlay/paths-only views, aggregate JSON/CSV and local HTML, and passed the synthetic 3-source smoke. This closes tooling risk; the remaining question is visual quality on chair/mug/plant.
+
+
+### P4-A.1 validation tooling complete
+
+The three-view multi-image harness is now CI-green, including a legitimate zero-path gradient case. Synthetic step/thin-line fixtures produced 47–49px logical gestures while paths-only stayed free of legacy scan fragments. P4-A.1 now waits only on real chair/mug/plant structural review before deciding whether to refine tracing or advance to medium form strokes.

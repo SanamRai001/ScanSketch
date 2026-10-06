@@ -174,3 +174,20 @@ Synthetic pack behavior:
 - overlay edge-F1 wins on **2/3** synthetic fixtures.
 
 The synthetic pack is only a harness proof. The quality gate remains the real chair/mug/plant paths-only review.
+
+
+## Three-view pack harness CI result
+
+The real-pack validation harness passed [GitHub Actions run 37473050878](https://github.com/SanamRai001/ScanSketch/actions/runs/37473050878) after making zero-path numeric/stat parsing robust.
+
+Synthetic harness coverage:
+
+- step: **2** long paths, mean **48.50px**, max **49.00px**;
+- thin-lines: **4** long paths, mean/max **47.00px**;
+- gradient: **0** seeds / **0** long paths, accepted as a valid no-op;
+- sources with paths: **2/3**;
+- sources with a >=40px path: **2/3**;
+- paths-only outputs contain **0** legacy segments;
+- overlay/path-only path records remain identical per case.
+
+The synthetic pack exists only to prove validation behavior. It is not evidence of human-sketch quality. The real chair/mug/plant pack remains the P4-A.1 exit gate.

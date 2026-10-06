@@ -226,3 +226,8 @@ A one-command multi-image harness now reuses the prior 3–5 nonportrait source 
 ### P4-A.1 pack harness CI result
 
 The complete three-view pack harness passed [CI run 37408490425](https://github.com/SanamRai001/ScanSketch/actions/runs/37408490425), including zero-path sources. Synthetic behavior: step 2 paths at 48.5px mean; thin-lines 4 paths at 47px; gradient 0 paths. This verifies that real-image validation can distinguish useful path discovery from legitimate no-op cases without forcing marks. **Real chair/mug/plant review is now the only P4-A.1 gate left.**
+
+
+### P4-A.1 pack-harness gate passed
+
+The 3–5 image three-view validator passed [CI run 37473050878](https://github.com/SanamRai001/ScanSketch/actions/runs/37473050878). Synthetic smoke: step 2 paths at 48.5px mean, thin-lines 4 paths at 47px, gradient correctly no-ops at 0 paths. Paths-only outputs contain no old segments, and zero-path cases are valid evidence rather than errors. **All non-user-dependent P4-A.1 engineering work is now complete; chair/mug/plant visual evidence is the remaining exit gate.**
