@@ -173,3 +173,8 @@ Implementation opened for one logical editable curved/polyline stroke. Old strai
 ### P4-A.0 engineering result
 
 First-class path support passed 69 tests and all inherited experiment checks. A seven-point curved gesture rendered as one logical 82.87px mark while old stroke-only reports stayed compatible. The representation bottleneck is cleared; P4-A.1 can now test actual long-path extraction from image structure.
+
+
+### P4-A.1 — long structural path tracing
+
+Opened the first real human-scale mark experiment. P4-A.1 traces edge-supported tangent streamlines into first-class Gesture paths, targeting roughly 24–96px instead of 2–10px fragments. Overlay mode preserves frozen P2-B.1 exactly; paths-only mode exposes the structural layer without scanline noise. No tone rebalance yet. [Verification](P4A1_VERIFY.md).

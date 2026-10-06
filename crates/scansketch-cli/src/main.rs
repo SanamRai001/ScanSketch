@@ -1,6 +1,6 @@
 use clap::Parser;
 use image::{imageops::FilterType, ImageFormat, ImageReader, Limits};
-use scansketch_core::{generate_deficit_proposal_sketch_with_stats, generate_directional_sketch, generate_hybrid_sketch_with_stats, generate_missing_structure_sketch_with_stats, generate_placement_sketch_with_stats, generate_selective_hybrid_sketch_with_stats, generate_sketch, render_sketch, SketchOptions};
+use scansketch_core::{generate_deficit_proposal_sketch_with_stats, generate_directional_sketch, generate_hybrid_sketch_with_stats, generate_long_structural_sketch_with_stats, generate_missing_structure_sketch_with_stats, generate_placement_sketch_with_stats, generate_selective_hybrid_sketch_with_stats, generate_sketch, render_sketch, SketchOptions};
 use std::{error::Error, fs, io, path::PathBuf};
 
 /// Native tonal + optionally coherence-ranked contour sketch (P2-B.1).
@@ -64,6 +64,12 @@ struct Args {
     /// residual while keeping P3-A.2.2 scoring/replacement controls frozen.
     #[arg(long, default_value_t = false)]
     hybrid_deficit_proposals: bool,
+    /// P4-A.1: append sparse long edge-supported gesture paths to frozen P2-B.1.
+    #[arg(long, default_value_t = false)]
+    long_structural: bool,
+    /// P4-A.1 inspection mode: render only the exact same long gesture paths.
+    #[arg(long, default_value_t = false)]
+    long_structural_only: bool,
 }
 
 fn run() -> Result<(), Box<dyn Error>> {
@@ -77,9 +83,11 @@ fn run() -> Result<(), Box<dyn Error>> {
         + args.hybrid_structural as u8
         + args.hybrid_selective as u8
         + args.hybrid_missing_structure as u8
-        + args.hybrid_deficit_proposals as u8;
+        + args.hybrid_deficit_proposals as u8
+        + args.long_structural as u8
+        + args.long_structural_only as u8;
     if experiment_count > 1 {
-        return Err("--directional, --placement-aware, --hybrid-structural, --hybrid-selective, --hybrid-missing-structure and --hybrid-deficit-proposals are separate experiments; choose only one".into());
+        return Err("--directional, --placement-aware, --hybrid-structural, --hybrid-selective, --hybrid-missing-structure, --hybrid-deficit-proposals, --long-structural and --long-structural-only are separate experiments; choose only one".into());
     }
     if !args.output.extension().and_then(|ext| ext.to_str()).is_some_and(|ext| ext.eq_ignore_ascii_case("png")) {
         return Err("--output must point to a .png file".into());
@@ -128,8 +136,19 @@ fn run() -> Result<(), Box<dyn Error>> {
         contour_threshold: args.contour_threshold,
     };
     let working_rgba = working.to_rgba8();
+    let mut long_path_stats = None;
     let (sketch, placement_stats, hybrid_stats, selective_stats, missing_stats, deficit_stats) =
-        if args.hybrid_deficit_proposals {
+        if args.long_structural || args.long_structural_only {
+            let (sketch, stats) =
+                generate_long_structural_sketch_with_stats(
+                    &working_rgba,
+                    &options,
+                    args.long_structural,
+                )
+                .map_err(io::Error::other)?;
+            long_path_stats = Some(stats);
+            (sketch, None, None, None, None, None)
+        } else if args.hybrid_deficit_proposals {
             let (sketch, stats) =
                 generate_deficit_proposal_sketch_with_stats(&working_rgba, &options)
                     .map_err(io::Error::other)?;
@@ -181,7 +200,11 @@ fn run() -> Result<(), Box<dyn Error>> {
     }
     println!(
         "ScanSketch {}: {}x{} | {} strokes | seed {} | saved {}",
-        if args.hybrid_deficit_proposals {
+        if args.long_structural_only {
+            "P4-A.1 long structural paths only"
+        } else if args.long_structural {
+            "P4-A.1 long structural overlay"
+        } else if args.hybrid_deficit_proposals {
             "P3-A.2.3 deficit-driven proposal prototype"
         } else if args.hybrid_missing_structure {
             "P3-A.2.2 missing-structure hybrid prototype"
@@ -198,6 +221,17 @@ fn run() -> Result<(), Box<dyn Error>> {
         },
         sketch.width, sketch.height, sketch.strokes.len(), sketch.seed, args.output.display()
     );
+    if let Some(stats) = long_path_stats {
+        println!(
+            "P4-A.1 long paths: seeds={} | accepted={} | baseline-segments={} | total-path={:.2} | mean-path={:.2} | max-path={:.2}",
+            stats.seed_candidates,
+            stats.accepted_paths,
+            stats.baseline_segment_count,
+            stats.total_path_length_px,
+            stats.mean_path_length_px,
+            stats.max_path_length_px,
+        );
+    }
     if let Some(stats) = placement_stats {
         println!(
             "P3-A.1 placement: target tone={} | coarse={} | fine={} | tonal={} | baseline-fallback={} | candidates={}",

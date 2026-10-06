@@ -206,3 +206,8 @@ First-class logical path support is being added without changing historical rend
 ### P4-A.0 CI result
 
 P4-A.0 passed [CI run 37405989296](https://github.com/SanamRai001/ScanSketch/actions/runs/37405989296): **69/69 Rust tests** plus every historical smoke. The seven-point path fixture is stored/measured as **one logical gesture**, length **82.87px**, with legacy `strokes.count=0` and `paths.count=1`. Backward compatibility is therefore proven for the foundation slice. **Next: P4-A.1 source-driven long structural path tracing.**
+
+
+## P4-A.1 long structural tracing opened
+
+Source-driven long gestures are now implemented as an opt-in P4 experiment. Seeds come from source edge corridors, direction comes from the existing multiscale tensor, forward/backward traces snap to edge support, and accepted paths must be at least ~24px and remain sparse. Two outputs are supported: exact P2-B.1 + paths, and paths-only for direct structural inspection. The old hatch field is deliberately unchanged until P4-A.3. See [P4-A.1 verification](P4A1_VERIFY.md).

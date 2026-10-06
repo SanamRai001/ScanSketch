@@ -161,3 +161,8 @@ Engineering gate: add backward-compatible logical polyline paths, continuous ren
 
 
 P4-A.0 exit gate passed: 69 tests, backward-compatible old JSON/metrics, continuous seven-point gesture path and one-logical-mark measurement. Proceed to **P4-A.1 long structural path tracing**.
+
+
+### P4-A.1 — long structural path tracing
+
+Trace sparse 24–96px Gesture paths from coherent edge/tangent corridors. Engineering gate requires long/curved synthetic paths, exact P2-B.1 segment preservation in overlay mode, and identical paths-only output. Real gate is visual inspection of chair/mug/plant path layers before any medium-stroke work. [Verification](P4A1_VERIFY.md).
