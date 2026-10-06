@@ -138,9 +138,12 @@ if ($final.strokes.Count -ne 0 -or $hatchOnly.strokes.Count -ne 0) {
     throw "P4-A.3 must contain zero legacy straight segments"
 }
 
-$hierarchyPaths = if ($hierarchy.PSObject.Properties.Name -contains "paths") { @($hierarchy.paths) } else { @() }
-$finalPaths = if ($final.PSObject.Properties.Name -contains "paths") { @($final.paths) } else { @() }
-$hatchPaths = if ($hatchOnly.PSObject.Properties.Name -contains "paths") { @($hatchOnly.paths) } else { @() }
+$hierarchyPaths = @()
+$finalPaths = @()
+$hatchPaths = @()
+if ($hierarchy.PSObject.Properties.Name -contains "paths") { $hierarchyPaths = @($hierarchy.paths) }
+if ($final.PSObject.Properties.Name -contains "paths") { $finalPaths = @($final.paths) }
+if ($hatchOnly.PSObject.Properties.Name -contains "paths") { $hatchPaths = @($hatchOnly.paths) }
 
 $finalStructure = @($finalPaths | Where-Object { $_.role -ne "hatch" })
 $finalHatches = @($finalPaths | Where-Object { $_.role -eq "hatch" })
