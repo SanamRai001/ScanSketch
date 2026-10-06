@@ -200,3 +200,8 @@ P4-A.2 now has a multi-image hierarchy review harness. Reuse chair/mug/plant and
 
 
 P4-A.2 validation infrastructure is fully green. Next action is data collection only: run the existing chair/mug/plant source pack through `run-p4a2-pack.ps1` and review P4-A.1 Gestures-only vs P4-A.2 Gesture+Form paths-only before P4-A.3.
+
+
+### P4-A.2 exit gate passed
+
+Chair/mug/plant all gain useful 8–32px Form structure without changing long Gestures. Freeze the two structural layers. **P4-A.3 is now the active direction: Gesture → Form → sparse residual Hatch.** P2-B.1 remains a control, not the P4 tonal foundation.

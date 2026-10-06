@@ -223,3 +223,8 @@ The medium layer clears its engineering gate: 79 tests green, exact P4-A.1 Gestu
 ### P4-A.2 validation tooling verified
 
 The multi-image hierarchy harness is CI-green, including no-op sources. Medium Forms appear only on the dedicated internal-detail fixture, while step/gradient add none. This is desirable selectivity; the next evidence is the real chair/mug/plant paths-only delta.
+
+
+### P4-A.2 first real outcome
+
+Medium Form hierarchy succeeds across chair/mug/plant: six Forms per source, 12–16px mean Form length versus 45–55px Gestures, ~25–31% Form path-length share, and paths-only edge-F1 gains of ~24–32% on all three. The medium layer is visibly subordinate and useful. Freeze Gesture+Form geometry. The remaining visual problem is the old full horizontal tone field, so P4-A.3 moves to sparse residual hatching rather than overlay accumulation. [Result](P4A2_FIRST_REAL_RESULT.md).

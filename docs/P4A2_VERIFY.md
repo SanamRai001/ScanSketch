@@ -146,3 +146,10 @@ Synthetic pack behavior:
 - `gradient`: **0 Gestures + 0 Forms**.
 
 Pack summary: Forms on 1/3 sources, paths-only edge-F1 win on 1/3, overlay edge-F1 win on 2/3, white non-worse on 1/3. These synthetic values are not a quality benchmark. The important evidence is selective behavior: the medium layer is present on the dedicated internal-detail source and absent where the source does not justify it.
+
+
+## First real-pack outcome
+
+Chair/mug/plant all pass the medium hierarchy gate. Each source retains its exact P4-A.1 Gestures and adds six Forms. Gesture means are **54.76 / 52.47 / 45.39px**; Form means **12.24 / 16.06 / 13.23px**. Form path-length share stays **25.11–31.46%**. Paths-only edge F1 improves **31.596% / 30.538% / 23.917%** over P4-A.1. Visual review confirms the medium layer is subordinate and useful rather than a new dash field. See [P4-A.2 first real result](P4A2_FIRST_REAL_RESULT.md).
+
+**Decision:** freeze Gesture+Form geometry and proceed to P4-A.3 residual hatching. The old full P2-B.1 overlay is not the final composition; white RMSE was non-worse on 0/3 overlay cases.

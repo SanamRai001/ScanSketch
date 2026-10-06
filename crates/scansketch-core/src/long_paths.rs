@@ -819,7 +819,6 @@ fn trace_medium_path(
     field: &OrientationField,
     width: usize,
     height: usize,
-    gesture_covered: &[bool],
 ) -> Option<(PathStroke, f32)> {
     let direction = best_medium_direction(field, seed.x, seed.y)?;
     let (tx, ty) = normalize(direction.tx, direction.ty)?;
@@ -916,7 +915,6 @@ fn generate_medium_paths(
             &field,
             width,
             height,
-            &gesture_covered,
         ) {
             Some((path, _)) => {
                 if path_overlap_fraction(&path.points, &gesture_covered, width, height)
