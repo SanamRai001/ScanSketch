@@ -15,6 +15,7 @@ on:
       - feat/p4a0-path-primitive
       - feat/p4a1-long-structural-paths
       - feat/p4a2-medium-form-paths
+      - feat/p4a3-residual-hatching
 
 jobs:
   cargo:
@@ -280,3 +281,38 @@ jobs:
           if (-not (Test-Path experiments/local/ci/p4a2-pack/summary.csv)) { throw "Missing P4-A.2 pack CSV" }
           if (-not (Test-Path experiments/local/ci/p4a2-pack/review.html)) { throw "Missing P4-A.2 pack HTML" }
           Write-Host ("P4-A.2 pack smoke: forms={0}/{1}; >=2 forms={2}/{1}; hierarchy edge wins={3}/{1}" -f $s.counts.sources_with_forms,$s.source_count,$s.counts.sources_with_at_least_two_forms,$s.counts.hierarchy_paths_edge_f1_wins_vs_p4a1)
+
+      - name: Smoke-test P4-A.3 sparse residual hatching
+        shell: pwsh
+        run: |
+          ./scripts/run-p4a3-ab.ps1 -InputImage experiments/local/ci/form-detail.png -OutputDir experiments/local/ci/p4a3-form-detail -MaxSize 64 -Seed 42 -RightsConfirmed
+          if ($LASTEXITCODE -ne 0) { throw "P4-A.3 proof smoke failed" }
+          $s = Get-Content experiments/local/ci/p4a3-form-detail/summary.json -Raw | ConvertFrom-Json
+          if (-not $s.structure_exactly_preserved) { throw "P4-A.3 changed frozen structure" }
+          if (-not $s.final_hatches_equal_hatch_only) { throw "P4-A.3 Hatch-only parity failed" }
+          if ($s.residual_stats.hatches -le 0) { throw "P4-A.3 generated no residual Hatches" }
+          if ($s.residual_stats.hatch_reduction -lt 0.40) { throw "P4-A.3 did not reduce Hatch count by at least 40%" }
+          $final = $s.fixtures | Where-Object { $_.mode -eq 'p4a3-final' }
+          $hatch = $s.fixtures | Where-Object { $_.mode -eq 'p4a3-hatches' }
+          if ($final.segment_count -ne 0 -or $hatch.segment_count -ne 0) { throw "P4-A.3 contains legacy straight segments" }
+          if ($final.hatch_count -ne $s.residual_stats.hatches) { throw "P4-A.3 Hatch metric mismatch" }
+          Write-Host ("P4-A.3 form-detail: gestures={0}; forms={1}; hatches={2}; control={3}; reduction={4:P1}; structure-share={5:P1}" -f $s.residual_stats.gestures,$s.residual_stats.forms,$s.residual_stats.hatches,$s.residual_stats.control_segments,$s.residual_stats.hatch_reduction,$s.residual_stats.structure_share)
+
+      - name: Smoke-test P4-A.3 four-view pack harness
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force experiments/local/ci/p4a3-pack-sources | Out-Null
+          Copy-Item experiments/local/ci/form-detail.png experiments/local/ci/p4a3-pack-sources/01-form-detail.png
+          Copy-Item experiments/local/ci/step.png experiments/local/ci/p4a3-pack-sources/02-step.png
+          Copy-Item experiments/local/ci/gradient.png experiments/local/ci/p4a3-pack-sources/03-gradient.png
+          ./scripts/run-p4a3-pack.ps1 -InputDir experiments/local/ci/p4a3-pack-sources -OutputDir experiments/local/ci/p4a3-pack -MaxSize 64 -Seed 42 -RightsConfirmed -NonPortraitConfirmed
+          if ($LASTEXITCODE -ne 0) { throw "P4-A.3 pack smoke failed" }
+          $s = Get-Content experiments/local/ci/p4a3-pack/summary.json -Raw | ConvertFrom-Json
+          if ($s.source_count -ne 3) { throw "Expected three P4-A.3 pack cases" }
+          if ($s.cases.Count -ne 3) { throw "Missing P4-A.3 pack case summaries" }
+          foreach ($case in $s.cases) {
+            if ($case.control_segments -gt 0 -and $case.hatch_reduction_pct -lt 40) { throw "P4-A.3 pack case missed 40% Hatch reduction" }
+          }
+          if (-not (Test-Path experiments/local/ci/p4a3-pack/summary.csv)) { throw "Missing P4-A.3 pack CSV" }
+          if (-not (Test-Path experiments/local/ci/p4a3-pack/review.html)) { throw "Missing P4-A.3 pack HTML" }
+          Write-Host ("P4-A.3 pack smoke: reduction40={0}/{1}; reduction60={2}/{1}; structure-majority={3}/{1}" -f $s.counts.hatch_reduction_at_least_40pct,$s.source_count,$s.counts.hatch_reduction_at_least_60pct,$s.counts.structure_path_length_majority)

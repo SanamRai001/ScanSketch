@@ -205,3 +205,20 @@ P4-A.2 validation infrastructure is fully green. Next action is data collection 
 ### P4-A.2 exit gate passed
 
 Chair/mug/plant all gain useful 8–32px Form structure without changing long Gestures. Freeze the two structural layers. **P4-A.3 is now the active direction: Gesture → Form → sparse residual Hatch.** P2-B.1 remains a control, not the P4 tonal foundation.
+
+
+## P4-A.3 — residual hatching rebalance [architecture frozen]
+
+Final P4 composition for this slice: **Gesture → Form → compressed residual Hatch**. Zero legacy P2-B.1 segments. Target a material Hatch-count reduction (initially >=40% vs P2-B.1) while preserving exact structural paths and object readability. Only after density/composition works should hatch direction be reconsidered. [Architecture](P4A3_ARCHITECTURE.md).
+
+
+P4-A.3 implementation now targets a true P4-only composition: zero legacy segments, exact Gesture/Form, sparse residual Hatch paths. Engineering gate requires >=40% Hatch-count reduction and exact structural preservation before chair/mug/plant review. [Verification](P4A3_VERIFY.md).
+
+
+P4-A.3 engineering gate passed: 85 tests, exact frozen structure, zero legacy segments, and **73.9% Hatch-count reduction** on form-detail. Proceed to the real chair/mug/plant composition review; do not tune Hatch direction or density again until that visual evidence exists.
+
+
+P4-A.3 now has a four-view real-pack harness. Reuse chair/mug/plant and choose between only two exits: **P4-G** if Gesture -> Form -> Hatch already reads naturally, or a small **P4-A.3.x Hatch-orientation** experiment if density is right but horizontal direction still looks mechanical. Do not retune Gesture/Form geometry.
+
+
+P4-A.3 validation infrastructure is complete and green. Next action: run the frozen chair/mug/plant pack through `run-p4a3-pack.ps1`. If the final images read naturally, proceed to **P4-G**; if density is good but horizontal Hatch direction still dominates, open only a small **P4-A.3.x orientation** experiment.

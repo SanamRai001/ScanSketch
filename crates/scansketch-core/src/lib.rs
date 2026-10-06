@@ -13,6 +13,7 @@ mod placement;
 mod metrics;
 mod white_audit;
 mod render;
+mod residual_hatch;
 mod scanline;
 mod stroke;
 
@@ -31,6 +32,11 @@ pub use long_paths::{
     HierarchyPathStats,
     LongPathStats,
     MediumPathStats,
+};
+pub use residual_hatch::{
+    generate_residual_hatch_sketch,
+    generate_residual_hatch_sketch_with_stats,
+    ResidualHatchStats,
 };
 pub use placement::{generate_placement_sketch, generate_placement_sketch_with_stats, PlacementStats};
 pub use stroke::{PathPoint, PathStroke, Sketch, Stroke, StrokeRole};

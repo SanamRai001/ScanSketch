@@ -1,6 +1,6 @@
 use clap::Parser;
 use image::{imageops::FilterType, ImageFormat, ImageReader, Limits};
-use scansketch_core::{generate_deficit_proposal_sketch_with_stats, generate_directional_sketch, generate_hierarchical_path_sketch_with_stats, generate_hybrid_sketch_with_stats, generate_long_structural_sketch_with_stats, generate_missing_structure_sketch_with_stats, generate_placement_sketch_with_stats, generate_selective_hybrid_sketch_with_stats, generate_sketch, render_sketch, SketchOptions};
+use scansketch_core::{generate_deficit_proposal_sketch_with_stats, generate_directional_sketch, generate_hierarchical_path_sketch_with_stats, generate_hybrid_sketch_with_stats, generate_long_structural_sketch_with_stats, generate_missing_structure_sketch_with_stats, generate_placement_sketch_with_stats, generate_residual_hatch_sketch_with_stats, generate_selective_hybrid_sketch_with_stats, generate_sketch, render_sketch, SketchOptions};
 use std::{error::Error, fs, io, path::PathBuf};
 
 /// Native tonal + optionally coherence-ranked contour sketch (P2-B.1).
@@ -76,6 +76,12 @@ struct Args {
     /// P4-A.2 inspection mode: render only Gesture + Form logical paths.
     #[arg(long, default_value_t = false)]
     stroke_hierarchy_only: bool,
+    /// P4-A.3: frozen Gesture + Form hierarchy followed by sparse residual Hatch paths.
+    #[arg(long, default_value_t = false)]
+    residual_hatching: bool,
+    /// P4-A.3 diagnostic: render only the exact residual Hatch layer.
+    #[arg(long, default_value_t = false)]
+    residual_hatching_only: bool,
 }
 
 fn run() -> Result<(), Box<dyn Error>> {
@@ -93,9 +99,11 @@ fn run() -> Result<(), Box<dyn Error>> {
         + args.long_structural as u8
         + args.long_structural_only as u8
         + args.stroke_hierarchy as u8
-        + args.stroke_hierarchy_only as u8;
+        + args.stroke_hierarchy_only as u8
+        + args.residual_hatching as u8
+        + args.residual_hatching_only as u8;
     if experiment_count > 1 {
-        return Err("--directional, --placement-aware, --hybrid-structural, --hybrid-selective, --hybrid-missing-structure, --hybrid-deficit-proposals, --long-structural, --long-structural-only, --stroke-hierarchy and --stroke-hierarchy-only are separate experiments; choose only one".into());
+        return Err("--directional, --placement-aware, --hybrid-structural, --hybrid-selective, --hybrid-missing-structure, --hybrid-deficit-proposals, --long-structural, --long-structural-only, --stroke-hierarchy, --stroke-hierarchy-only, --residual-hatching and --residual-hatching-only are separate experiments; choose only one".into());
     }
     if !args.output.extension().and_then(|ext| ext.to_str()).is_some_and(|ext| ext.eq_ignore_ascii_case("png")) {
         return Err("--output must point to a .png file".into());
@@ -146,8 +154,19 @@ fn run() -> Result<(), Box<dyn Error>> {
     let working_rgba = working.to_rgba8();
     let mut long_path_stats = None;
     let mut hierarchy_stats = None;
+    let mut residual_hatch_stats = None;
     let (sketch, placement_stats, hybrid_stats, selective_stats, missing_stats, deficit_stats) =
-        if args.stroke_hierarchy || args.stroke_hierarchy_only {
+        if args.residual_hatching || args.residual_hatching_only {
+            let (sketch, stats) =
+                generate_residual_hatch_sketch_with_stats(
+                    &working_rgba,
+                    &options,
+                    args.residual_hatching,
+                )
+                .map_err(io::Error::other)?;
+            residual_hatch_stats = Some(stats);
+            (sketch, None, None, None, None, None)
+        } else if args.stroke_hierarchy || args.stroke_hierarchy_only {
             let (sketch, stats) =
                 generate_hierarchical_path_sketch_with_stats(
                     &working_rgba,
@@ -219,7 +238,11 @@ fn run() -> Result<(), Box<dyn Error>> {
     }
     println!(
         "ScanSketch {}: {}x{} | {} strokes | seed {} | saved {}",
-        if args.stroke_hierarchy_only {
+        if args.residual_hatching_only {
+            "P4-A.3 residual Hatch paths only"
+        } else if args.residual_hatching {
+            "P4-A.3 Gesture + Form + residual Hatch"
+        } else if args.stroke_hierarchy_only {
             "P4-A.2 Gesture + Form paths only"
         } else if args.stroke_hierarchy {
             "P4-A.2 stroke hierarchy overlay"
@@ -244,6 +267,21 @@ fn run() -> Result<(), Box<dyn Error>> {
         },
         sketch.width, sketch.height, sketch.strokes.len(), sketch.seed, args.output.display()
     );
+    if let Some(stats) = residual_hatch_stats {
+        println!(
+            "P4-A.3 residual: gestures={} | forms={} | hatches={} | control-segments={} | hatch-budget={} | residual-pixels={} | hatch-mean={:.2} | structure-share={:.4} | hatch-share={:.4} | hatch-reduction={:.4}",
+            stats.gesture_count,
+            stats.form_count,
+            stats.hatch_count,
+            stats.legacy_control_segments,
+            stats.hatch_budget,
+            stats.residual_candidate_pixels,
+            stats.hatch_mean_path_length_px,
+            stats.structure_length_share,
+            stats.hatch_length_share,
+            stats.hatch_count_reduction_fraction_vs_control,
+        );
+    }
     if let Some(stats) = hierarchy_stats {
         println!(
             "P4-A.2 hierarchy: gestures={} | forms={} | form-seeds={} | form-overlap-rejected={} | baseline-segments={} | gesture-mean={:.2} | form-mean={:.2} | form-max={:.2} | gesture-share={:.4} | form-share={:.4}",

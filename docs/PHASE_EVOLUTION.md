@@ -228,3 +228,28 @@ The multi-image hierarchy harness is CI-green, including no-op sources. Medium F
 ### P4-A.2 first real outcome
 
 Medium Form hierarchy succeeds across chair/mug/plant: six Forms per source, 12–16px mean Form length versus 45–55px Gestures, ~25–31% Form path-length share, and paths-only edge-F1 gains of ~24–32% on all three. The medium layer is visibly subordinate and useful. Freeze Gesture+Form geometry. The remaining visual problem is the old full horizontal tone field, so P4-A.3 moves to sparse residual hatching rather than overlay accumulation. [Result](P4A2_FIRST_REAL_RESULT.md).
+
+
+### P4-A.3 — residual hatching rebalance architecture
+
+After successful Gesture+Form hierarchy, tone is rebuilt instead of inherited. P4-A.3 renders frozen structure first, computes compressed remaining tonal need, suppresses hatching around structural corridors, and adds sparse short `Hatch` paths. No legacy P2-B.1 segments are part of the P4 candidate. The first experiment changes density/composition only; hatch direction remains mostly horizontal to preserve causal clarity. [Architecture](P4A3_ARCHITECTURE.md).
+
+
+### P4-A.3 implementation opened
+
+The old scan field is no longer part of the P4 candidate. Gesture+Form render first; compressed source-vs-structure residual then generates short role-tagged Hatch paths with a <=55% control-count budget and protected structural corridors. This isolates density/composition while leaving Hatch direction mostly horizontal for now. [Verification](P4A3_VERIFY.md).
+
+
+### P4-A.3 first engineering result
+
+The first full P4 composition is operational: 4 Gesture + 1 Form + 42 Hatch marks on the synthetic form-detail fixture, versus 161 legacy control segments. Hatch count falls **73.9%**, structure supplies ~49.3% of path length, all marks are role-aware paths, and no old straight segments remain. 85 tests and every historical smoke stay green. Next evidence must be visual on the real chair/mug/plant pack.
+
+
+### P4-A.3 multi-image validation harness
+
+The first full P4-only tonal composition now has a 3-5 image batch gate. The harness emphasizes mark hierarchy and Hatch-count reduction rather than RMSE and provides a four-view review so density/composition problems can be separated from remaining mechanical Hatch orientation.
+
+
+### P4-A.3 validation tooling complete
+
+The four-view batch gate is CI-green, including zero-structure and empty-hierarchy cases. Synthetic sources all cut Hatch count by >70% while preserving frozen structure. This closes tooling risk; the next evidence must decide whether the real P4 final composition visually reads as Gesture -> Form -> supporting Hatch, or whether Hatch orientation still looks mechanical.

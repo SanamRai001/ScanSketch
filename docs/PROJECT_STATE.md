@@ -270,3 +270,28 @@ The hierarchy pack validator passed [CI run 37486009965](https://github.com/Sana
 P4-A.2 passes the chair/mug/plant hierarchy gate. All 3/3 sources add exactly 6 medium Forms while preserving 4/4/5 long Gestures. Gesture mean length remains **45.39–54.76px**, Form mean **12.24–16.06px**, and Form path-length share **25.11–31.46%**. Paths-only edge F1 improves **23.917–31.596%** on all three. The hierarchy is visibly sparse and scale-separated. [Exact result](P4A2_FIRST_REAL_RESULT.md).
 
 The full legacy overlay is explicitly not the final P4 renderer: overlay white RMSE is non-worse on 0/3. **Next: P4-A.3 rebuilds tone as sparse residual Hatch marks after the frozen Gesture+Form hierarchy.**
+
+
+## P4-A.3 architecture frozen
+
+P4-A.3 changes the composition model rather than stacking more ink. Frozen P4-A.1 Gestures and P4-A.2 Forms render first; a compressed residual tonal target then generates sparse role-tagged `Hatch` paths. The final P4-A.3 candidate contains **zero legacy P2-B.1 segments**. P2-B.1 remains control only. Initial design deliberately keeps Hatch geometry short and mostly horizontal so the first experiment isolates **density/composition** from hatch-direction changes. See [P4-A.3 architecture](P4A3_ARCHITECTURE.md).
+
+
+### P4-A.3 implementation opened
+
+Residual hatching is now being implemented as a separate P4 composition. The final candidate contains exact frozen Gesture+Form paths, **zero legacy P2-B.1 straight segments**, and role-tagged short Hatch paths derived from compressed residual tone. Hatch count is hard-capped at 55% of the P2-B.1 control count, structural corridors are protected, and Hatch-only mode verifies exact layer parity. See [P4-A.3 verification](P4A3_VERIFY.md).
+
+
+### P4-A.3 engineering result
+
+P4-A.3 passed [CI run 37495188329](https://github.com/SanamRai001/ScanSketch/actions/runs/37495188329): **85/85 Rust tests** and all inherited smoke checks. On `form-detail`, the exact 4 Gesture + 1 Form hierarchy is preserved, then **42** Hatch paths replace a **161-segment** P2-B.1 control field (**73.9% count reduction**). Mean Hatch length is **4.57px**, structure carries **49.3%** of path length, and the final candidate contains **zero legacy straight segments**. Real chair/mug/plant visual review is now the gate.
+
+
+### P4-A.3 real-pack harness
+
+A one-command four-view validator now compares P2-B.1, frozen P4-A.2 hierarchy, P4-A.3 final composition and Hatch-only diagnostics across 3-5 local nonportrait sources. It records Hatch-count reduction, structure/Hatch path-length share, white behavior and secondary reconstruction metrics, then generates JSON/CSV/HTML review. This is the final real-image gate before either P4-G human-likeness validation or a narrowly scoped Hatch-direction refinement.
+
+
+### P4-A.3 pack-harness CI result
+
+The four-view multi-image validator passed [CI run 37499063691](https://github.com/SanamRai001/ScanSketch/actions/runs/37499063691). Synthetic Hatch-count reductions were **73.91% / 76.68% / 71.38%** on form-detail/step/gradient, with zero-structure cases handled correctly. Aggregate JSON/CSV/HTML generation is green. **Repository-side P4-A.3 work is complete; the real chair/mug/plant final-composition review is now the only open gate.**
