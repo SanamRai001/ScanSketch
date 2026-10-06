@@ -233,3 +233,8 @@ Medium Form hierarchy succeeds across chair/mug/plant: six Forms per source, 12â
 ### P4-A.3 â€” residual hatching rebalance architecture
 
 After successful Gesture+Form hierarchy, tone is rebuilt instead of inherited. P4-A.3 renders frozen structure first, computes compressed remaining tonal need, suppresses hatching around structural corridors, and adds sparse short `Hatch` paths. No legacy P2-B.1 segments are part of the P4 candidate. The first experiment changes density/composition only; hatch direction remains mostly horizontal to preserve causal clarity. [Architecture](P4A3_ARCHITECTURE.md).
+
+
+### P4-A.3 implementation opened
+
+The old scan field is no longer part of the P4 candidate. Gesture+Form render first; compressed source-vs-structure residual then generates short role-tagged Hatch paths with a <=55% control-count budget and protected structural corridors. This isolates density/composition while leaving Hatch direction mostly horizontal for now. [Verification](P4A3_VERIFY.md).

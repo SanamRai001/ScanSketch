@@ -210,3 +210,6 @@ Chair/mug/plant all gain useful 8–32px Form structure without changing long Ge
 ## P4-A.3 — residual hatching rebalance [architecture frozen]
 
 Final P4 composition for this slice: **Gesture → Form → compressed residual Hatch**. Zero legacy P2-B.1 segments. Target a material Hatch-count reduction (initially >=40% vs P2-B.1) while preserving exact structural paths and object readability. Only after density/composition works should hatch direction be reconsidered. [Architecture](P4A3_ARCHITECTURE.md).
+
+
+P4-A.3 implementation now targets a true P4-only composition: zero legacy segments, exact Gesture/Form, sparse residual Hatch paths. Engineering gate requires >=40% Hatch-count reduction and exact structural preservation before chair/mug/plant review. [Verification](P4A3_VERIFY.md).

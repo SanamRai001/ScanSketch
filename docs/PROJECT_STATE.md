@@ -275,3 +275,8 @@ The full legacy overlay is explicitly not the final P4 renderer: overlay white R
 ## P4-A.3 architecture frozen
 
 P4-A.3 changes the composition model rather than stacking more ink. Frozen P4-A.1 Gestures and P4-A.2 Forms render first; a compressed residual tonal target then generates sparse role-tagged `Hatch` paths. The final P4-A.3 candidate contains **zero legacy P2-B.1 segments**. P2-B.1 remains control only. Initial design deliberately keeps Hatch geometry short and mostly horizontal so the first experiment isolates **density/composition** from hatch-direction changes. See [P4-A.3 architecture](P4A3_ARCHITECTURE.md).
+
+
+### P4-A.3 implementation opened
+
+Residual hatching is now being implemented as a separate P4 composition. The final candidate contains exact frozen Gesture+Form paths, **zero legacy P2-B.1 straight segments**, and role-tagged short Hatch paths derived from compressed residual tone. Hatch count is hard-capped at 55% of the P2-B.1 control count, structural corridors are protected, and Hatch-only mode verifies exact layer parity. See [P4-A.3 verification](P4A3_VERIFY.md).
