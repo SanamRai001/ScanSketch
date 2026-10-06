@@ -213,3 +213,6 @@ Final P4 composition for this slice: **Gesture → Form → compressed residual 
 
 
 P4-A.3 implementation now targets a true P4-only composition: zero legacy segments, exact Gesture/Form, sparse residual Hatch paths. Engineering gate requires >=40% Hatch-count reduction and exact structural preservation before chair/mug/plant review. [Verification](P4A3_VERIFY.md).
+
+
+P4-A.3 engineering gate passed: 85 tests, exact frozen structure, zero legacy segments, and **73.9% Hatch-count reduction** on form-detail. Proceed to the real chair/mug/plant composition review; do not tune Hatch direction or density again until that visual evidence exists.

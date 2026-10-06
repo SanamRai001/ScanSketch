@@ -280,3 +280,8 @@ P4-A.3 changes the composition model rather than stacking more ink. Frozen P4-A.
 ### P4-A.3 implementation opened
 
 Residual hatching is now being implemented as a separate P4 composition. The final candidate contains exact frozen Gesture+Form paths, **zero legacy P2-B.1 straight segments**, and role-tagged short Hatch paths derived from compressed residual tone. Hatch count is hard-capped at 55% of the P2-B.1 control count, structural corridors are protected, and Hatch-only mode verifies exact layer parity. See [P4-A.3 verification](P4A3_VERIFY.md).
+
+
+### P4-A.3 engineering result
+
+P4-A.3 passed [CI run 37495188329](https://github.com/SanamRai001/ScanSketch/actions/runs/37495188329): **85/85 Rust tests** and all inherited smoke checks. On `form-detail`, the exact 4 Gesture + 1 Form hierarchy is preserved, then **42** Hatch paths replace a **161-segment** P2-B.1 control field (**73.9% count reduction**). Mean Hatch length is **4.57px**, structure carries **49.3%** of path length, and the final candidate contains **zero legacy straight segments**. Real chair/mug/plant visual review is now the gate.

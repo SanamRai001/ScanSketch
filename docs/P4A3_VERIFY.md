@@ -1,6 +1,6 @@
 # P4-A.3 — Residual Hatching Verification
 
-**Status:** implementation branch `feat/p4a3-residual-hatching`. Engineering and real-image gates pending.
+**Status:** engineering gate passed on GitHub Actions: **85/85 Rust tests**, every inherited P2/P3/P4 smoke, and the dedicated residual-hatching proof. Real chair/mug/plant visual gate remains. [CI run 37495188329](https://github.com/SanamRai001/ScanSketch/actions/runs/37495188329).
 
 ## Controlled change
 
@@ -140,3 +140,23 @@ Do not reject a visually more human sketch merely because it reconstructs graysc
 If chair/mug/plant retain recognizability while scanline dominance materially falls, proceed toward P4-G human-likeness validation.
 
 If density is good but mostly-horizontal Hatch orientation still looks mechanical, open a **small P4-A.3.x form-aware Hatch direction experiment** without changing Gesture/Form or Hatch count.
+
+
+## First engineering result
+
+On the rights-clear 64×64 `form-detail` fixture:
+
+- frozen Gestures: **4**;
+- frozen Forms: **1**;
+- residual Hatches: **42**;
+- P2-B.1 control segments: **161**;
+- Hatch budget ceiling: **88**;
+- Hatch-count reduction: **73.91%**;
+- residual candidate pixels: **1676**;
+- mean Hatch length: **4.57px**;
+- structure path-length share: **49.32%**;
+- Hatch path-length share: **50.68%**;
+- legacy straight segments in P4-A.3 final: **0**;
+- final Hatch list exactly equals Hatch-only mode.
+
+This clears the engineering gate by a wide margin. The important next question is visual: does the same composition look more human and less scanline-dominated on chair, mug and plant?

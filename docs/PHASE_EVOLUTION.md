@@ -238,3 +238,8 @@ After successful Gesture+Form hierarchy, tone is rebuilt instead of inherited. P
 ### P4-A.3 implementation opened
 
 The old scan field is no longer part of the P4 candidate. Gesture+Form render first; compressed source-vs-structure residual then generates short role-tagged Hatch paths with a <=55% control-count budget and protected structural corridors. This isolates density/composition while leaving Hatch direction mostly horizontal for now. [Verification](P4A3_VERIFY.md).
+
+
+### P4-A.3 first engineering result
+
+The first full P4 composition is operational: 4 Gesture + 1 Form + 42 Hatch marks on the synthetic form-detail fixture, versus 161 legacy control segments. Hatch count falls **73.9%**, structure supplies ~49.3% of path length, all marks are role-aware paths, and no old straight segments remain. 85 tests and every historical smoke stay green. Next evidence must be visual on the real chair/mug/plant pack.
