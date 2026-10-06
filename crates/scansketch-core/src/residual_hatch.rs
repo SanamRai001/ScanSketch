@@ -347,8 +347,11 @@ pub fn generate_residual_hatch_sketch_with_stats(
         .filter(|path| path.role == StrokeRole::Form)
         .count();
 
-    let structure_total_path_length_px: f64 =
-        structure.iter().map(PathStroke::path_length_px).sum();
+    let structure_total_path_length_px: f64 = if structure.is_empty() {
+        0.0
+    } else {
+        structure.iter().map(PathStroke::path_length_px).sum()
+    };
     let hatch_total_path_length_px: f64 =
         hatches.iter().map(PathStroke::path_length_px).sum();
     let hatch_count = hatches.len();

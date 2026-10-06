@@ -22,9 +22,18 @@ function Read-IntStat([string]$text, [string]$name) {
     return [int]$m.Groups[1].Value
 }
 function Read-FloatStat([string]$text, [string]$name) {
-    $m = [regex]::Match($text, '(?:^|:|\|)\s*' + [regex]::Escape($name) + '=([0-9]+(?:\.[0-9]+)?)')
+    $m = [regex]::Match($text, '(?:^|:|\|)\s*' + [regex]::Escape($name) + '=([^\s|]+)')
     if (-not $m.Success) { throw "Unable to parse '$name' from: $text" }
-    return [double]$m.Groups[1].Value
+    $value = 0.0
+    if (-not [double]::TryParse(
+        $m.Groups[1].Value,
+        [System.Globalization.NumberStyles]::Float,
+        [System.Globalization.CultureInfo]::InvariantCulture,
+        [ref]$value
+    )) {
+        throw "Unable to parse numeric '$name' value '$($m.Groups[1].Value)' from: $text"
+    }
+    return $value
 }
 function JsonCompact($value) {
     return ($value | ConvertTo-Json -Depth 30 -Compress)
