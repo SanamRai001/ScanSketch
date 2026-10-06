@@ -418,7 +418,11 @@ fn generate_paths(source: &RgbaImage) -> (Vec<PathStroke>, LongPathStats) {
         ay.total_cmp(&by).then_with(|| ax.total_cmp(&bx))
     });
 
-    let total_path_length_px: f64 = paths.iter().map(PathStroke::path_length_px).sum();
+    let total_path_length_px: f64 = if paths.is_empty() {
+        0.0
+    } else {
+        paths.iter().map(PathStroke::path_length_px).sum()
+    };
     let max_path_length_px = paths
         .iter()
         .map(PathStroke::path_length_px)
