@@ -197,3 +197,6 @@ P4-A.2 implementation is now behind `--stroke-hierarchy` / `--stroke-hierarchy-o
 
 
 P4-A.2 now has a multi-image hierarchy review harness. Reuse chair/mug/plant and compare P4-A.1 Gestures-only directly against P4-A.2 Gesture+Form paths-only. P4-A.3 remains blocked until medium marks add useful internal structure on multiple classes.
+
+
+P4-A.2 validation infrastructure is fully green. Next action is data collection only: run the existing chair/mug/plant source pack through `run-p4a2-pack.ps1` and review P4-A.1 Gestures-only vs P4-A.2 Gesture+Form paths-only before P4-A.3.

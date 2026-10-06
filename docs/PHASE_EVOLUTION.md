@@ -218,3 +218,8 @@ The second stroke scale is now executable: P4-A.1 Gestures are preserved exactly
 ### P4-A.2 first engineering result
 
 The medium layer clears its engineering gate: 79 tests green, exact P4-A.1 Gesture preservation, and a 15px Form path added to the short internal feature while Gestures retain ~92% of structural path length. The hierarchy is behaving as intended; real-object visual review is next.
+
+
+### P4-A.2 validation tooling verified
+
+The multi-image hierarchy harness is CI-green, including no-op sources. Medium Forms appear only on the dedicated internal-detail fixture, while step/gradient add none. This is desirable selectivity; the next evidence is the real chair/mug/plant paths-only delta.

@@ -258,3 +258,8 @@ Medium Form tracing is now implemented as a separate hierarchy experiment. The e
 ### P4-A.2 real-pack harness
 
 The P4-A.2 batch validator now compares frozen P4-A.1 Gestures against Gesture+Form hierarchy across the same 3-5 real sources, with aggregate JSON/CSV and an ASCII-only local HTML review. The center paths-only column is the primary visual gate. [Runbook](P4A2_RUN.md).
+
+
+### P4-A.2 pack-harness CI result
+
+The hierarchy pack validator passed [CI run 37486009965](https://github.com/SanamRai001/ScanSketch/actions/runs/37486009965). Synthetic cases behaved selectively: form-detail 4 Gesture + 1 Form, step 2 + 0, gradient 0 + 0. JSON/CSV/ASCII-only HTML review generation and zero-Form handling are green. **Real chair/mug/plant P4-A.1-vs-P4-A.2 review is now the only open gate.**

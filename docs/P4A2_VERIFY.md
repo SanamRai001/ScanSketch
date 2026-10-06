@@ -133,3 +133,16 @@ If Gesture + Form paths are useful, proceed to **P4-A.3 residual hatching rebala
 ## Multi-image real-pack harness
 
 `run-p4a2-pack.ps1` now reuses 3-5 nonportrait sources and creates a focused three-column review: P4-A.1 Gestures, P4-A.2 Gestures+Forms, and P4-A.2 overlay. It aggregates role counts, Form length/share, and paths-only edge change. See [P4-A.2 runbook](P4A2_RUN.md).
+
+
+## Pack-harness CI verification
+
+The multi-image hierarchy validator passed GitHub Actions [run 37486009965](https://github.com/SanamRai001/ScanSketch/actions/runs/37486009965), including JSON/CSV/HTML output and zero-Form cases.
+
+Synthetic pack behavior:
+
+- `form-detail`: **4 Gestures + 1 Form**;
+- `step`: **2 Gestures + 0 Forms**;
+- `gradient`: **0 Gestures + 0 Forms**.
+
+Pack summary: Forms on 1/3 sources, paths-only edge-F1 win on 1/3, overlay edge-F1 win on 2/3, white non-worse on 1/3. These synthetic values are not a quality benchmark. The important evidence is selective behavior: the medium layer is present on the dedicated internal-detail source and absent where the source does not justify it.
