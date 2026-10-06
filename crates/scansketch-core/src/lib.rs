@@ -23,7 +23,15 @@ pub use white_audit::{audit_white_pixels, AffectedPixel, AuditRoi, WhiteAudit};
 pub use scanline::{generate_sketch, SketchOptions};
 pub use directional::generate_directional_sketch;
 pub use hybrid::{generate_deficit_proposal_sketch, generate_deficit_proposal_sketch_with_stats, generate_hybrid_sketch, generate_hybrid_sketch_with_stats, generate_missing_structure_sketch, generate_missing_structure_sketch_with_stats, generate_selective_hybrid_sketch, generate_selective_hybrid_sketch_with_stats, DeficitProposalStats, HybridStats, MissingStructureStats, SelectiveHybridStats};
-pub use long_paths::{generate_long_structural_sketch, generate_long_structural_sketch_with_stats, LongPathStats};
+pub use long_paths::{
+    generate_hierarchical_path_sketch,
+    generate_hierarchical_path_sketch_with_stats,
+    generate_long_structural_sketch,
+    generate_long_structural_sketch_with_stats,
+    HierarchyPathStats,
+    LongPathStats,
+    MediumPathStats,
+};
 pub use placement::{generate_placement_sketch, generate_placement_sketch_with_stats, PlacementStats};
 pub use stroke::{PathPoint, PathStroke, Sketch, Stroke, StrokeRole};
 

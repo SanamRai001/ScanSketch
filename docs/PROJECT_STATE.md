@@ -243,3 +243,30 @@ The three-view multi-image harness now passes [CI run 37477931352](https://githu
 The real chair/mug/plant gate succeeds. All 3/3 sources produce long structural gestures; mean path lengths are **54.76/52.47/45.39px**, max **79.95/56.24/52.66px**. Paths-only previews visibly trace meaningful chair, mug and plant structure and represent the first clear departure from the old 2-10px scan-fragment language. The layer is correctly sparse; missing information is now medium-scale form rather than long contour capability. [Exact result](P4A1_FIRST_REAL_RESULT.md).
 
 **Next:** P4-A.2 medium form-following paths (roughly 8-32px), while preserving the accepted long Gesture layer unchanged.
+
+
+## P4-A.2 architecture frozen
+
+After P4-A.1 succeeded on chair/mug/plant, the next layer is **medium Form paths**, not denser Gesture paths. P4-A.2 freezes the exact P4-A.1 Gesture layer and adds deterministic ~8-32px Form paths from coherent source edges, with an interior-support ranking bonus and explicit Gesture-corridor suppression. [Architecture](P4A2_ARCHITECTURE.md).
+
+
+### P4-A.2 implementation opened
+
+Medium Form tracing is now implemented as a separate hierarchy experiment. The exact P4-A.1 Gesture list is generated first and frozen; denser 8-32px Form proposals then use interior-support ranking and Gesture-corridor suppression. New CLI modes provide hierarchy overlay and paths-only output. A dedicated `form-detail.png` fixture exercises short internal structure without changing any historical P2-C fixture set. [Verification](P4A2_VERIFY.md).
+
+
+### P4-A.2 real-pack harness
+
+The P4-A.2 batch validator now compares frozen P4-A.1 Gestures against Gesture+Form hierarchy across the same 3-5 real sources, with aggregate JSON/CSV and an ASCII-only local HTML review. The center paths-only column is the primary visual gate. [Runbook](P4A2_RUN.md).
+
+
+### P4-A.2 pack-harness CI result
+
+The hierarchy pack validator passed [CI run 37486009965](https://github.com/SanamRai001/ScanSketch/actions/runs/37486009965). Synthetic cases behaved selectively: form-detail 4 Gesture + 1 Form, step 2 + 0, gradient 0 + 0. JSON/CSV/ASCII-only HTML review generation and zero-Form handling are green. **Real chair/mug/plant P4-A.1-vs-P4-A.2 review is now the only open gate.**
+
+
+## P4-A.2 first real result
+
+P4-A.2 passes the chair/mug/plant hierarchy gate. All 3/3 sources add exactly 6 medium Forms while preserving 4/4/5 long Gestures. Gesture mean length remains **45.39–54.76px**, Form mean **12.24–16.06px**, and Form path-length share **25.11–31.46%**. Paths-only edge F1 improves **23.917–31.596%** on all three. The hierarchy is visibly sparse and scale-separated. [Exact result](P4A2_FIRST_REAL_RESULT.md).
+
+The full legacy overlay is explicitly not the final P4 renderer: overlay white RMSE is non-worse on 0/3. **Next: P4-A.3 rebuilds tone as sparse residual Hatch marks after the frozen Gesture+Form hierarchy.**

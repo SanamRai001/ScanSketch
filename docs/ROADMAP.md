@@ -186,3 +186,22 @@ P4-A.1 pack tooling is fully CI-green, including a valid zero-path gradient case
 ### P4-A.1 real gate passed
 
 3/3 nonportrait classes generated useful long structural gestures. Proceed to **P4-A.2 medium form paths**; keep the long Gesture layer frozen and sparse. Medium paths should target missing interior/form structure at ~8-32px while avoiding long-path duplication.
+
+
+### P4-A.2 — medium form-following paths
+
+Freeze P4-A.1 Gesture geometry exactly. Add 8-32px Form paths with denser edge proposals, interior-support preference and Gesture-corridor suppression. Real gate remains chair/mug/plant paths-only review. P4-A.3 hatching rebalance stays blocked until this layer is useful.
+
+
+P4-A.2 implementation is now behind `--stroke-hierarchy` / `--stroke-hierarchy-only`. Engineering gate requires exact Gesture preservation and nonzero 8-32px Form paths on the dedicated form-detail fixture before chair/mug/plant review.
+
+
+P4-A.2 now has a multi-image hierarchy review harness. Reuse chair/mug/plant and compare P4-A.1 Gestures-only directly against P4-A.2 Gesture+Form paths-only. P4-A.3 remains blocked until medium marks add useful internal structure on multiple classes.
+
+
+P4-A.2 validation infrastructure is fully green. Next action is data collection only: run the existing chair/mug/plant source pack through `run-p4a2-pack.ps1` and review P4-A.1 Gestures-only vs P4-A.2 Gesture+Form paths-only before P4-A.3.
+
+
+### P4-A.2 exit gate passed
+
+Chair/mug/plant all gain useful 8–32px Form structure without changing long Gestures. Freeze the two structural layers. **P4-A.3 is now the active direction: Gesture → Form → sparse residual Hatch.** P2-B.1 remains a control, not the P4 tonal foundation.

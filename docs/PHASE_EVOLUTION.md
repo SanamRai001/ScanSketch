@@ -203,3 +203,28 @@ The three-view batch runner is green and correctly preserves neutral/no-path cas
 ### P4-A.1 real-image outcome
 
 Chair, mug and plant all produce meaningful long Gesture paths with ~45-55px mean lengths and up to ~80px maximum. The paths-only review finally shows a new visual vocabulary: continuous structural lines instead of short horizontal fragments. P4-A.1 is accepted as the long-stroke layer. It is intentionally sparse; next add an 8-32px Form layer rather than increasing gesture density. [Result](P4A1_FIRST_REAL_RESULT.md).
+
+
+### P4-A.2 architecture opened
+
+The second human-stroke scale is now defined: exact P4-A.1 long Gestures stay frozen, while 8-32px `Form` paths target missing interior structure. Medium seeds prefer edges with source content on both sides and avoid accepted Gesture corridors, so the new layer should describe form rather than redraw silhouette. [Architecture](P4A2_ARCHITECTURE.md).
+
+
+### P4-A.2 implementation opened
+
+The second stroke scale is now executable: P4-A.1 Gestures are preserved exactly, then 8-32px Form paths are added from denser edge proposals with interior preference and Gesture suppression. The key visual comparison is P4-A.1 paths-only versus P4-A.2 paths-only; old hatching remains untouched until P4-A.3. [Verification](P4A2_VERIFY.md).
+
+
+### P4-A.2 first engineering result
+
+The medium layer clears its engineering gate: 79 tests green, exact P4-A.1 Gesture preservation, and a 15px Form path added to the short internal feature while Gestures retain ~92% of structural path length. The hierarchy is behaving as intended; real-object visual review is next.
+
+
+### P4-A.2 validation tooling verified
+
+The multi-image hierarchy harness is CI-green, including no-op sources. Medium Forms appear only on the dedicated internal-detail fixture, while step/gradient add none. This is desirable selectivity; the next evidence is the real chair/mug/plant paths-only delta.
+
+
+### P4-A.2 first real outcome
+
+Medium Form hierarchy succeeds across chair/mug/plant: six Forms per source, 12–16px mean Form length versus 45–55px Gestures, ~25–31% Form path-length share, and paths-only edge-F1 gains of ~24–32% on all three. The medium layer is visibly subordinate and useful. Freeze Gesture+Form geometry. The remaining visual problem is the old full horizontal tone field, so P4-A.3 moves to sparse residual hatching rather than overlay accumulation. [Result](P4A2_FIRST_REAL_RESULT.md).
